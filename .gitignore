@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.pytest-tmp/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+streamlit.log
+*.tmp
+*.bak
+*_Report.txt
+pytest_results.txt
+streamlit*.out.log
+.my_temp/
+.tmp/
+New folder/
+
+# Medical image data (never commit patient/imaging data)
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.nrrd
+*.mha
+
+# Environment / secrets
+.env
+.env.local
+
+# Runtime caches
+sovereign_cache/
+
+# Local fine-tune outputs (weights + reports may be large; never commit)
+models/finetuned/
+reports/finetune/
+data/train/
+data/finetune/
+*.pt
+*.onnx
+!tests/**/*.onnx

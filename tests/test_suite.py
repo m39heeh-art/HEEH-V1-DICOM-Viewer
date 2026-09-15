@@ -923,6 +923,7 @@ def test_tcia_download_uses_buffered_path_for_sized_series(tmp_path, monkeypatch
 
 def test_tcia_partial_cache_is_not_treated_as_complete(tmp_path, monkeypatch):
     """A stale partial download must be resumed/retried, not analyzed as data."""
+    from pathlib import Path
     from app import ClinicalApp
     dest = tmp_path / "series"
     dest.mkdir()
@@ -954,7 +955,7 @@ def test_tcia_partial_cache_is_not_treated_as_complete(tmp_path, monkeypatch):
         files = ClinicalApp()._download_tcia_series(
             "1.2.3", str(dest), progress_cb=None
         )
-    assert [path.rsplit("\\", 1)[-1] for path in files] == ["image.dcm"]
+    assert [Path(path).name for path in files] == ["image.dcm"]
 
 
 def test_tcia_metadata_uses_get_and_writes_csv_cache(tmp_path, monkeypatch):

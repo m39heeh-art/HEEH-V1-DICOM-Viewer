@@ -121,6 +121,8 @@ networkx==3.6.1
     #   torch
 nibabel==5.4.2
     # via -r requirements.txt
+ml-dtypes==0.6.0
+    # via onnx
 numcodecs==0.16.5
     # via zarr
 numpy==2.4.6
@@ -146,6 +148,8 @@ numpy==2.4.6
     #   torchvision
     #   transformers
     #   zarr
+onnx==1.22.0
+    # via -r requirements.txt
 onnxruntime==1.29.0
     # via -r requirements.txt
 openpyxl==3.1.5

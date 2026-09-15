@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768911.svg)](https://doi.org/10.5281/zenodo.22768911)
+
 # HEEH-V1(TM) DICOM Viewer
 
 HEEH-V1(TM) DICOM Viewer is a Streamlit web application for **medical-image

@@ -17,15 +17,21 @@
       "identifier": "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer",
       "resource_type": "software",
       "relation": "isIdenticalTo"
+    },
+    {
+      "identifier": "https://orcid.org/0009-0004-2729-443X",
+      "resource_type": "other",
+      "relation": "isIdenticalTo"
     }
   ],
   "description": "<p>HEEH-V1(TM) DICOM Viewer is a research and education Streamlit application for DICOM and volumetric-image viewing, calibrated measurements, quantitative analysis, experimental AI workflows, privacy-aware exports, and TCIA data access.</p><p>This software is not a certified medical device and must not be used for diagnosis, treatment planning, triage, or patient-care decisions.</p>",
   "creators": [
     {
-      "name": "m39heeh-art"
+      "name": "m39heeh-art",
+      "orcid": "0009-0004-2729-443X"
     }
   ],
   "title": "HEEH-V1(TM) DICOM Viewer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "language": "eng"
 }

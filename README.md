@@ -13,7 +13,9 @@ provenance reporting.
 Do not rename or substitute this identity in the application, launchers,
 exports, package metadata, documentation, or publication assets.
 
-ORCID contributor identifier: [0009-0004-2729-443X](https://orcid.org/0009-0004-2729-443X).`r`n`r`nThe official project logo is stored at `assets/heeh-v1-logo.jpg` and is used
+ORCID contributor identifier: [0009-0004-2729-443X](https://orcid.org/0009-0004-2729-443X).
+
+The official project logo is stored at `assets/heeh-v1-logo.jpg` and is used
 as the application page icon and header mark. Keep the logo with the project
 identity when publishing or redistributing the application.
 

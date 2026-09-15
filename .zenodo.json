@@ -1,0 +1,31 @@
+{
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open",
+  "keywords": [
+    "DICOM",
+    "medical imaging",
+    "radiomics",
+    "image analysis",
+    "Streamlit",
+    "research software",
+    "TCIA"
+  ],
+  "publication_date": "2026-09-15",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer",
+      "resource_type": "software",
+      "relation": "isIdenticalTo"
+    }
+  ],
+  "description": "<p>HEEH-V1(TM) DICOM Viewer is a research and education Streamlit application for DICOM and volumetric-image viewing, calibrated measurements, quantitative analysis, experimental AI workflows, privacy-aware exports, and TCIA data access.</p><p>This software is not a certified medical device and must not be used for diagnosis, treatment planning, triage, or patient-care decisions.</p>",
+  "creators": [
+    {
+      "name": "m39heeh-art"
+    }
+  ],
+  "title": "HEEH-V1(TM) DICOM Viewer",
+  "version": "1.0.1",
+  "language": "eng"
+}

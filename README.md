@@ -25,6 +25,13 @@ identity when publishing or redistributing the application.
 > they are not medical findings. A qualified clinician must independently
 > interpret all images and results.
 
+## Browser access and compatibility
+
+The public repository, release files, and Zenodo record are delivered through standard HTTPS and can be opened in current versions of Chrome, Microsoft Edge, Firefox, Safari, and other standards-compliant browsers. The DOI badge links directly to the permanent Zenodo record.
+
+When running the application locally, start Streamlit with one of the included launchers and open the displayed `http://localhost:8501` address in a current desktop browser. JavaScript, cookies, and local storage must be enabled for Streamlit controls, uploads, downloads, and interactive Plotly visualizations. Use a recent browser release for large image sets and WebGL-based 3D views; browser extensions, restrictive enterprise policies, or disabled WebGL can limit individual features but do not affect repository or DOI access.
+
+The application is responsive for standard desktop and tablet layouts. It is research software, not a hosted clinical service, and browser compatibility does not imply clinical certification or diagnostic suitability.
 ## Contents
 
 - [Capabilities](#capabilities)

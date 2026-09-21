@@ -46,6 +46,16 @@ from core.physiological_validator import PhysiologicalValidator as _Physiologica
 from core.constants import DISPLAY_PRESETS, DISPLAY_W, HU_MAX, HU_MIN
 from core.branding import PRODUCT_NAME
 from core.logging_config import audit_event, get_logger
+from core.resource_limits import (
+    MAX_ARCHIVE_MEMBER_BYTES,
+    MAX_ARCHIVE_MEMBERS,
+    MAX_ARCHIVE_TOTAL_BYTES,
+    MAX_MANIFEST_ROWS,
+    MAX_MANIFEST_TOTAL_BYTES,
+    MAX_UPLOAD_FILE_BYTES,
+    MAX_UPLOAD_FILES,
+    MAX_UPLOAD_TOTAL_BYTES,
+)
 from core.modality_detector import ModalityDetector, missing_required_tags
 from core.dicom_ordering import order_dicom_files
 from core.loaders import _load_volume_file_cached
@@ -577,6 +587,10 @@ def _measure_label_html(name: str) -> str:
 
 
 class ClinicalApp:
+    _MAX_ARCHIVE_MEMBERS = MAX_ARCHIVE_MEMBERS
+    _MAX_ARCHIVE_MEMBER_BYTES = MAX_ARCHIVE_MEMBER_BYTES
+    _MAX_ARCHIVE_TOTAL_BYTES = MAX_ARCHIVE_TOTAL_BYTES
+
     @staticmethod
     def _advance_auto_reader_index(
         current_index: int,
@@ -861,7 +875,25 @@ class ClinicalApp:
         other_images: list[str] = []
         json_by_prefix: dict[str, dict] = {}
         with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
-            for member in archive.infolist():
+            members = archive.infolist()
+            if len(members) > ClinicalApp._MAX_ARCHIVE_MEMBERS:
+                raise ValueError(
+                    f"Export archive contains too many members "
+                    f"(maximum {ClinicalApp._MAX_ARCHIVE_MEMBERS})."
+                )
+            total_size = 0
+            for member in members:
+                if member.file_size > ClinicalApp._MAX_ARCHIVE_MEMBER_BYTES:
+                    raise ValueError(
+                        f"Export member {member.filename!r} exceeds the "
+                        f"{ClinicalApp._MAX_ARCHIVE_MEMBER_BYTES}-byte limit."
+                    )
+                total_size += member.file_size
+                if total_size > ClinicalApp._MAX_ARCHIVE_TOTAL_BYTES:
+                    raise ValueError(
+                        "Export archive exceeds the total uncompressed-size limit."
+                    )
+            for member in members:
                 member_path = Path(member.filename)
                 if member.is_dir() or member_path.is_absolute() or ".." in member_path.parts:
                     continue
@@ -930,6 +962,10 @@ class ClinicalApp:
     def _persist_uploaded_files(uploaded_files) -> list[str]:
         """Materialize completed uploads so reruns do not depend on upload handles."""
         uploads = list(uploaded_files or [])
+        if len(uploads) > MAX_UPLOAD_FILES:
+            raise ValueError(
+                f"Too many uploaded files (maximum {MAX_UPLOAD_FILES})."
+            )
         signature = tuple(
             (
                 str(getattr(item, "name", "upload")),
@@ -954,6 +990,7 @@ class ClinicalApp:
 
         root = Path(tempfile.mkdtemp(prefix="heeh_upload_"))
         paths = []
+        total_bytes = 0
         for index, uploaded in enumerate(uploads):
             name = Path(str(getattr(uploaded, "name", f"upload_{index}"))).name
             suffix = "".join(Path(name).suffixes)
@@ -961,6 +998,18 @@ class ClinicalApp:
                 suffix = ".bin"
             destination = root / f"{index:06d}{suffix.lower()}"
             data = ClinicalApp._read_target_bytes(uploaded)
+            if len(data) > MAX_UPLOAD_FILE_BYTES:
+                shutil.rmtree(root, ignore_errors=True)
+                raise ValueError(
+                    f"Uploaded file {name!r} exceeds the "
+                    f"{MAX_UPLOAD_FILE_BYTES}-byte limit."
+                )
+            total_bytes += len(data)
+            if total_bytes > MAX_UPLOAD_TOTAL_BYTES:
+                shutil.rmtree(root, ignore_errors=True)
+                raise ValueError(
+                    "The uploaded files exceed the total size limit."
+                )
             destination.write_bytes(data)
             paths.append(str(destination))
 
@@ -968,6 +1017,23 @@ class ClinicalApp:
         st.session_state["_uploaded_input_signature"] = signature
         st.session_state["_uploaded_input_paths"] = paths
         return paths
+
+    @staticmethod
+    def _clear_uploaded_files() -> None:
+        """Remove persisted upload files and invalidate the active upload snapshot."""
+        old_root = st.session_state.pop("_uploaded_input_root", None)
+        if old_root:
+            root = Path(str(old_root))
+            if root.name.startswith("heeh_upload_"):
+                shutil.rmtree(root, ignore_errors=True)
+        st.session_state.pop("_uploaded_input_signature", None)
+        st.session_state.pop("_uploaded_input_paths", None)
+        st.session_state.pop("_active_input_files", None)
+        st.session_state.pop("_active_input_fingerprint", None)
+        st.session_state.pop("_active_files_fingerprint", None)
+        st.session_state.pop("_ordered_input_cache", None)
+        st.session_state.pop("viewer_index", None)
+        st.session_state.pop("viewer_slice_index", None)
 
     @staticmethod
     def _reopened_measurement_keys(file_id: str) -> tuple[str, ...]:
@@ -4540,22 +4606,59 @@ class ClinicalApp:
                     else:
                         st.error(_I("ERR_INVALID_DIR"))
             else:
+                upload_widget_generation = int(
+                    st.session_state.get("_upload_widget_generation", 0)
+                )
+                if st.button(
+                    "Clear uploaded files",
+                    key="clear_uploaded_files",
+                ):
+                    self._clear_uploaded_files()
+                    st.session_state["_upload_widget_generation"] = (
+                        upload_widget_generation + 1
+                    )
+                    st.rerun()
                 uploaded_files = st.file_uploader(
                     _I("UPLOAD_LABEL"),
                     type=None,
                     accept_multiple_files=True,
-                    key="initial_file_uploader",
+                    key=f"initial_file_uploader_{upload_widget_generation}",
                 )
-                # Streamlit may briefly return an empty list while a rerun is
-                # triggered by downstream processing. Keep the last completed
-                # upload available so starting analysis cannot make the input
-                # disappear from the active viewer.
                 if uploaded_files:
-                    files_list = self._persist_uploaded_files(uploaded_files)
+                    try:
+                        files_list = self._persist_uploaded_files(uploaded_files)
+                    except ValueError as exc:
+                        logger.warning("Upload rejected: %s", exc)
+                        st.error(str(exc))
+                        files_list = st.session_state.get(
+                            "_uploaded_input_paths", []
+                        )
                 else:
+                    # Streamlit can briefly report an empty list while the
+                    # uploader reruns after a second file is added. Preserve
+                    # the completed upload snapshot; explicit clearing uses
+                    # the button above, which resets the widget generation.
                     files_list = st.session_state.get(
                         "_uploaded_input_paths", []
                     )
+                if files_list:
+                    upload_total = sum(
+                        Path(path).stat().st_size
+                        for path in files_list
+                        if Path(path).is_file()
+                    )
+                    st.caption(
+                        f"{len(files_list)} file(s) selected · "
+                        f"{upload_total / 1024**2:.2f} MB total"
+                    )
+                    with st.expander("Selected files", expanded=False):
+                        for path in files_list:
+                            file_path = Path(path)
+                            if file_path.is_file():
+                                st.caption(
+                                    f"`{file_path.name}` · "
+                                    f"{file_path.stat().st_size / 1024**2:.2f} MB"
+                                )
 
         # Reopen consolidated measurement exports by extracting their
         # de-identified DICOM members and restoring the matching JSON records.
@@ -4663,6 +4766,17 @@ class ClinicalApp:
 
                 url_col = parsed.get("url_column")
                 rows = parsed.get("rows") or []
+                if len(rows) > MAX_MANIFEST_ROWS:
+                    logger.warning(
+                        "manifest %s has too many rows: %d",
+                        parsed.get("file_name", "?"),
+                        len(rows),
+                    )
+                    st.error(
+                        f"Manifest contains too many rows "
+                        f"(maximum {MAX_MANIFEST_ROWS})."
+                    )
+                    continue
                 if not url_col:
                     logger.warning("manifest %s has no URL column",
                                    parsed.get("file_name", "?"))
@@ -4678,6 +4792,7 @@ class ClinicalApp:
 
                 manifest_files = []
                 failed_urls = 0
+                downloaded_total = 0
                 total = len(rows)
                 progress = st.progress(
                     0.0,
@@ -4725,9 +4840,13 @@ class ClinicalApp:
                                             if not chunk:
                                                 continue
                                             downloaded += len(chunk)
-                                            if downloaded > max_bytes:
+                                            downloaded_total += len(chunk)
+                                            if (
+                                                downloaded > max_bytes
+                                                or downloaded_total > MAX_MANIFEST_TOTAL_BYTES
+                                            ):
                                                 raise ValueError(
-                                                    "Remote image exceeds the safety limit."
+                                                    "Manifest downloads exceed the safety limit."
                                                 )
                                             out.write(chunk)
                             if dest.exists() and dest.is_file() and dest.stat().st_size:

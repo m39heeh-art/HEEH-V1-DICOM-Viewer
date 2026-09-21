@@ -9,6 +9,7 @@ device - the tests assert numerical correctness, not clinical validity.
 import numpy as np
 import pytest
 from types import SimpleNamespace
+from pathlib import Path
 
 # Keep one canonical pytest entry point while retaining focused source modules.
 # The imported tests are collected from this module when the test path is run.
@@ -1072,6 +1073,42 @@ def test_load_nifti_upload_resets_file_position(tmp_path):
     assert isinstance(data, np.ndarray)
     assert data.shape == vol.shape
     assert "Volume" in modality
+
+
+def test_persist_uploaded_files_supports_add_and_clear_cycles(tmp_path):
+    """Adding a second upload must replace the persisted set with both files."""
+    import io
+    import streamlit as st
+    from app import ClinicalApp
+
+    def upload(name: str, payload: bytes):
+        item = io.BytesIO(payload)
+        item.name = name
+        item.size = len(payload)
+        return item
+
+    st.session_state.clear()
+    try:
+        app = ClinicalApp.__new__(ClinicalApp)
+        first = app._persist_uploaded_files(
+            [upload("first.dcm", b"first")]
+        )
+        combined = app._persist_uploaded_files(
+            [upload("first.dcm", b"first"), upload("second.dcm", b"second")]
+        )
+
+        assert len(first) == 1
+        assert len(combined) == 2
+        assert [Path(path).read_bytes() for path in combined] == [
+            b"first",
+            b"second",
+        ]
+
+        app._clear_uploaded_files()
+        assert st.session_state.get("_uploaded_input_paths") is None
+        assert not any(Path(path).exists() for path in combined)
+    finally:
+        st.session_state.clear()
 
 
 def test_load_nrrd_via_sitk_fallback(tmp_path):

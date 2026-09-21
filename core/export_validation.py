@@ -14,6 +14,11 @@ import re
 import zipfile
 from pathlib import PurePosixPath
 
+from core.resource_limits import (
+    MAX_ARCHIVE_MEMBER_BYTES,
+    MAX_ARCHIVE_MEMBERS,
+    MAX_ARCHIVE_TOTAL_BYTES,
+)
 
 _LOCAL_PATH_RE = re.compile(
     r"(?:[A-Za-z]:[\\/]|\\\\|/(?:Users|home|患者|病人)/)", re.IGNORECASE
@@ -63,13 +68,28 @@ def validate_export_archive(
         return result
 
     members = archive.infolist()
+    if len(members) > MAX_ARCHIVE_MEMBERS:
+        error(
+            "TOO_MANY_MEMBERS",
+            f"Archive contains {len(members)} members; maximum is "
+            f"{MAX_ARCHIVE_MEMBERS}.",
+        )
+        return result
     contents: dict[str, bytes] = {}
+    total_size = 0
     for member in members:
         if not _is_safe_member(member.filename):
             error("UNSAFE_MEMBER", member.filename)
             continue
         if member.is_dir():
             continue
+        if member.file_size > MAX_ARCHIVE_MEMBER_BYTES:
+            error("MEMBER_TOO_LARGE", member.filename)
+            continue
+        total_size += member.file_size
+        if total_size > MAX_ARCHIVE_TOTAL_BYTES:
+            error("ARCHIVE_TOO_LARGE", "Total uncompressed archive size exceeded.")
+            break
         try:
             contents[member.filename] = archive.read(member)
             result["files_checked"] += 1

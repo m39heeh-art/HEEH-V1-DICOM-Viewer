@@ -62,7 +62,9 @@ start_application() {
     if "$PYTHON_BIN" -c "import streamlit" 2>/dev/null; then
         print_success "Streamlit is available"
     else
-        print_warning "Streamlit check failed, but continuing..."
+        print_error "Streamlit is not installed for $PYTHON_BIN"
+        print_info "Install dependencies with: $PYTHON_BIN -m pip install -r requirements.txt"
+        exit 1
     fi
     
     echo
@@ -94,7 +96,6 @@ start_application() {
     echo "  3. HEEH-V1™ DICOM Viewer will load"
     echo "  4. Start analyzing medical images!"
     echo
-    print_success "✅ System Status: READY for medical imaging analysis"
     echo
     print_warning "⚠️  Note: This is a research/education tool, not a certified medical device"
     echo
@@ -114,8 +115,9 @@ start_application() {
         print_info "📊 Server logs available in: logs/streamlit_output.log"
         print_info "🛑 Stop server with: kill $(cat streamlit_pid.txt)"
     else
-        print_warning "⚠️ Streamlit may not have started properly"
+        print_error "⚠️ Streamlit failed to start"
         print_info "Check streamlit_output.log for details"
+        exit 1
     fi
     
     echo

@@ -809,7 +809,7 @@ class ClinicalApp:
             })
         manifest = {
             "schema": "heeh-v1.export-manifest",
-            "version": "1.0",
+            "version": "1.0.0",
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "software": {
                 "name": "HEEH-V1 DICOM Research Toolkit",
@@ -3629,12 +3629,12 @@ class ClinicalApp:
     _TCIA_IMAGE_URL = "https://nbia.cancerimagingarchive.net/nbia-api/services/v4/getImage"
     _TCIA_META_URL = "https://nbia.cancerimagingarchive.net/nbia-api/services/v4/getSeries"
     _TCIA_HEADERS: ClassVar[dict[str, str]] = {
-        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0",
+        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0.0",
         "Accept-Encoding": "identity",
         "Connection": "keep-alive",
     }
     _TCIA_META_HEADERS: ClassVar[dict[str, str]] = {
-        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0",
+        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0.0",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
     }

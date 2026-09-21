@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22883349.svg)](https://doi.org/10.5281/zenodo.22883349)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
 
 # HEEH-V1(TM) DICOM Viewer

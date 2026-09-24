@@ -528,7 +528,7 @@ For a reproducible environment check on Windows, run:
 cmd /c call .\verify.bat
 ```
 
-The current publication release is `v1.1.1` and is based on the latest
+The current publication release is `v1.0.1` and is based on the latest
 `main` branch. The release remains research-only; release labels do not imply
 clinical or regulatory approval.
 

@@ -11,7 +11,7 @@ class SystemConfig:
     """
 
     TITLE = f"{PRODUCT_NAME} (Research / Education Tool)"
-    VERSION = "1.1.1"
+    VERSION = "1.0.1"
 
     @staticmethod
     def apply_style():

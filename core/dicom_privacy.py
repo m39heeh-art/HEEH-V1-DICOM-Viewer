@@ -11,9 +11,17 @@ from copy import deepcopy
 from typing import Any
 
 import pydicom
+from pydicom.datadict import tag_for_keyword
 from pydicom.uid import generate_uid
 
 from core.standards import PHI_FIELD_NAMES, pseudonymous_identifier
+
+
+def requires_pixel_review(dataset: pydicom.dataset.Dataset) -> bool:
+    """Return whether pixel-level privacy review is mandatory before release."""
+    if not isinstance(dataset, pydicom.dataset.Dataset):
+        raise TypeError("dataset must be a pydicom Dataset")
+    return str(getattr(dataset, "BurnedInAnnotation", "") or "").upper() == "YES"
 
 
 def deidentify_dataset(
@@ -42,6 +50,9 @@ def deidentify_dataset(
     )
 
     for keyword in PHI_FIELD_NAMES:
+        tag = tag_for_keyword(keyword)
+        if tag is None or tag not in result:
+            continue
         if keyword in result:
             if keyword == "PatientID":
                 result.PatientID = pseudo_id
@@ -85,9 +96,7 @@ def deidentify_dataset(
         "Descriptors; UID Remap; Dates Removed; Burned-In Review"
     )
     if hasattr(result, "BurnedInAnnotation"):
-        result.BurnedInAnnotation = "YES" if str(
-            getattr(result, "BurnedInAnnotation", "")
-        ).upper() == "YES" else "UNKNOWN"
+        result.BurnedInAnnotation = "YES" if requires_pixel_review(result) else "UNKNOWN"
     result.remove_private_tags()
     return result
 

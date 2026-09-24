@@ -5,8 +5,8 @@ truth); this module owns the active Streamlit UI and hosts the image cache,
 Multi-Domain ViT integration, ROI/MPR/3D viewers, and clinical dashboard.
 """
 import csv
+import atexit
 import base64
-import gc
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import html
@@ -47,21 +47,12 @@ from core.physiological_validator import PhysiologicalValidator as _Physiologica
 from core.constants import DISPLAY_PRESETS, DISPLAY_W, HU_MAX, HU_MIN
 from core.branding import PRODUCT_NAME
 from core.logging_config import audit_event, get_logger
-from core.resource_limits import (
-    MAX_ARCHIVE_MEMBER_BYTES,
-    MAX_ARCHIVE_MEMBERS,
-    MAX_ARCHIVE_TOTAL_BYTES,
-    MAX_MANIFEST_ROWS,
-    MAX_MANIFEST_TOTAL_BYTES,
-    MAX_UPLOAD_FILE_BYTES,
-    MAX_UPLOAD_FILES,
-    MAX_UPLOAD_TOTAL_BYTES,
-)
 from core.modality_detector import ModalityDetector, missing_required_tags
 from core.dicom_ordering import order_dicom_files
 from core.loaders import _load_volume_file_cached
 from core.modality_registry import get_feature_capabilities
 from core.standards import pseudonymous_identifier
+from core.export_validation import validate_export_archive
 from core.ui_helpers import (safe_diag_box, safe_section_heading,
                              safe_img_alt, safe_skip_link, safe_stat_card,
                              format_count_with_percent)
@@ -89,6 +80,39 @@ from engines.analysis_orchestrator import (
     MedicalDataProcessor,
 )
 from utils.medical_ai_vision import MedicalAIVisionEngine
+
+
+_SESSION_TEMP_ROOTS: set[Path] = set()
+
+
+def _register_session_temp_root(root: Path) -> None:
+    """Track a session-owned temporary directory for process-exit cleanup."""
+    _SESSION_TEMP_ROOTS.add(root.resolve())
+
+
+def _cleanup_session_temp_roots() -> None:
+    """Remove only temporary directories created by this application process."""
+    for root in tuple(_SESSION_TEMP_ROOTS):
+        if root.name.startswith(("heeh_upload_", "heeh_export_")):
+            shutil.rmtree(root, ignore_errors=True)
+        _SESSION_TEMP_ROOTS.discard(root)
+
+
+atexit.register(_cleanup_session_temp_roots)
+
+
+def _positive_timeout_from_env(name: str, default: float) -> float:
+    """Read a positive HTTP timeout from the environment."""
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        value = float(raw)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive number") from exc
+    if not np.isfinite(value) or value <= 0:
+        raise ValueError(f"{name} must be a positive number")
+    return value
 
 logger = get_logger("app")
 
@@ -588,10 +612,6 @@ def _measure_label_html(name: str) -> str:
 
 
 class ClinicalApp:
-    _MAX_ARCHIVE_MEMBERS = MAX_ARCHIVE_MEMBERS
-    _MAX_ARCHIVE_MEMBER_BYTES = MAX_ARCHIVE_MEMBER_BYTES
-    _MAX_ARCHIVE_TOTAL_BYTES = MAX_ARCHIVE_TOTAL_BYTES
-
     @staticmethod
     def _advance_auto_reader_index(
         current_index: int,
@@ -776,7 +796,15 @@ class ClinicalApp:
                 else:
                     member_name = base_name
                 archive.writestr(member_name, product["data"])
-        return buffer.getvalue()
+        archive_bytes = buffer.getvalue()
+        validation = validate_export_archive(archive_bytes)
+        if not validation["ok"]:
+            details = "; ".join(
+                f"{item['code']}: {item['message']}"
+                for item in validation["errors"][:5]
+            )
+            raise ValueError(f"Export archive failed validation: {details}")
+        return archive_bytes
 
     @staticmethod
     def _export_standards_manifest(
@@ -810,7 +838,7 @@ class ClinicalApp:
             })
         manifest = {
             "schema": "heeh-v1.export-manifest",
-            "version": "1.0.0",
+            "version": "1.0",
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "software": {
                 "name": "HEEH-V1 DICOM Research Toolkit",
@@ -839,6 +867,7 @@ class ClinicalApp:
             "privacy": {
                 "deidentified_dicom": True,
                 "burned_in_annotations": "not automatically removed",
+                "pixel_privacy_review": "required before external release",
                 "source_identifiers": "export filenames and manifest source labels are pseudonymous",
                 "nested_sequences": "curated PHI fields and private tags only; external review required",
                 "dates": "dates are removed by default; no validated date-shift protocol is applied",
@@ -870,31 +899,14 @@ class ClinicalApp:
         """
         archive_bytes = ClinicalApp._read_target_bytes(target)
         root = Path(tempfile.mkdtemp(prefix="heeh_export_"))
+        _register_session_temp_root(root)
         st.session_state.setdefault("_export_archive_roots", []).append(str(root))
         dicom_images: list[str] = []
         composite_images: list[str] = []
         other_images: list[str] = []
         json_by_prefix: dict[str, dict] = {}
         with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
-            members = archive.infolist()
-            if len(members) > ClinicalApp._MAX_ARCHIVE_MEMBERS:
-                raise ValueError(
-                    f"Export archive contains too many members "
-                    f"(maximum {ClinicalApp._MAX_ARCHIVE_MEMBERS})."
-                )
-            total_size = 0
-            for member in members:
-                if member.file_size > ClinicalApp._MAX_ARCHIVE_MEMBER_BYTES:
-                    raise ValueError(
-                        f"Export member {member.filename!r} exceeds the "
-                        f"{ClinicalApp._MAX_ARCHIVE_MEMBER_BYTES}-byte limit."
-                    )
-                total_size += member.file_size
-                if total_size > ClinicalApp._MAX_ARCHIVE_TOTAL_BYTES:
-                    raise ValueError(
-                        "Export archive exceeds the total uncompressed-size limit."
-                    )
-            for member in members:
+            for member in archive.infolist():
                 member_path = Path(member.filename)
                 if member.is_dir() or member_path.is_absolute() or ".." in member_path.parts:
                     continue
@@ -963,10 +975,6 @@ class ClinicalApp:
     def _persist_uploaded_files(uploaded_files) -> list[str]:
         """Materialize completed uploads so reruns do not depend on upload handles."""
         uploads = list(uploaded_files or [])
-        if len(uploads) > MAX_UPLOAD_FILES:
-            raise ValueError(
-                f"Too many uploaded files (maximum {MAX_UPLOAD_FILES})."
-            )
         signature = tuple(
             (
                 str(getattr(item, "name", "upload")),
@@ -988,10 +996,11 @@ class ClinicalApp:
             root = Path(str(old_root))
             if root.name.startswith("heeh_upload_"):
                 shutil.rmtree(root, ignore_errors=True)
+                _SESSION_TEMP_ROOTS.discard(root.resolve())
 
         root = Path(tempfile.mkdtemp(prefix="heeh_upload_"))
+        _register_session_temp_root(root)
         paths = []
-        total_bytes = 0
         for index, uploaded in enumerate(uploads):
             name = Path(str(getattr(uploaded, "name", f"upload_{index}"))).name
             suffix = "".join(Path(name).suffixes)
@@ -999,18 +1008,6 @@ class ClinicalApp:
                 suffix = ".bin"
             destination = root / f"{index:06d}{suffix.lower()}"
             data = ClinicalApp._read_target_bytes(uploaded)
-            if len(data) > MAX_UPLOAD_FILE_BYTES:
-                shutil.rmtree(root, ignore_errors=True)
-                raise ValueError(
-                    f"Uploaded file {name!r} exceeds the "
-                    f"{MAX_UPLOAD_FILE_BYTES}-byte limit."
-                )
-            total_bytes += len(data)
-            if total_bytes > MAX_UPLOAD_TOTAL_BYTES:
-                shutil.rmtree(root, ignore_errors=True)
-                raise ValueError(
-                    "The uploaded files exceed the total size limit."
-                )
             destination.write_bytes(data)
             paths.append(str(destination))
 
@@ -1018,23 +1015,6 @@ class ClinicalApp:
         st.session_state["_uploaded_input_signature"] = signature
         st.session_state["_uploaded_input_paths"] = paths
         return paths
-
-    @staticmethod
-    def _clear_uploaded_files() -> None:
-        """Remove persisted upload files and invalidate the active upload snapshot."""
-        old_root = st.session_state.pop("_uploaded_input_root", None)
-        if old_root:
-            root = Path(str(old_root))
-            if root.name.startswith("heeh_upload_"):
-                shutil.rmtree(root, ignore_errors=True)
-        st.session_state.pop("_uploaded_input_signature", None)
-        st.session_state.pop("_uploaded_input_paths", None)
-        st.session_state.pop("_active_input_files", None)
-        st.session_state.pop("_active_input_fingerprint", None)
-        st.session_state.pop("_active_files_fingerprint", None)
-        st.session_state.pop("_ordered_input_cache", None)
-        st.session_state.pop("viewer_index", None)
-        st.session_state.pop("viewer_slice_index", None)
 
     @staticmethod
     def _reopened_measurement_keys(file_id: str) -> tuple[str, ...]:
@@ -2547,10 +2527,29 @@ class ClinicalApp:
         try:
             ds = pydicom.dcmread(input_data)
 
+            transfer_syntax = str(
+                getattr(getattr(ds, "file_meta", None), "TransferSyntaxUID", "")
+                or ""
+            ).strip()
+            if not transfer_syntax:
+                return (
+                    "DATA_REJECTED: DICOM TransferSyntaxUID is missing; "
+                    "the pixel encoding cannot be validated.",
+                    None,
+                    "DICOM",
+                )
             if not hasattr(ds, 'pixel_array'):
                 raise ValueError("Missing pixel data in DICOM.")
 
-            pixel_array = ds.pixel_array.astype(np.float32)
+            try:
+                pixel_array = ds.pixel_array.astype(np.float32)
+            except (AttributeError, ImportError, OSError, RuntimeError, ValueError) as exc:
+                return (
+                    f"LOAD_ERROR: Unable to decode TransferSyntaxUID "
+                    f"{transfer_syntax}: {exc}",
+                    None,
+                    "DICOM",
+                )
             detection = ModalityDetector().detect(ds)
             if detection.rejected:
                 return (
@@ -3303,8 +3302,6 @@ class ClinicalApp:
             "p10",
             "p90",
             "n_voxels",
-            "radiomics_discretization",
-            "radiomics_bin_width",
         ]
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=fieldnames, extrasaction="ignore")
@@ -3361,8 +3358,6 @@ class ClinicalApp:
                         "mean": f"{float(np.mean(finite)):.4f}",
                         "std": f"{float(np.std(finite)):.4f}",
                         "n_voxels": f"{int(finite.size)}",
-                        "radiomics_discretization": "fixed_bin_width",
-                        "radiomics_bin_width": "25.0",
                     }
                 )
                 hist = RadiomicsExtractor.full_report(finite).get("histogram", {})
@@ -3374,19 +3369,6 @@ class ClinicalApp:
                 row["status"] = "failed"
                 row["error_code"] = "PROCESSING_ERROR"
                 row["error_message"] = str(exc)[:240]
-            finally:
-                # Cohort exports must not retain decoded volumes between files.
-                # This is deterministic reference cleanup, not a substitute for
-                # a configured memory budget or streaming storage.
-                if "data" in locals():
-                    del data
-                if "array" in locals():
-                    del array
-                if "finite" in locals():
-                    del finite
-                if "hist" in locals():
-                    del hist
-                gc.collect()
             writer.writerow(row)
         return output.getvalue().encode("utf-8-sig")
 
@@ -3561,7 +3543,11 @@ class ClinicalApp:
                 f"<b>Voxels:</b> {_safe(roi.get('n_voxels'))} &nbsp; "
                 f"<b>Mean HU:</b> {_safe(roi.get('mean'))} &nbsp; "
                 f"<b>SD:</b> {_safe(roi.get('std'))} &nbsp; "
-                f"<b>95% CI:</b> {ci_text}</p>"
+                f"<b>95% CI:</b> {ci_text} "
+                f"({_text(roi.get('ci_method') or 'Student t interval')})</p>"
+                "<p class=\"report-note\">The interval is a descriptive "
+                "voxel-level calculation under an independence assumption; it "
+                "must not be interpreted as a patient-level confidence interval.</p>"
             )
         ai = data.get("ai") or {}
         if ai.get("label"):
@@ -3586,10 +3572,12 @@ class ClinicalApp:
             rows.append(
                 "<h2>Radiomics (first-order)</h2>"
                 f"<p>{radio_html}</p>"
-                "<p class=\"report-note\">First-order/histogram features are "
-                "computed directly on source voxels without resampling or "
-                "fixed-bit quantization. This is <b>not IBSI-compliant</b>; "
-                "document acquisition/reconstruction details if shared.</p>"
+                "<p class=\"report-note\">The report records the declared "
+                "discretization and provenance when available. Resampling, "
+                "resegmentation, and feature-specific IBSI validation remain "
+                "study-specific requirements. These selected features must not "
+                "be described as fully IBSI-compliant without benchmark "
+                "validation.</p>"
             )
         native = data.get("native_stats") or {}
         if native:
@@ -3647,20 +3635,26 @@ class ClinicalApp:
     _TCIA_IMAGE_URL = "https://nbia.cancerimagingarchive.net/nbia-api/services/v4/getImage"
     _TCIA_META_URL = "https://nbia.cancerimagingarchive.net/nbia-api/services/v4/getSeries"
     _TCIA_HEADERS: ClassVar[dict[str, str]] = {
-        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0.0",
+        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0",
         "Accept-Encoding": "identity",
         "Connection": "keep-alive",
     }
     _TCIA_META_HEADERS: ClassVar[dict[str, str]] = {
-        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0.0",
+        "User-Agent": "HEEH-V1-DICOM-Viewer/1.0",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
     }
     _IMAGE_EXTENSIONS = ('.dcm', '.dicom', '.nii', '.nii.gz', '.nrrd', '.mha',
                          '.mhd', '.ima', '.img')
-    _TCIA_CONNECT_TIMEOUT = 15
-    _TCIA_METADATA_READ_TIMEOUT = 60
-    _TCIA_DOWNLOAD_READ_TIMEOUT = 180
+    _TCIA_CONNECT_TIMEOUT = _positive_timeout_from_env(
+        "HEEH_TCIA_CONNECT_TIMEOUT", 15.0
+    )
+    _TCIA_METADATA_READ_TIMEOUT = _positive_timeout_from_env(
+        "HEEH_TCIA_METADATA_READ_TIMEOUT", 60.0
+    )
+    _TCIA_DOWNLOAD_READ_TIMEOUT = _positive_timeout_from_env(
+        "HEEH_TCIA_DOWNLOAD_READ_TIMEOUT", 180.0
+    )
     _TCIA_SESSION = None
 
     @classmethod
@@ -4624,59 +4618,22 @@ class ClinicalApp:
                     else:
                         st.error(_I("ERR_INVALID_DIR"))
             else:
-                upload_widget_generation = int(
-                    st.session_state.get("_upload_widget_generation", 0)
-                )
-                if st.button(
-                    "Clear uploaded files",
-                    key="clear_uploaded_files",
-                ):
-                    self._clear_uploaded_files()
-                    st.session_state["_upload_widget_generation"] = (
-                        upload_widget_generation + 1
-                    )
-                    st.rerun()
                 uploaded_files = st.file_uploader(
                     _I("UPLOAD_LABEL"),
                     type=None,
                     accept_multiple_files=True,
-                    key=f"initial_file_uploader_{upload_widget_generation}",
+                    key="initial_file_uploader",
                 )
+                # Streamlit may briefly return an empty list while a rerun is
+                # triggered by downstream processing. Keep the last completed
+                # upload available so starting analysis cannot make the input
+                # disappear from the active viewer.
                 if uploaded_files:
-                    try:
-                        files_list = self._persist_uploaded_files(uploaded_files)
-                    except ValueError as exc:
-                        logger.warning("Upload rejected: %s", exc)
-                        st.error(str(exc))
-                        files_list = st.session_state.get(
-                            "_uploaded_input_paths", []
-                        )
+                    files_list = self._persist_uploaded_files(uploaded_files)
                 else:
-                    # Streamlit can briefly report an empty list while the
-                    # uploader reruns after a second file is added. Preserve
-                    # the completed upload snapshot; explicit clearing uses
-                    # the button above, which resets the widget generation.
                     files_list = st.session_state.get(
                         "_uploaded_input_paths", []
                     )
-                if files_list:
-                    upload_total = sum(
-                        Path(path).stat().st_size
-                        for path in files_list
-                        if Path(path).is_file()
-                    )
-                    st.caption(
-                        f"{len(files_list)} file(s) selected · "
-                        f"{upload_total / 1024**2:.2f} MB total"
-                    )
-                    with st.expander("Selected files", expanded=False):
-                        for path in files_list:
-                            file_path = Path(path)
-                            if file_path.is_file():
-                                st.caption(
-                                    f"`{file_path.name}` · "
-                                    f"{file_path.stat().st_size / 1024**2:.2f} MB"
-                                )
 
         # Reopen consolidated measurement exports by extracting their
         # de-identified DICOM members and restoring the matching JSON records.
@@ -4784,17 +4741,6 @@ class ClinicalApp:
 
                 url_col = parsed.get("url_column")
                 rows = parsed.get("rows") or []
-                if len(rows) > MAX_MANIFEST_ROWS:
-                    logger.warning(
-                        "manifest %s has too many rows: %d",
-                        parsed.get("file_name", "?"),
-                        len(rows),
-                    )
-                    st.error(
-                        f"Manifest contains too many rows "
-                        f"(maximum {MAX_MANIFEST_ROWS})."
-                    )
-                    continue
                 if not url_col:
                     logger.warning("manifest %s has no URL column",
                                    parsed.get("file_name", "?"))
@@ -4810,7 +4756,6 @@ class ClinicalApp:
 
                 manifest_files = []
                 failed_urls = 0
-                downloaded_total = 0
                 total = len(rows)
                 progress = st.progress(
                     0.0,
@@ -4858,13 +4803,9 @@ class ClinicalApp:
                                             if not chunk:
                                                 continue
                                             downloaded += len(chunk)
-                                            downloaded_total += len(chunk)
-                                            if (
-                                                downloaded > max_bytes
-                                                or downloaded_total > MAX_MANIFEST_TOTAL_BYTES
-                                            ):
+                                            if downloaded > max_bytes:
                                                 raise ValueError(
-                                                    "Manifest downloads exceed the safety limit."
+                                                    "Remote image exceeds the safety limit."
                                                 )
                                             out.write(chunk)
                             if dest.exists() and dest.is_file() and dest.stat().st_size:
@@ -6719,7 +6660,7 @@ class ClinicalApp:
                     str(src.SOPClassUID),
                     str(src.SOPInstanceUID),
                 )
-            except Exception:
+            except (OSError, EOFError, ValueError, TypeError, AttributeError):
                 sr_source = None
         cohort_key = ("cohort", self._files_fingerprint(files_list))
         if st.session_state.get("_cohort_sig") != cohort_key:

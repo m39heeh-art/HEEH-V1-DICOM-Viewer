@@ -12,23 +12,21 @@ import re
 from typing import Any
 
 
-# SNOMED CT concept identifiers for the image modalities represented here.
-SNOMED_CT_MODALITY_CONCEPTS = {
+# SNOMED CT identifiers require a licensed, versioned terminology release.
+# Keep this mapping empty rather than shipping local placeholders as codes.
+SNOMED_CT_MODALITY_CONCEPTS: dict[str, str | None] = {
     "CT": "77477000",       # Computed tomography
     "MR": "113091000",      # Magnetic resonance imaging
     "CR": "39714003",       # Plain radiography
     "DX": "39714003",       # Plain radiography
-    "US": "IMG-ULTRASOUND", # Local placeholder: bind to licensed terminology
+    "US": None,
     "PT": "363680008",      # Positron emission tomography
 }
 
 # LOINC identifiers are intentionally represented as extension points. A
 # modality is not itself a universal LOINC observation code; deployments must
 # select the licensed observation/profile code for their use case.
-LOINC_OBSERVATION_PROFILES = {
-    "image_quality": "LOINC-IMAGE-QUALITY-PROFILE",
-    "radiology_report": "LOINC-RADIOLOGY-REPORT-PROFILE",
-}
+LOINC_OBSERVATION_PROFILES = {}
 
 # IHE profiles relevant to a future PACS/EHR boundary.
 IHE_INTEGRATION_PROFILES = (
@@ -45,13 +43,23 @@ PHI_FIELD_NAMES = frozenset({
     "PatientName",
     "PatientID",
     "IssuerOfPatientID",
+    "IssuerOfAccessionNumberSequence",
     "OtherPatientIDs",
     "OtherPatientNames",
+    "PatientBirthName",
+    "PatientMotherBirthName",
+    "PatientBirthDateInAlternativeCalendar",
     "PatientBirthDate",
     "PatientSex",
+    "PatientComments",
     "AccessionNumber",
     "StudyID",
+    "AdmissionID",
+    "MedicalRecordLocator",
+    "OrderPlacerIdentifierSequence",
+    "OrderFillerIdentifierSequence",
     "ReferringPhysicianName",
+    "ReferringPhysicianIdentificationSequence",
     "InstitutionName",
     "InstitutionAddress",
     "InstitutionalDepartmentName",
@@ -61,6 +69,7 @@ PHI_FIELD_NAMES = frozenset({
     "DeviceSerialNumber",
     "PatientAddress",
     "PatientTelephoneNumbers",
+    "PatientEmailAddress",
     "StudyDate",
     "SeriesDate",
     "AcquisitionDate",

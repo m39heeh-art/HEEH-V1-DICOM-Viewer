@@ -19,6 +19,8 @@ Label priority: --labels-csv (series_uid,label) > metadata column
 from __future__ import annotations
 
 import csv
+import hashlib
+import json
 import random
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -272,6 +274,26 @@ def stratified_split(items: List[Dict], val_frac: float = 0.2,
     return train, val
 
 
+def group_ids(items: List[Dict]) -> set[str]:
+    """Return the independent groups represented by dataset items."""
+    return {
+        str(item.get("series_uid") or item.get("group_id") or item.get("source"))
+        for item in items
+    }
+
+
+def validate_group_disjoint(train: List[Dict], val: List[Dict]) -> None:
+    """Reject train/validation leakage when correlated images share a group."""
+    overlap = group_ids(train) & group_ids(val)
+    if overlap:
+        preview = ", ".join(sorted(overlap)[:3])
+        suffix = "..." if len(overlap) > 3 else ""
+        raise ValueError(
+            f"Train/validation group leakage detected for {len(overlap)} group(s): "
+            f"{preview}{suffix}"
+        )
+
+
 def dataset_stats(items: List[Dict]) -> Dict:
     """Summarize per-class sample counts for the dataset."""
     counts: Dict[str, int] = {}
@@ -280,3 +302,23 @@ def dataset_stats(items: List[Dict]) -> Dict:
         counts[str(it["label"])] = counts.get(str(it["label"]), 0) + 1
         groups.add(str(it.get("series_uid") or it.get("group_id") or it.get("source")))
     return {"n": len(items), "groups": len(groups), "classes": sorted(counts), "counts": counts}
+
+
+def dataset_manifest(items: List[Dict]) -> Dict:
+    """Create a privacy-preserving, deterministic manifest for an experiment."""
+    records = []
+    for item in items:
+        records.append({
+            "group": str(item.get("series_uid") or item.get("group_id") or ""),
+            "label": str(item.get("label") or ""),
+            "source_name": Path(str(item.get("source") or "")).name,
+        })
+    records.sort(key=lambda value: (value["group"], value["label"], value["source_name"]))
+    payload = json.dumps(records, sort_keys=True, separators=(",", ":")).encode()
+    return {
+        "algorithm": "sha256",
+        "record_count": len(records),
+        "group_count": len({record["group"] for record in records}),
+        "dataset_hash": hashlib.sha256(payload).hexdigest(),
+        "records": records,
+    }

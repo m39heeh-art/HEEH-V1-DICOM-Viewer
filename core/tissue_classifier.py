@@ -3,6 +3,7 @@ from typing import Dict
 import numpy as np
 import torch
 from scipy import stats
+from scipy.ndimage import zoom
 from skimage.feature import graycomatrix, graycoprops, canny as sk_canny
 from core.constants import TISSUE_RANGES
 from skimage.filters import sobel
@@ -144,16 +145,15 @@ class RadiomicsExtractor:
     def histogram_features(
         data: np.ndarray,
         *,
-        levels: int = 64,
-        bin_width: float | None = 25.0,
+        levels: int = 256,
+        bin_width: float = 25.0,
         discretization: str = "fixed_bin_width",
         include_provenance: bool = False,
     ) -> Dict[str, float]:
-        """First-order features with an explicit, reproducible discretization.
+        """Compute reproducible first-order features for the CT subset.
 
-        Fixed-width binning is the default for CT-like intensity data. The
-        continuous first-order statistics remain unchanged; only histogram
-        entropy uses the declared discretization.
+        Continuous statistics remain in the source intensity domain. Entropy is
+        calculated from the explicitly declared IBSI-style discretisation.
         """
         f = data.ravel().astype(np.float64)
         if f.size == 0:
@@ -165,11 +165,9 @@ class RadiomicsExtractor:
                 "discretization must be 'min_max' or 'fixed_bin_width'"
             )
         if discretization == "fixed_bin_width" and (
-            bin_width is None or not np.isfinite(bin_width) or bin_width <= 0
+            not np.isfinite(bin_width) or bin_width <= 0
         ):
-            raise ValueError(
-                "bin_width must be a positive finite number for fixed_bin_width"
-            )
+            raise ValueError("bin_width must be positive and finite")
         mean_v = float(np.mean(f))
         std_v = float(np.std(f, ddof=1)) if f.size >= 2 else 0.0
         skew_v = float(stats.skew(f)) if f.size >= 3 else 0.0
@@ -182,15 +180,13 @@ class RadiomicsExtractor:
         if not np.isfinite(kurt_v):
             kurt_v = 0.0
         if discretization == "fixed_bin_width":
-            minimum = float(np.min(f))
-            maximum = float(np.max(f))
-            edges = np.arange(
-                minimum,
-                maximum + float(bin_width) * 2,
-                float(bin_width),
-                dtype=np.float64,
-            )
-            histogram, _ = np.histogram(f, bins=edges)
+            origin = float(np.min(f))
+            bins = np.floor((f - origin) / bin_width).astype(np.int64)
+            if int(np.max(bins)) >= levels:
+                raise ValueError(
+                    "levels is too small for the declared fixed bin width and data range"
+                )
+            histogram = np.bincount(bins, minlength=levels)
         else:
             histogram, _ = np.histogram(f, bins=levels)
         probabilities = histogram / f.size
@@ -218,11 +214,9 @@ class RadiomicsExtractor:
             result["provenance"] = {
                 "discretization": discretization,
                 "levels": int(levels),
-                "bin_width": (
-                    None if bin_width is None else float(bin_width)
-                ),
+                "bin_width": float(bin_width),
                 "entropy_definition": (
-                    "Shannon entropy of discretized first-order histogram"
+                    "Shannon entropy of the declared discretised histogram"
                 ),
             }
         return result
@@ -233,7 +227,7 @@ class RadiomicsExtractor:
         distances: list = None,
         angles: list = None,
         *,
-        levels: int = 64,
+        levels: int = 256,
         bin_width: float | None = 25.0,
         discretization: str = "fixed_bin_width",
         include_provenance: bool = False,
@@ -348,21 +342,27 @@ class RadiomicsExtractor:
         data: np.ndarray,
         binary_mask: np.ndarray = None,
         *,
-        levels: int = 64,
+        levels: int = 256,
         bin_width: float | None = 25.0,
         discretization: str = "fixed_bin_width",
         spacing: float | tuple[float, ...] = 1.0,
         include_provenance: bool = True,
     ) -> Dict[str, Dict[str, float]]:
         """تقرير كامل بجميع الميزات."""
+        # Keep the histogram section numeric; provenance belongs at report level.
+        histogram = cls.histogram_features(
+            data,
+            levels=levels,
+            bin_width=float(bin_width or 25.0),
+            discretization=discretization,
+            include_provenance=False,
+        )
         report = {
-            "histogram": cls.histogram_features(
-                data,
-                levels=levels,
-                bin_width=bin_width,
-                discretization=discretization,
-                include_provenance=False,
-            )
+            "histogram": {
+                key: value
+                for key, value in histogram.items()
+                if isinstance(value, (int, float, np.integer, np.floating))
+            }
         }
         if data.ndim == 2 and data.size >= 64:
             report["glcm"] = cls.glcm_features(
@@ -376,8 +376,13 @@ class RadiomicsExtractor:
             report["shape"] = cls.shape_features(binary_mask, spacing=spacing)
         if include_provenance:
             report["provenance"] = {
+                "profile": "CT_IBSI_SUBSET_V1",
+                "status": (
+                    "Selected IBSI-aligned features; official benchmark "
+                    "validation is required before claiming full compliance."
+                ),
                 "levels": int(levels),
-                "bin_width": None if bin_width is None else float(bin_width),
+                "bin_width": float(bin_width or 25.0),
                 "discretization": discretization,
                 "spacing": (
                     [float(spacing)] * np.asarray(binary_mask).ndim
@@ -392,6 +397,64 @@ class RadiomicsExtractor:
                 ),
             }
         return report
+
+    @staticmethod
+    def preprocess_ct(
+        data: np.ndarray,
+        *,
+        spacing: tuple[float, ...],
+        target_spacing: tuple[float, ...] | None = None,
+        resegment: tuple[float, float] | None = None,
+        interpolation_order: int = 1,
+    ) -> tuple[np.ndarray, dict]:
+        """Apply an explicit, reproducible CT radiomics preprocessing policy.
+
+        Resampling is opt-in because IBSI makes processing scheme choices
+        study-specific. The returned provenance must accompany extracted
+        features and the official IBSI benchmark is still required for claims.
+        """
+        image = np.asarray(data, dtype=np.float64)
+        source_spacing = tuple(float(value) for value in spacing)
+        if image.ndim != len(source_spacing) or any(
+            not np.isfinite(value) or value <= 0 for value in source_spacing
+        ):
+            raise ValueError("spacing must match data dimensions and be positive")
+        if not np.isfinite(image).all():
+            raise ValueError("CT data must contain only finite values")
+        if target_spacing is not None:
+            destination = tuple(float(value) for value in target_spacing)
+            if len(destination) != image.ndim or any(
+                not np.isfinite(value) or value <= 0 for value in destination
+            ):
+                raise ValueError("target_spacing must match data dimensions")
+            factors = tuple(
+                source / target for source, target in zip(source_spacing, destination)
+            )
+            if any(abs(factor - 1.0) > 1e-12 for factor in factors):
+                image = zoom(image, factors, order=interpolation_order)
+            output_spacing = destination
+        else:
+            output_spacing = source_spacing
+        if resegment is not None:
+            lower, upper = (float(value) for value in resegment)
+            if not np.isfinite([lower, upper]).all() or lower >= upper:
+                raise ValueError("resegment must be a finite (lower, upper) interval")
+            image = image[(image >= lower) & (image <= upper)]
+            if image.size == 0:
+                raise ValueError("resegment removed all voxels")
+        provenance = {
+            "profile": "CT_IBSI_SUBSET_V1",
+            "source_spacing": list(source_spacing),
+            "target_spacing": list(output_spacing),
+            "resampled": target_spacing is not None,
+            "interpolation_order": (
+                int(interpolation_order) if target_spacing is not None else None
+            ),
+            "resegmentation": (
+                None if resegment is None else [float(resegment[0]), float(resegment[1])]
+            ),
+        }
+        return image, provenance
 
 
 class XAIExplainer:

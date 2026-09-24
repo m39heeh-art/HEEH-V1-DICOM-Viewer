@@ -7,7 +7,7 @@ from core.security import (
     encryption_key_from_environment,
     generate_key,
 )
-from core.dicom_privacy import deidentify_dataset
+from core.dicom_privacy import deidentify_dataset, requires_pixel_review
 from core.standards import (
     compliance_boundary,
     pseudonymous_identifier,
@@ -75,3 +75,12 @@ def test_dicom_deidentification_marks_burned_in_annotation_review():
 
     assert clean.BurnedInAnnotation == "YES"
     assert "Burned-In Review" in clean.DeidentificationMethod
+    assert requires_pixel_review(clean)
+
+
+def test_dicom_without_burned_in_annotation_does_not_require_pixel_review():
+    dataset = Dataset()
+    dataset.PatientID = "patient-123"
+    dataset.BurnedInAnnotation = "NO"
+
+    assert not requires_pixel_review(dataset)

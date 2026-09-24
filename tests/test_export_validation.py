@@ -59,6 +59,62 @@ def test_export_validation_requires_manifest_and_lists_all_files():
     assert any(item["code"] == "UNMANIFESTED_FILE" for item in unlisted["errors"])
 
 
+def test_export_validation_rejects_private_or_non_pseudonymous_dicom():
+    from pydicom.dataset import FileDataset, FileMetaDataset
+    from pydicom.uid import ExplicitVRLittleEndian, generate_uid
+
+    meta = FileMetaDataset()
+    meta.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"
+    meta.MediaStorageSOPInstanceUID = generate_uid()
+    meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    ds = FileDataset("bad.dcm", {}, file_meta=meta, preamble=b"\0" * 128)
+    ds.PatientName = "Real^Patient"
+    ds.PatientID = "real-id"
+    ds.PatientIdentityRemoved = "NO"
+    ds.add_new((0x0011, 0x0010), "LO", "private")
+    stream = io.BytesIO()
+    ds.save_as(stream)
+    payload = stream.getvalue()
+    manifest = json.dumps({"files": [{
+        "file": "bad.dcm",
+        "sha256": __import__("hashlib").sha256(payload).hexdigest(),
+    }]}).encode()
+    result = validate_export_archive(_zip({
+        "bad.dcm": payload,
+        "export_manifest.json": manifest,
+    }))
+    codes = {item["code"] for item in result["errors"]}
+    assert "PRIVATE_TAGS_PRESENT" in codes
+    assert "PHI_FIELD_PRESENT" in codes
+    assert "NON_PSEUDONYMOUS_PATIENT_ID" in codes
+
+
+def test_export_validation_accepts_explicit_anonymized_patient_name():
+    from pydicom.dataset import FileDataset, FileMetaDataset
+    from pydicom.uid import ExplicitVRLittleEndian, generate_uid
+
+    meta = FileMetaDataset()
+    meta.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"
+    meta.MediaStorageSOPInstanceUID = generate_uid()
+    meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    ds = FileDataset("clean.dcm", {}, file_meta=meta, preamble=b"\0" * 128)
+    ds.PatientName = "ANONYMOUS"
+    ds.PatientID = "NEURO_0123456789abcdef"
+    ds.PatientIdentityRemoved = "YES"
+    stream = io.BytesIO()
+    ds.save_as(stream)
+    payload = stream.getvalue()
+    manifest = json.dumps({"files": [{
+        "file": "clean.dcm",
+        "sha256": __import__("hashlib").sha256(payload).hexdigest(),
+    }]}).encode()
+    result = validate_export_archive(_zip({
+        "clean.dcm": payload,
+        "export_manifest.json": manifest,
+    }))
+    assert result["ok"], result["errors"]
+
+
 def test_app_export_normalizes_legacy_angle_records():
     from app import ClinicalApp
 

@@ -6,6 +6,7 @@ Multi-Domain ViT integration, ROI/MPR/3D viewers, and clinical dashboard.
 """
 import csv
 import base64
+import gc
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import html
@@ -3302,6 +3303,8 @@ class ClinicalApp:
             "p10",
             "p90",
             "n_voxels",
+            "radiomics_discretization",
+            "radiomics_bin_width",
         ]
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=fieldnames, extrasaction="ignore")
@@ -3358,6 +3361,8 @@ class ClinicalApp:
                         "mean": f"{float(np.mean(finite)):.4f}",
                         "std": f"{float(np.std(finite)):.4f}",
                         "n_voxels": f"{int(finite.size)}",
+                        "radiomics_discretization": "fixed_bin_width",
+                        "radiomics_bin_width": "25.0",
                     }
                 )
                 hist = RadiomicsExtractor.full_report(finite).get("histogram", {})
@@ -3369,6 +3374,19 @@ class ClinicalApp:
                 row["status"] = "failed"
                 row["error_code"] = "PROCESSING_ERROR"
                 row["error_message"] = str(exc)[:240]
+            finally:
+                # Cohort exports must not retain decoded volumes between files.
+                # This is deterministic reference cleanup, not a substitute for
+                # a configured memory budget or streaming storage.
+                if "data" in locals():
+                    del data
+                if "array" in locals():
+                    del array
+                if "finite" in locals():
+                    del finite
+                if "hist" in locals():
+                    del hist
+                gc.collect()
             writer.writerow(row)
         return output.getvalue().encode("utf-8-sig")
 

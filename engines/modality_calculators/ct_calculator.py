@@ -243,12 +243,22 @@ class CTCalculator(ModalityCalculator):
             ``radial_nps`` (1D radial profile) and ``nps_0`` (zero-frequency
             NPS value in HU^2 mm^2).
         """
-        if hu.ndim < 2 or hu.shape[0] < 8 or hu.shape[1] < 8:
+        if (
+            hu.ndim < 2
+            or hu.shape[0] < 8
+            or hu.shape[1] < 8
+            or not np.isfinite(pixel_size_x)
+            or not np.isfinite(pixel_size_y)
+            or pixel_size_x <= 0
+            or pixel_size_y <= 0
+        ):
             return {
                 "nps_2d": None,
                 "radial_frequency": None,
                 "radial_nps": None,
                 "nps_0": None,
+                "dimensionality": "2D in-plane",
+                "status": "invalid_input",
             }
 
         img = hu[: hu.shape[0], : hu.shape[1]].astype(np.float64)
@@ -299,6 +309,12 @@ class CTCalculator(ModalityCalculator):
             "radial_frequency": rad_freq.tolist(),
             "radial_nps": rad_nps.tolist(),
             "nps_0": nps_0,
+            "dimensionality": "2D in-plane",
+            "methodology": "AAPM TG-150 / IEC-style uniform ROI estimate",
+            "status": (
+                "research estimate; not a 3D volume NPS and requires a "
+                "uniform ROI and protocol-specific validation"
+            ),
         }
 
     @staticmethod

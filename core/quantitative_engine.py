@@ -72,7 +72,14 @@ class QuantitativeEngine:
                 "cv_percentage": None if cv_val is None else round(float(cv_val), 2),
                 "cv_status": cv_status,
                 "n_voxels": int(n_samples),
-                "status": "Quantitative analysis (research/education only)"
+                "ci_method": (
+                    "Student t interval; voxel independence assumption "
+                    "not corrected for spatial autocorrelation"
+                ),
+                "status": (
+                    "Quantitative analysis (research/education only); "
+                    "CI is not a cluster-level or patient-level estimate"
+                ),
             }
 
         except (ValueError, TypeError, RuntimeWarning) as e:

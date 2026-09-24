@@ -141,11 +141,35 @@ class RadiomicsExtractor:
     """
 
     @staticmethod
-    def histogram_features(data: np.ndarray) -> Dict[str, float]:
-        """الميزات الإحصائية من توزيع القيم."""
+    def histogram_features(
+        data: np.ndarray,
+        *,
+        levels: int = 64,
+        bin_width: float | None = 25.0,
+        discretization: str = "fixed_bin_width",
+        include_provenance: bool = False,
+    ) -> Dict[str, float]:
+        """First-order features with an explicit, reproducible discretization.
+
+        Fixed-width binning is the default for CT-like intensity data. The
+        continuous first-order statistics remain unchanged; only histogram
+        entropy uses the declared discretization.
+        """
         f = data.ravel().astype(np.float64)
         if f.size == 0:
             return {}
+        if levels < 2:
+            raise ValueError("levels must be at least 2")
+        if discretization not in {"min_max", "fixed_bin_width"}:
+            raise ValueError(
+                "discretization must be 'min_max' or 'fixed_bin_width'"
+            )
+        if discretization == "fixed_bin_width" and (
+            bin_width is None or not np.isfinite(bin_width) or bin_width <= 0
+        ):
+            raise ValueError(
+                "bin_width must be a positive finite number for fixed_bin_width"
+            )
         mean_v = float(np.mean(f))
         std_v = float(np.std(f, ddof=1)) if f.size >= 2 else 0.0
         skew_v = float(stats.skew(f)) if f.size >= 3 else 0.0
@@ -157,12 +181,23 @@ class RadiomicsExtractor:
             skew_v = 0.0
         if not np.isfinite(kurt_v):
             kurt_v = 0.0
-        histogram, _ = np.histogram(f, bins=64)
+        if discretization == "fixed_bin_width":
+            minimum = float(np.min(f))
+            maximum = float(np.max(f))
+            edges = np.arange(
+                minimum,
+                maximum + float(bin_width) * 2,
+                float(bin_width),
+                dtype=np.float64,
+            )
+            histogram, _ = np.histogram(f, bins=edges)
+        else:
+            histogram, _ = np.histogram(f, bins=levels)
         probabilities = histogram / f.size
         entropy = -np.sum(
             probabilities * np.log2(probabilities + 1e-12)
         )
-        return {
+        result = {
             "mean": round(mean_v, 2),
             "median": round(float(np.median(f)), 2),
             "min": round(float(f.min()), 2),
@@ -179,6 +214,18 @@ class RadiomicsExtractor:
             "p90": round(float(np.percentile(f, 90)), 2),
             "entropy": round(float(entropy), 4),
         }
+        if include_provenance:
+            result["provenance"] = {
+                "discretization": discretization,
+                "levels": int(levels),
+                "bin_width": (
+                    None if bin_width is None else float(bin_width)
+                ),
+                "entropy_definition": (
+                    "Shannon entropy of discretized first-order histogram"
+                ),
+            }
+        return result
 
     @staticmethod
     def glcm_features(
@@ -187,8 +234,8 @@ class RadiomicsExtractor:
         angles: list = None,
         *,
         levels: int = 64,
-        bin_width: float | None = None,
-        discretization: str = "min_max",
+        bin_width: float | None = 25.0,
+        discretization: str = "fixed_bin_width",
         include_provenance: bool = False,
     ) -> Dict[str, float]:
         """ميزات GLCM (Gray-Level Co-occurrence Matrix).
@@ -302,13 +349,21 @@ class RadiomicsExtractor:
         binary_mask: np.ndarray = None,
         *,
         levels: int = 64,
-        bin_width: float | None = None,
-        discretization: str = "min_max",
+        bin_width: float | None = 25.0,
+        discretization: str = "fixed_bin_width",
         spacing: float | tuple[float, ...] = 1.0,
         include_provenance: bool = True,
     ) -> Dict[str, Dict[str, float]]:
         """تقرير كامل بجميع الميزات."""
-        report = {"histogram": cls.histogram_features(data)}
+        report = {
+            "histogram": cls.histogram_features(
+                data,
+                levels=levels,
+                bin_width=bin_width,
+                discretization=discretization,
+                include_provenance=include_provenance,
+            )
+        }
         if data.ndim == 2 and data.size >= 64:
             report["glcm"] = cls.glcm_features(
                 data,

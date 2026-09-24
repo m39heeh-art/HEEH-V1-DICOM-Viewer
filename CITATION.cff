@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "HEEH-V1(TM) DICOM Viewer"
+message: "If you use this software, please cite the repository and release."
+type: software
+authors:
+  - family-names: "m39heeh-art"
+    given-names: "HEEH-V1"
+    orcid: "https://orcid.org/0009-0004-2729-443X"
+repository-code: "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer"
+license: MIT
+version: "1.0.0"
+date-released: "2026-09-24"

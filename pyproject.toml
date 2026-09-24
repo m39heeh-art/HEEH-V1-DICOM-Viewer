@@ -1,6 +1,6 @@
 [project]
 name = "heeh-v1-dicom-viewer"
-version = "1.0.0"
+version = "1.1.1"
 description = "HEEH-V1(TM) DICOM Viewer: a research and education web application for medical image analysis, tissue classification, and scientific metrics."
 readme = "README.md"
 requires-python = ">=3.11,<3.15"

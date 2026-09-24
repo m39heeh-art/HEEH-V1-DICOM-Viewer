@@ -205,8 +205,9 @@ performance.
 ### Radiomics-style features
 
 - Histogram features including percentiles, skewness, kurtosis, and entropy.
-- Reproducible fixed-bin-width histogram entropy (25 HU default) with
-  discretization provenance in reports and cohort exports.
+- Modality-aware radiomics policies: CT uses fixed 25 HU bins with a shared
+  `-1024 HU` origin; non-CT data uses an explicitly labeled research
+  min-max policy and requires modality-specific calibration.
 - GLCM-style texture features.
 - Shape features.
 - Combined radiomics-style reports.
@@ -527,7 +528,7 @@ For a reproducible environment check on Windows, run:
 cmd /c call .\verify.bat
 ```
 
-The current publication release is `v1.0.0` and is based on the latest
+The current publication release is `v1.1.1` and is based on the latest
 `main` branch. The release remains research-only; release labels do not imply
 clinical or regulatory approval.
 

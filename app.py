@@ -3325,6 +3325,7 @@ class ClinicalApp:
             "discretization",
             "bin_width_hu",
             "bin_origin_hu",
+            "preprocessing",
         ]
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=fieldnames, extrasaction="ignore")
@@ -3381,18 +3382,32 @@ class ClinicalApp:
                         "mean": f"{float(np.mean(finite)):.4f}",
                         "std": f"{float(np.std(finite)):.4f}",
                         "n_voxels": f"{int(finite.size)}",
-                        "radiomics_profile": "CT_IBSI_SUBSET_V1",
-                        "discretization": "fixed_bin_width",
-                        "bin_width_hu": "25.0",
-                        "bin_origin_hu": "-1024.0",
+                    }
+                )
+                policy = RadiomicsExtractor.policy_for_modality(modality)
+                row.update(
+                    {
+                        "radiomics_profile": policy["profile"],
+                        "discretization": policy["discretization"],
+                        "bin_width_hu": (
+                            "" if policy["bin_width"] is None
+                            else f"{policy['bin_width']:.1f}"
+                        ),
+                        "bin_origin_hu": (
+                            "" if policy["bin_origin"] is None
+                            else f"{policy['bin_origin']:.1f}"
+                        ),
+                        "preprocessing": policy["preprocessing"],
                     }
                 )
                 hist = RadiomicsExtractor.full_report(
                     finite,
-                    levels=256,
-                    bin_width=25.0,
-                    bin_origin=-1024.0,
-                    discretization="fixed_bin_width",
+                    levels=policy["levels"],
+                    bin_width=policy["bin_width"],
+                    bin_origin=policy["bin_origin"],
+                    discretization=policy["discretization"],
+                    profile=policy["profile"],
+                    preprocessing=policy["preprocessing"],
                 ).get("histogram", {})
                 for key in ("entropy", "skewness", "kurtosis", "p10", "p90"):
                     if hist.get(key) is not None:
@@ -5731,7 +5746,19 @@ class ClinicalApp:
                 st.session_state["_radiomics_cache"] = radiomics_cache
             rad_report = radiomics_cache.get(image_signature)
             if rad_report is None:
-                rad_report = RadiomicsExtractor.full_report(hu_data)
+                policy = RadiomicsExtractor.policy_for_modality(analysis_modality)
+                rad_report = RadiomicsExtractor.full_report(
+                    hu_data,
+                    levels=policy["levels"],
+                    bin_width=policy["bin_width"],
+                    bin_origin=(
+                        HU_MIN if policy["bin_origin"] is None
+                        else policy["bin_origin"]
+                    ),
+                    discretization=policy["discretization"],
+                    profile=policy["profile"],
+                    preprocessing=policy["preprocessing"],
+                )
                 radiomics_cache[image_signature] = rad_report
             else:
                 radiomics_cache.move_to_end(image_signature)

@@ -142,12 +142,34 @@ class RadiomicsExtractor:
     """
 
     @staticmethod
+    def policy_for_modality(modality: str | None) -> dict:
+        """Return an explicit, reproducible discretisation policy by modality."""
+        normalized = str(modality or "UNKNOWN").upper().split(" ")[0]
+        if normalized == "CT":
+            return {
+                "profile": "CT_IBSI_SUBSET_V1",
+                "discretization": "fixed_bin_width",
+                "levels": 256,
+                "bin_width": 25.0,
+                "bin_origin": float(HU_MIN),
+                "preprocessing": "finite_values_only; geometry_policy_not_available",
+            }
+        return {
+            "profile": "NON_CT_RESEARCH_INTENSITY_V1",
+            "discretization": "min_max",
+            "levels": 256,
+            "bin_width": None,
+            "bin_origin": None,
+            "preprocessing": "finite_values_only; modality_calibration_required",
+        }
+
+    @staticmethod
     def histogram_features(
         data: np.ndarray,
         *,
         levels: int = 256,
         bin_width: float = 25.0,
-        bin_origin: float = HU_MIN,
+        bin_origin: float | None = HU_MIN,
         discretization: str = "fixed_bin_width",
         include_provenance: bool = False,
     ) -> Dict[str, float]:
@@ -169,7 +191,7 @@ class RadiomicsExtractor:
             not np.isfinite(bin_width) or bin_width <= 0
         ):
             raise ValueError("bin_width must be positive and finite")
-        if not np.isfinite(bin_origin):
+        if bin_origin is not None and not np.isfinite(bin_origin):
             raise ValueError("bin_origin must be finite")
         mean_v = float(np.mean(f))
         std_v = float(np.std(f, ddof=1)) if f.size >= 2 else 0.0
@@ -222,7 +244,7 @@ class RadiomicsExtractor:
                 "discretization": discretization,
                 "levels": int(levels),
                 "bin_width": float(bin_width),
-                "bin_origin": float(bin_origin),
+                "bin_origin": None if bin_origin is None else float(bin_origin),
                 "entropy_definition": (
                     "Shannon entropy of the declared discretised histogram"
                 ),
@@ -304,7 +326,7 @@ class RadiomicsExtractor:
                 "discretization": discretization,
                 "levels": int(levels),
                 "bin_width": None if bin_width is None else float(bin_width),
-                "bin_origin": float(bin_origin),
+                "bin_origin": None if bin_origin is None else float(bin_origin),
                 "distances": [int(value) for value in distances],
                 "angles": [float(value) for value in angles],
             }
@@ -359,18 +381,21 @@ class RadiomicsExtractor:
         *,
         levels: int = 256,
         bin_width: float | None = 25.0,
-        bin_origin: float = HU_MIN,
+        bin_origin: float | None = HU_MIN,
         discretization: str = "fixed_bin_width",
+        profile: str = "CT_IBSI_SUBSET_V1",
+        preprocessing: str = "not_specified",
         spacing: float | tuple[float, ...] = 1.0,
         include_provenance: bool = True,
     ) -> Dict[str, Dict[str, float]]:
         """تقرير كامل بجميع الميزات."""
         # Keep the histogram section numeric; provenance belongs at report level.
+        effective_bin_origin = HU_MIN if bin_origin is None else float(bin_origin)
         histogram = cls.histogram_features(
             data,
             levels=levels,
             bin_width=float(bin_width or 25.0),
-            bin_origin=float(bin_origin),
+            bin_origin=effective_bin_origin,
             discretization=discretization,
             include_provenance=False,
         )
@@ -394,15 +419,18 @@ class RadiomicsExtractor:
             report["shape"] = cls.shape_features(binary_mask, spacing=spacing)
         if include_provenance:
             report["provenance"] = {
-                "profile": "CT_IBSI_SUBSET_V1",
+                "profile": profile,
                 "status": (
                     "Selected IBSI-aligned features; official benchmark "
                     "validation is required before claiming full compliance."
                 ),
                 "levels": int(levels),
                 "bin_width": float(bin_width or 25.0),
-                "bin_origin": float(bin_origin),
+                "bin_origin": (
+                    None if bin_origin is None else float(bin_origin)
+                ),
                 "discretization": discretization,
+                "preprocessing": preprocessing,
                 "spacing": (
                     [float(spacing)] * np.asarray(binary_mask).ndim
                     if isinstance(spacing, (int, float)) and binary_mask is not None

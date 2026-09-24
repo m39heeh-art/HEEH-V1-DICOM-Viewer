@@ -121,6 +121,28 @@ def test_ct_radiomics_preprocessing_records_explicit_policy():
     assert provenance["resegmentation"] == [-1000.0, 1000.0]
 
 
+def test_radiomics_policy_is_modality_aware():
+    from core.tissue_classifier import RadiomicsExtractor
+
+    ct = RadiomicsExtractor.policy_for_modality("CT")
+    mr = RadiomicsExtractor.policy_for_modality("MR")
+
+    assert ct["discretization"] == "fixed_bin_width"
+    assert ct["bin_origin"] == -1024.0
+    assert mr["discretization"] == "min_max"
+    assert mr["bin_origin"] is None
+    report = RadiomicsExtractor.full_report(
+        np.linspace(0.0, 1.0, 64).reshape(8, 8),
+        bin_width=mr["bin_width"],
+        bin_origin=mr["bin_origin"],
+        discretization=mr["discretization"],
+        profile=mr["profile"],
+        preprocessing=mr["preprocessing"],
+    )
+    assert report["provenance"]["profile"] == "NON_CT_RESEARCH_INTENSITY_V1"
+    assert report["provenance"]["bin_origin"] is None
+
+
 def test_navigation_benchmark_reports_cache_behavior():
     from core.navigation_benchmark import run_navigation_benchmark
 

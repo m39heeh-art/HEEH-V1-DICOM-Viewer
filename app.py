@@ -5,6 +5,7 @@ truth); this module owns the active Streamlit UI and hosts the image cache,
 Multi-Domain ViT integration, ROI/MPR/3D viewers, and clinical dashboard.
 """
 import csv
+import atexit
 import base64
 import gc
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -42,6 +43,7 @@ import streamlit.components.v2 as components_v2
 from PIL import Image, PngImagePlugin
 from streamlit.errors import StreamlitAPIException
 from streamlit_image_coordinates import streamlit_image_coordinates
+
 
 from core.physiological_validator import PhysiologicalValidator as _PhysiologicalValidator
 from core.constants import DISPLAY_PRESETS, DISPLAY_W, HU_MAX, HU_MIN
@@ -89,6 +91,40 @@ from engines.analysis_orchestrator import (
     MedicalDataProcessor,
 )
 from utils.medical_ai_vision import MedicalAIVisionEngine
+
+
+_SESSION_TEMP_ROOTS: set[Path] = set()
+
+
+def _register_session_temp_root(root: Path) -> None:
+    """Track a session-owned temporary directory for process-exit cleanup."""
+    _SESSION_TEMP_ROOTS.add(root.resolve())
+
+
+def _cleanup_session_temp_roots() -> None:
+    """Remove only temporary directories created by this application process."""
+    for root in tuple(_SESSION_TEMP_ROOTS):
+        if root.name.startswith(("heeh_upload_", "heeh_export_")):
+            shutil.rmtree(root, ignore_errors=True)
+        _SESSION_TEMP_ROOTS.discard(root)
+
+
+atexit.register(_cleanup_session_temp_roots)
+
+
+def _positive_timeout_from_env(name: str, default: float) -> float:
+    """Read a positive HTTP timeout from the environment."""
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        value = float(raw)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive number") from exc
+    if not np.isfinite(value) or value <= 0:
+        raise ValueError(f"{name} must be a positive number")
+    return value
+
 
 logger = get_logger("app")
 
@@ -870,6 +906,7 @@ class ClinicalApp:
         """
         archive_bytes = ClinicalApp._read_target_bytes(target)
         root = Path(tempfile.mkdtemp(prefix="heeh_export_"))
+        _register_session_temp_root(root)
         st.session_state.setdefault("_export_archive_roots", []).append(str(root))
         dicom_images: list[str] = []
         composite_images: list[str] = []
@@ -990,6 +1027,7 @@ class ClinicalApp:
                 shutil.rmtree(root, ignore_errors=True)
 
         root = Path(tempfile.mkdtemp(prefix="heeh_upload_"))
+        _register_session_temp_root(root)
         paths = []
         total_bytes = 0
         for index, uploaded in enumerate(uploads):
@@ -1027,6 +1065,7 @@ class ClinicalApp:
             root = Path(str(old_root))
             if root.name.startswith("heeh_upload_"):
                 shutil.rmtree(root, ignore_errors=True)
+                _SESSION_TEMP_ROOTS.discard(root.resolve())
         st.session_state.pop("_uploaded_input_signature", None)
         st.session_state.pop("_uploaded_input_paths", None)
         st.session_state.pop("_active_input_files", None)
@@ -2547,10 +2586,29 @@ class ClinicalApp:
         try:
             ds = pydicom.dcmread(input_data)
 
+            transfer_syntax = str(
+                getattr(getattr(ds, "file_meta", None), "TransferSyntaxUID", "")
+                or ""
+            ).strip()
+            if not transfer_syntax:
+                return (
+                    "DATA_REJECTED: DICOM TransferSyntaxUID is missing; "
+                    "the pixel encoding cannot be validated.",
+                    None,
+                    "DICOM",
+                )
             if not hasattr(ds, 'pixel_array'):
                 raise ValueError("Missing pixel data in DICOM.")
 
-            pixel_array = ds.pixel_array.astype(np.float32)
+            try:
+                pixel_array = ds.pixel_array.astype(np.float32)
+            except (AttributeError, ImportError, OSError, RuntimeError, ValueError) as exc:
+                return (
+                    f"LOAD_ERROR: Unable to decode TransferSyntaxUID "
+                    f"{transfer_syntax}: {exc}",
+                    None,
+                    "DICOM",
+                )
             detection = ModalityDetector().detect(ds)
             if detection.rejected:
                 return (
@@ -3658,9 +3716,15 @@ class ClinicalApp:
     }
     _IMAGE_EXTENSIONS = ('.dcm', '.dicom', '.nii', '.nii.gz', '.nrrd', '.mha',
                          '.mhd', '.ima', '.img')
-    _TCIA_CONNECT_TIMEOUT = 15
-    _TCIA_METADATA_READ_TIMEOUT = 60
-    _TCIA_DOWNLOAD_READ_TIMEOUT = 180
+    _TCIA_CONNECT_TIMEOUT = _positive_timeout_from_env(
+        "HEEH_TCIA_CONNECT_TIMEOUT", 15.0
+    )
+    _TCIA_METADATA_READ_TIMEOUT = _positive_timeout_from_env(
+        "HEEH_TCIA_METADATA_READ_TIMEOUT", 60.0
+    )
+    _TCIA_DOWNLOAD_READ_TIMEOUT = _positive_timeout_from_env(
+        "HEEH_TCIA_DOWNLOAD_READ_TIMEOUT", 180.0
+    )
     _TCIA_SESSION = None
 
     @classmethod

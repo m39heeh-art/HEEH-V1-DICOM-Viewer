@@ -16,6 +16,11 @@ from __future__ import annotations
 import json
 import time
 import importlib.metadata
+import hashlib
+import os
+import platform
+import subprocess
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -158,7 +163,8 @@ def train_model(model_id: str, train_items: List[Dict], val_items: List[Dict],
                 epochs: int = 3, lr: float = 2e-5, batch_size: int = 8,
                 grad_accum: int = 2, device: str = "auto", fp16: bool = True,
                 full: bool = False, seed: int = 42,
-                freeze_on_cpu: int = 8) -> Dict:
+                freeze_on_cpu: int = 8,
+                dataset_manifest: Optional[Dict] = None) -> Dict:
     """Full fine-tune loop. Returns summary dict, writes artifacts to out_dir."""
     from transformers import AutoImageProcessor, AutoModelForImageClassification
 
@@ -168,6 +174,7 @@ def train_model(model_id: str, train_items: List[Dict], val_items: List[Dict],
     np.random.seed(seed)
     dev = resolve_device(device)
     use_amp = bool(fp16 and dev.type == "cuda")
+    model_revision = os.environ.get("HF_MODEL_REVISION", "not-pinned")
 
     processor = AutoImageProcessor.from_pretrained(model_id)
     model = AutoModelForImageClassification.from_pretrained(
@@ -294,12 +301,50 @@ def train_model(model_id: str, train_items: List[Dict], val_items: List[Dict],
                "seed": seed, "train_samples": len(train_items),
                "validation_samples": len(val_items),
                "package_versions": _package_versions(),
+               "model_revision": model_revision,
+               "dataset_manifest": dataset_manifest or {},
+               "split_policy": "group-disjoint train/validation split",
                "disclaimer": DISCLAIMER}
     (out / "metrics.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     _write_report(out, summary)
     _write_curves(out, hist)
     _export_onnx(model, processor, dev, out)
+    _write_run_manifest(out, summary)
     return summary
+
+
+def _write_run_manifest(out: Path, summary: Dict) -> None:
+    """Persist the environment and produced-artifact provenance for a run."""
+    artifacts = {}
+    for name in ("best.pt", "model.onnx", "metrics.json", "onnx_check.json"):
+        path = out / name
+        if path.is_file():
+            artifacts[name] = {
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "bytes": path.stat().st_size,
+            }
+    try:
+        revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=Path.cwd(),
+            capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        revision = None
+    manifest = {
+        "schema_version": 1,
+        "python": sys.version.split()[0],
+        "platform": platform.platform(),
+        "git_revision": revision,
+        "model_id": summary["model_id"],
+        "model_revision": summary["model_revision"],
+        "seed": summary["seed"],
+        "split_policy": summary["split_policy"],
+        "dataset_manifest": summary["dataset_manifest"],
+        "package_versions": summary["package_versions"],
+        "artifacts": artifacts,
+        "disclaimer": DISCLAIMER,
+    }
+    (out / "run_manifest.json").write_text(
+        json.dumps(manifest, indent=2), encoding="utf-8")
 
 
 def _write_report(out: Path, s: Dict) -> None:

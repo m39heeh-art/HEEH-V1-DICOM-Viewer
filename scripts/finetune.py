@@ -25,8 +25,10 @@ from engines.tcia_dataset import (  # noqa: E402
     build_from_folder,
     build_from_tcia_cache,
     dataset_stats,
+    dataset_manifest,
     encode_labels,
     stratified_split,
+    validate_group_disjoint,
 )
 
 
@@ -82,7 +84,9 @@ def main(argv=None) -> int:
         return 2
     items, mapping = encode_labels(items)
     train, val = stratified_split(items)
+    validate_group_disjoint(train, val)
     stats = dataset_stats(items)
+    manifest = dataset_manifest(items)
     print(json.dumps({"source": src, "model": model_id, **stats,
                       "train": len(train), "val": len(val)}, indent=2))
     if len(mapping) < 2:
@@ -98,10 +102,13 @@ def main(argv=None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     (out / "dataset_stats.json").write_text(
         json.dumps(stats, indent=2), encoding="utf-8")
+    (out / "dataset_manifest.json").write_text(
+        json.dumps(manifest, indent=2), encoding="utf-8")
     summary = train_model(
         model_id, train, val, mapping, out, epochs=args.epochs, lr=args.lr,
         batch_size=args.batch_size, grad_accum=args.grad_accum,
-        device=args.device, fp16=args.fp16, full=args.full, seed=args.seed)
+        device=args.device, fp16=args.fp16, full=args.full, seed=args.seed,
+        dataset_manifest=manifest)
     print(json.dumps({k: summary[k] for k in
                       ("best_val_acc", "macro_f1", "epochs_run", "device",
                        "full_unfrozen")}, indent=2))

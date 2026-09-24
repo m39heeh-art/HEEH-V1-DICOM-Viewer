@@ -69,17 +69,15 @@ class QuantitativeEngine:
                 "mean": round(mean_val, 2),
                 "std": round(std_val, 2),
                 "ci": (round(float(confidence_interval[0]), 2), round(float(confidence_interval[1]), 2)),
+                "ci_method": "Student t interval",
+                "ci_assumption": (
+                    "Descriptive voxel-level interval; voxels are treated as "
+                    "independent and it is not a patient-level uncertainty estimate."
+                ),
                 "cv_percentage": None if cv_val is None else round(float(cv_val), 2),
                 "cv_status": cv_status,
                 "n_voxels": int(n_samples),
-                "ci_method": (
-                    "Student t interval; voxel independence assumption "
-                    "not corrected for spatial autocorrelation"
-                ),
-                "status": (
-                    "Quantitative analysis (research/education only); "
-                    "CI is not a cluster-level or patient-level estimate"
-                ),
+                "status": "Quantitative analysis (research/education only)"
             }
 
         except (ValueError, TypeError, RuntimeWarning) as e:

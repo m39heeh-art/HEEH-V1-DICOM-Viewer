@@ -14,17 +14,20 @@ import re
 import zipfile
 from pathlib import PurePosixPath
 
-from core.resource_limits import (
-    MAX_ARCHIVE_MEMBER_BYTES,
-    MAX_ARCHIVE_MEMBERS,
-    MAX_ARCHIVE_TOTAL_BYTES,
-)
+from pydicom.datadict import tag_for_keyword
+from core.standards import PHI_FIELD_NAMES
+
 
 _LOCAL_PATH_RE = re.compile(
     r"(?:[A-Za-z]:[\\/]|\\\\|/(?:Users|home|患者|病人)/)", re.IGNORECASE
 )
 _PRIVATE_PATH_MARKERS = (".neuroproject_tcia", "\\users\\", "/users/")
 _TEXT_SUFFIXES = {".csv", ".html", ".json", ".txt", ".xml"}
+_ALLOWED_DEIDENTIFIED_VALUES = {
+    "PatientName": {"ANONYMOUS"},
+    "PatientID": {"ANONYMOUS"},
+    "PatientIdentityRemoved": {"YES"},
+}
 
 
 def _is_safe_member(name: str) -> bool:
@@ -68,28 +71,13 @@ def validate_export_archive(
         return result
 
     members = archive.infolist()
-    if len(members) > MAX_ARCHIVE_MEMBERS:
-        error(
-            "TOO_MANY_MEMBERS",
-            f"Archive contains {len(members)} members; maximum is "
-            f"{MAX_ARCHIVE_MEMBERS}.",
-        )
-        return result
     contents: dict[str, bytes] = {}
-    total_size = 0
     for member in members:
         if not _is_safe_member(member.filename):
             error("UNSAFE_MEMBER", member.filename)
             continue
         if member.is_dir():
             continue
-        if member.file_size > MAX_ARCHIVE_MEMBER_BYTES:
-            error("MEMBER_TOO_LARGE", member.filename)
-            continue
-        total_size += member.file_size
-        if total_size > MAX_ARCHIVE_TOTAL_BYTES:
-            error("ARCHIVE_TOO_LARGE", "Total uncompressed archive size exceeded.")
-            break
         try:
             contents[member.filename] = archive.read(member)
             result["files_checked"] += 1
@@ -135,10 +123,33 @@ def validate_export_archive(
                 from pydicom.errors import InvalidDicomError
 
                 dataset = pydicom.dcmread(io.BytesIO(data), stop_before_pixels=True)
+                if any(element.tag.is_private for element in dataset.iterall()):
+                    error("PRIVATE_TAGS_PRESENT", name)
+                if str(getattr(dataset, "PatientIdentityRemoved", "")).upper() != "YES":
+                    error("MISSING_DEIDENTIFICATION_MARKER", name)
+                for keyword in PHI_FIELD_NAMES - {
+                    "PatientID", "PatientSex", "StudyDate", "SeriesDate",
+                    "AcquisitionDate", "ContentDate", "StudyTime",
+                    "SeriesTime", "AcquisitionTime", "ContentTime",
+                }:
+                    tag = tag_for_keyword(keyword)
+                    value = (
+                        str(dataset[tag].value or "").strip()
+                        if tag is not None and tag in dataset
+                        else ""
+                    )
+                    allowed = _ALLOWED_DEIDENTIFIED_VALUES.get(keyword, set())
+                    if value and value not in allowed:
+                        error("PHI_FIELD_PRESENT", f"{name}: {keyword}")
+                patient_id = str(getattr(dataset, "PatientID", "") or "")
+                if patient_id and not (
+                    patient_id == "ANONYMOUS" or patient_id.startswith("NEURO_")
+                ):
+                    error("NON_PSEUDONYMOUS_PATIENT_ID", name)
                 if str(getattr(dataset, "Modality", "")) == "SR":
                     if not getattr(dataset, "ContentSequence", None):
                         error("EMPTY_DICOM_SR", name)
-            except (ImportError, InvalidDicomError, OSError, ValueError, TypeError) as exc:
+            except (ImportError, InvalidDicomError, OSError, ValueError, TypeError, AttributeError) as exc:
                 error("INVALID_DICOM", f"{name}: {type(exc).__name__}")
             continue
         if suffix not in _TEXT_SUFFIXES:

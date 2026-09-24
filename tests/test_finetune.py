@@ -4,12 +4,15 @@ Research/education tools only. Asserts numerical contracts, not clinical validit
 """
 
 import numpy as np
+import pytest
+import json
 import torch
 from PIL import Image
 
 from engines.finetune_trainer import confusion_and_macro_f1, resolve_device, roc_auc_score
 from engines.tcia_dataset import (encode_labels, load_labels_csv,
-                                  slice_to_rgb, stratified_split)
+                                  slice_to_rgb, stratified_split,
+                                  validate_group_disjoint, dataset_manifest)
 
 
 def _rand_rgb(seed=0, size=(32, 32)):
@@ -62,6 +65,28 @@ def test_stratified_split_keeps_series_together():
     assert {item["series_uid"] for item in train}.isdisjoint(
         {item["series_uid"] for item in val}
     )
+    validate_group_disjoint(train, val)
+
+
+def test_validate_group_disjoint_rejects_leakage():
+    """Explicitly reject a correlated group appearing in both partitions."""
+    train = [{"series_uid": "shared", "source": "shared/a.dcm"}]
+    val = [{"series_uid": "shared", "source": "shared/b.dcm"}]
+    with pytest.raises(ValueError, match="group leakage"):
+        validate_group_disjoint(train, val)
+
+
+def test_dataset_manifest_is_deterministic_and_does_not_store_full_paths():
+    """Dataset provenance must be stable without exposing local paths."""
+    items = [
+        {"series_uid": "s2", "label": "B", "source": "C:/private/s2/b.dcm"},
+        {"series_uid": "s1", "label": "A", "source": "C:/private/s1/a.dcm"},
+    ]
+    manifest = dataset_manifest(items)
+    assert manifest["algorithm"] == "sha256"
+    assert manifest["record_count"] == 2
+    assert manifest["group_count"] == 2
+    assert "private" not in json.dumps(manifest)
 
 
 def test_confusion_macro_f1_known():

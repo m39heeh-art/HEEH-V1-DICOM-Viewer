@@ -164,7 +164,9 @@ source pixels remain authoritative for quantitative calculations.
 - Whole-image HU statistics.
 - Noise and uniformity summaries.
 - Research SNR and CNR proxies.
-- Noise Power Spectrum (NPS) summaries where spatial data are sufficient.
+- 2D in-plane Noise Power Spectrum (NPS) summaries for suitable uniform ROIs;
+  these are not 3D volume NPS measurements and require protocol-specific
+  validation.
 - MTF-related research summaries derived from available NPS information.
 - Low-contrast detectability proxy.
 - Dose metadata display such as CTDIvol when present.
@@ -203,6 +205,8 @@ performance.
 ### Radiomics-style features
 
 - Histogram features including percentiles, skewness, kurtosis, and entropy.
+- Reproducible fixed-bin-width histogram entropy (25 HU default) with
+  discretization provenance in reports and cohort exports.
 - GLCM-style texture features.
 - Shape features.
 - Combined radiomics-style reports.
@@ -211,7 +215,9 @@ performance.
 The current implementation is **IBSI-aligned in selected definitions**, not a
 claim of full IBSI compliance. Reproducible radiomics requires documented
 acquisition, reconstruction, interpolation, discretization, segmentation,
-preprocessing, and feature-version choices.
+preprocessing, and feature-version choices. The default histogram entropy
+configuration uses a fixed 25 HU bin width; callers may supply a different
+validated bin width and the selected configuration is recorded in provenance.
 
 ### Longitudinal analysis
 
@@ -242,7 +248,9 @@ replacement for calibrated source data.
 
 - Lazy MONAI preprocessing to reduce startup cost.
 - Volume preprocessing and research segmentation preparation.
-- SimpleITK isotropic resampling.
+- SimpleITK isotropic resampling as an explicit preprocessing operation; it is
+  not silently applied to every input because source voxel spacing and
+  interpolation policy must be validated for each study.
 - N4 bias-correction helper.
 - Rigid and affine registration helpers.
 

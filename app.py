@@ -3321,6 +3321,10 @@ class ClinicalApp:
             "p10",
             "p90",
             "n_voxels",
+            "radiomics_profile",
+            "discretization",
+            "bin_width_hu",
+            "bin_origin_hu",
         ]
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=fieldnames, extrasaction="ignore")
@@ -3377,9 +3381,19 @@ class ClinicalApp:
                         "mean": f"{float(np.mean(finite)):.4f}",
                         "std": f"{float(np.std(finite)):.4f}",
                         "n_voxels": f"{int(finite.size)}",
+                        "radiomics_profile": "CT_IBSI_SUBSET_V1",
+                        "discretization": "fixed_bin_width",
+                        "bin_width_hu": "25.0",
+                        "bin_origin_hu": "-1024.0",
                     }
                 )
-                hist = RadiomicsExtractor.full_report(finite).get("histogram", {})
+                hist = RadiomicsExtractor.full_report(
+                    finite,
+                    levels=256,
+                    bin_width=25.0,
+                    bin_origin=-1024.0,
+                    discretization="fixed_bin_width",
+                ).get("histogram", {})
                 for key in ("entropy", "skewness", "kurtosis", "p10", "p90"):
                     if hist.get(key) is not None:
                         row[key] = f"{float(hist[key]):.4f}"

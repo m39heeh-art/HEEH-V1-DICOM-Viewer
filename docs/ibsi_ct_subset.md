@@ -13,7 +13,9 @@ of full IBSI compliance.
 - Optional resegmentation uses an inclusive `(lower, upper)` HU interval and is
   recorded.
 - First-order entropy and GLCM features use declared discretisation settings.
-  The default is fixed bin width with `bin_width=25 HU` and `levels=256`.
+  The default is fixed bin width with `bin_width=25 HU`, `bin_origin=-1024 HU`,
+  and `levels=256`. The fixed origin is shared across cohort cases; values
+  outside the declared range are rejected rather than silently clipped.
 - Feature reports include `profile=CT_IBSI_SUBSET_V1` and the processing
   parameters needed to reproduce the calculation.
 

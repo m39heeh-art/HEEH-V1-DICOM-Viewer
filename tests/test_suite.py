@@ -94,11 +94,13 @@ def test_radiomics_report_contains_reproducibility_parameters():
         levels=16,
         discretization="fixed_bin_width",
         bin_width=4.0,
+        bin_origin=0.0,
         spacing=(0.5, 0.75),
     )
 
     assert report["provenance"]["levels"] == 16
     assert report["provenance"]["bin_width"] == 4.0
+    assert report["provenance"]["bin_origin"] == 0.0
     assert report["provenance"]["spacing"] == [0.5, 0.75]
     assert report["provenance"]["profile"] == "CT_IBSI_SUBSET_V1"
 
@@ -305,6 +307,32 @@ def test_vit_preprocessing_records_non_quantitative_provenance(monkeypatch):
     assert engine.last_provenance["operation"] == "model_input_resize"
     assert engine.last_provenance["model_input_is_quantitative"] is False
     assert engine.last_provenance["super_resolution"] is False
+
+
+def test_vit_processor_shape_gate_rejects_model_mismatch(monkeypatch):
+    from utils.medical_ai_vision import MedicalAIVisionEngine
+
+    class FakeProcessor:
+        def __call__(self, images, return_tensors):
+            import torch
+            return {"pixel_values": torch.zeros(1, 3, 128, 128)}
+
+    class Config:
+        image_size = 224
+
+    class FakeModel:
+        config = Config()
+
+    engine = MedicalAIVisionEngine()
+    engine.processor = FakeProcessor()
+    engine.model = FakeModel()
+    engine._loaded_model_id = engine._get_model_id()
+    monkeypatch.setattr(engine, "_ensure_loaded", lambda: True)
+
+    result = engine.infer(np.zeros((32, 48), dtype=np.uint8), "MR")
+
+    assert result[0] == "MODEL_INPUT_SHAPE_ERROR"
+    assert "image_size" in result[2]
 
 
 # ---------------------------------------------------------------------------

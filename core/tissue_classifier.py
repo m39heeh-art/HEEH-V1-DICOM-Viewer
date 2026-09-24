@@ -5,7 +5,7 @@ import torch
 from scipy import stats
 from scipy.ndimage import zoom
 from skimage.feature import graycomatrix, graycoprops, canny as sk_canny
-from core.constants import TISSUE_RANGES
+from core.constants import HU_MIN, TISSUE_RANGES
 from skimage.filters import sobel
 
 class TissueClassifier:
@@ -147,6 +147,7 @@ class RadiomicsExtractor:
         *,
         levels: int = 256,
         bin_width: float = 25.0,
+        bin_origin: float = HU_MIN,
         discretization: str = "fixed_bin_width",
         include_provenance: bool = False,
     ) -> Dict[str, float]:
@@ -168,6 +169,8 @@ class RadiomicsExtractor:
             not np.isfinite(bin_width) or bin_width <= 0
         ):
             raise ValueError("bin_width must be positive and finite")
+        if not np.isfinite(bin_origin):
+            raise ValueError("bin_origin must be finite")
         mean_v = float(np.mean(f))
         std_v = float(np.std(f, ddof=1)) if f.size >= 2 else 0.0
         skew_v = float(stats.skew(f)) if f.size >= 3 else 0.0
@@ -180,8 +183,12 @@ class RadiomicsExtractor:
         if not np.isfinite(kurt_v):
             kurt_v = 0.0
         if discretization == "fixed_bin_width":
-            origin = float(np.min(f))
+            origin = float(bin_origin)
             bins = np.floor((f - origin) / bin_width).astype(np.int64)
+            if int(np.min(bins)) < 0:
+                raise ValueError(
+                    "data contains values below the declared fixed-bin origin"
+                )
             if int(np.max(bins)) >= levels:
                 raise ValueError(
                     "levels is too small for the declared fixed bin width and data range"
@@ -215,6 +222,7 @@ class RadiomicsExtractor:
                 "discretization": discretization,
                 "levels": int(levels),
                 "bin_width": float(bin_width),
+                "bin_origin": float(bin_origin),
                 "entropy_definition": (
                     "Shannon entropy of the declared discretised histogram"
                 ),
@@ -229,6 +237,7 @@ class RadiomicsExtractor:
         *,
         levels: int = 256,
         bin_width: float | None = 25.0,
+        bin_origin: float = HU_MIN,
         discretization: str = "fixed_bin_width",
         include_provenance: bool = False,
     ) -> Dict[str, float]:
@@ -258,9 +267,14 @@ class RadiomicsExtractor:
                 )
             if not np.isfinite(bin_width) or bin_width <= 0:
                 raise ValueError("bin_width must be a positive finite number")
-            minimum = float(np.min(img))
-            img_norm = np.floor((img - minimum) / bin_width)
-            img_norm = np.clip(img_norm, 0, levels - 1).astype(np.uint8)
+            if not np.isfinite(bin_origin):
+                raise ValueError("bin_origin must be finite")
+            img_norm = np.floor((img - float(bin_origin)) / bin_width)
+            if int(np.min(img_norm)) < 0 or int(np.max(img_norm)) >= levels:
+                raise ValueError(
+                    "levels and bin_origin do not cover the GLCM input range"
+                )
+            img_norm = img_norm.astype(np.uint8)
         else:
             img_norm = np.clip(
                 (img - img.min()) / max(img.max() - img.min(), 1e-9)
@@ -290,6 +304,7 @@ class RadiomicsExtractor:
                 "discretization": discretization,
                 "levels": int(levels),
                 "bin_width": None if bin_width is None else float(bin_width),
+                "bin_origin": float(bin_origin),
                 "distances": [int(value) for value in distances],
                 "angles": [float(value) for value in angles],
             }
@@ -344,6 +359,7 @@ class RadiomicsExtractor:
         *,
         levels: int = 256,
         bin_width: float | None = 25.0,
+        bin_origin: float = HU_MIN,
         discretization: str = "fixed_bin_width",
         spacing: float | tuple[float, ...] = 1.0,
         include_provenance: bool = True,
@@ -354,6 +370,7 @@ class RadiomicsExtractor:
             data,
             levels=levels,
             bin_width=float(bin_width or 25.0),
+            bin_origin=float(bin_origin),
             discretization=discretization,
             include_provenance=False,
         )
@@ -369,6 +386,7 @@ class RadiomicsExtractor:
                 data,
                 levels=levels,
                 bin_width=bin_width,
+                bin_origin=bin_origin,
                 discretization=discretization,
                 include_provenance=include_provenance,
             )
@@ -383,6 +401,7 @@ class RadiomicsExtractor:
                 ),
                 "levels": int(levels),
                 "bin_width": float(bin_width or 25.0),
+                "bin_origin": float(bin_origin),
                 "discretization": discretization,
                 "spacing": (
                     [float(spacing)] * np.asarray(binary_mask).ndim

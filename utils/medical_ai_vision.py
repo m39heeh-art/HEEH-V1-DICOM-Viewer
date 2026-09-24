@@ -78,6 +78,7 @@ class MedicalAIVisionEngine:
         source = Image.fromarray(image).convert("RGB")
         inputs = self.processor(images=source, return_tensors="pt")
         pixel_values = inputs.get("pixel_values")
+        self._validate_model_inputs(pixel_values)
         self.last_provenance = {
             "operation": "model_input_resize",
             "source_modality": str(modality or "UNKNOWN"),
@@ -98,6 +99,31 @@ class MedicalAIVisionEngine:
             ),
         }
         return inputs
+
+    def _validate_model_inputs(self, pixel_values) -> None:
+        """Reject malformed processor output before invoking the model."""
+        if pixel_values is None or not hasattr(pixel_values, "shape"):
+            raise ValueError("MODEL_INPUT_SHAPE_ERROR: pixel_values is missing")
+        shape = tuple(int(value) for value in pixel_values.shape)
+        if len(shape) != 4 or shape[0] < 1 or shape[1] != 3:
+            raise ValueError(
+                "MODEL_INPUT_SHAPE_ERROR: expected [batch, 3, height, width]"
+            )
+        if shape[2] < 1 or shape[3] < 1:
+            raise ValueError("MODEL_INPUT_SHAPE_ERROR: image dimensions must be positive")
+        if not bool(torch.isfinite(pixel_values).all()):
+            raise ValueError("MODEL_INPUT_SHAPE_ERROR: pixel_values are not finite")
+        config = getattr(self.model, "config", None)
+        expected = getattr(config, "image_size", None)
+        if isinstance(expected, int):
+            expected = (expected, expected)
+        if isinstance(expected, (tuple, list)) and len(expected) == 2:
+            expected_shape = tuple(int(value) for value in expected)
+            if shape[2:] != expected_shape:
+                raise ValueError(
+                    "MODEL_INPUT_SHAPE_ERROR: processor output does not match "
+                    f"model image_size {expected_shape}"
+                )
 
     def infer(
         self,
@@ -146,6 +172,16 @@ class MedicalAIVisionEngine:
                     "input only; research use, not clinical grade"
                 )
 
+        except ValueError as exc:
+            if str(exc).startswith("MODEL_INPUT_SHAPE_ERROR"):
+                return "MODEL_INPUT_SHAPE_ERROR", 0.0, str(exc)
+            if not allow_hu_fallback:
+                return (
+                    "INFERENCE_UNAVAILABLE",
+                    0.0,
+                    "Inference failed; no heuristic modality fallback was used.",
+                )
+            return self._fallback(hu_data if hu_data is not None else image_np)
         except Exception:
             if not allow_hu_fallback:
                 return (

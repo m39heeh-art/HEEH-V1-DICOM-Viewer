@@ -361,7 +361,7 @@ class RadiomicsExtractor:
                 levels=levels,
                 bin_width=bin_width,
                 discretization=discretization,
-                include_provenance=include_provenance,
+                include_provenance=False,
             )
         }
         if data.ndim == 2 and data.size >= 64:

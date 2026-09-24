@@ -12,7 +12,8 @@ class QuantitativeEngine:
     @staticmethod
     def execute(roi_hu: np.ndarray) -> Union[Dict[str, Any], str]:
         """
-        Calculates high-fidelity density metrics while preserving Raw Diagnostic Value.
+        Calculates research density metrics while preserving raw calibrated
+        intensity values.
         Assertion Layer: Physiological range check [-1024, 3071] HU.
         """
         try:

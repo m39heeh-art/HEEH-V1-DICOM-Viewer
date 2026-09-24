@@ -150,7 +150,7 @@
 }
 
 /* Streamlit's default centered block is too narrow for image review. Keep
-   controls readable while giving the viewer room for diagnostic-sized images. */
+   controls readable while giving the viewer room for medical images. */
 [data-testid="stAppViewContainer"] main [data-testid="stMainBlockContainer"] {
   max-width: var(--content-max-width);
   padding: var(--sp-4) var(--sp-8) var(--sp-12);
@@ -267,7 +267,7 @@ iframe[title="neuro_pixel_hover_viewer"] {
 }
 
 /* Compact metadata bar keeps modality and workflow state visible without
-   competing with the diagnostic viewer. */
+   competing with the image viewer. */
 .workspace-status {
   display: flex;
   flex-wrap: wrap;
@@ -293,7 +293,7 @@ iframe[title="neuro_pixel_hover_viewer"] {
 }
 
 /* Keep the native sidebar as a floating control drawer. Fixed positioning
-   prevents opening it from changing the diagnostic workspace width. */
+   prevents opening it from changing the image-analysis workspace width. */
 section[data-testid="stSidebar"] {
   display: block !important;
   position: fixed !important;

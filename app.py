@@ -630,7 +630,7 @@ class ClinicalApp:
         return current, False
     """
     Orchestrator for medical image processing and biophysical analysis.
-    Adheres to Raw Diagnostic Value preservation and Pure-Gray rendering.
+    Preserves raw calibrated values for analysis and uses Pure-Gray rendering.
     """
 
     def __init__(self):
@@ -5253,7 +5253,7 @@ class ClinicalApp:
         # Pin the file identity to keep the session stable (session stability)
         file_id = getattr(target, 'name', str(target))
 
-        # Clear coordinates when the slice changes to ensure "diagnostic integrity"
+        # Clear coordinates when the slice changes to preserve source-data integrity.
         if st.session_state.get('current_file') != file_id:
             st.session_state.coords = None
             st.session_state.current_file = file_id
@@ -7307,7 +7307,7 @@ class ClinicalApp:
         except (ValueError, TypeError, MemoryError) as e:
             # Target matrix and memory errors specifically (specific clinical guard)
             # Report the failure instead of silently returning zeros that could
-            # lead to a wrong diagnosis
+            # lead to a wrong interpretation
             raise RuntimeError(f"WINDOWING_MATRIX_FAILURE: {e!s}") from e
 
     @staticmethod

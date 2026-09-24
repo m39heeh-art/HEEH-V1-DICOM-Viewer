@@ -1,5 +1,5 @@
 """
-Clinical Metrics Engine for Segmentation and Diagnosis Evaluation.
+Clinical Metrics Engine for Segmentation Evaluation.
 
 Provides standard medical imaging evaluation metrics:
 - Sensitivity (Recall)

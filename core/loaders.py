@@ -9,6 +9,10 @@ import numpy as np
 import torch
 import SimpleITK as sitk
 
+from core.logging_config import get_logger
+
+logger = get_logger(__name__)
+
 @st.cache_data(show_spinner=False, max_entries=16)
 def _load_volume_file_cached(load_path: str, mtime: float):
     """Read a volumetric image (NIfTI/NRRD/MHA) keyed on path + mtime so that
@@ -55,5 +59,6 @@ def _load_medical_model_cached(model_id: str):
 
         return processor, model, device
 
-    except (ImportError, OSError, RuntimeError, ValueError):
+    except (ImportError, OSError, RuntimeError, ValueError) as exc:
+        logger.warning("Medical AI model unavailable: %s", exc, exc_info=True)
         return None, None, device

@@ -43,6 +43,7 @@ from PIL import Image, PngImagePlugin
 from streamlit.errors import StreamlitAPIException
 from streamlit_image_coordinates import streamlit_image_coordinates
 
+
 from core.physiological_validator import PhysiologicalValidator as _PhysiologicalValidator
 from core.constants import DISPLAY_PRESETS, DISPLAY_W, HU_MAX, HU_MIN
 from core.branding import PRODUCT_NAME
@@ -1015,6 +1016,24 @@ class ClinicalApp:
         st.session_state["_uploaded_input_signature"] = signature
         st.session_state["_uploaded_input_paths"] = paths
         return paths
+
+    @staticmethod
+    def _clear_uploaded_files() -> None:
+        """Remove persisted upload files and invalidate the active upload snapshot."""
+        old_root = st.session_state.pop("_uploaded_input_root", None)
+        if old_root:
+            root = Path(str(old_root))
+            if root.name.startswith("heeh_upload_"):
+                shutil.rmtree(root, ignore_errors=True)
+                _SESSION_TEMP_ROOTS.discard(root.resolve())
+        st.session_state.pop("_uploaded_input_signature", None)
+        st.session_state.pop("_uploaded_input_paths", None)
+        st.session_state.pop("_active_input_files", None)
+        st.session_state.pop("_active_input_fingerprint", None)
+        st.session_state.pop("_active_files_fingerprint", None)
+        st.session_state.pop("_ordered_input_cache", None)
+        st.session_state.pop("viewer_index", None)
+        st.session_state.pop("viewer_slice_index", None)
 
     @staticmethod
     def _reopened_measurement_keys(file_id: str) -> tuple[str, ...]:

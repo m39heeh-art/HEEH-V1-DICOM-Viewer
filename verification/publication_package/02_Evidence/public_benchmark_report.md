@@ -1,6 +1,8 @@
-# HEEH-V1 public benchmark report
+# HEEH-V1 v1.0.2 public benchmark report
 
-This report contains only measured values and clearly labeled unavailable experiments. It does not claim clinical accuracy or superiority.
+This report presents measured results and identifies experiments that were
+not performed. It does not claim clinical accuracy, diagnostic superiority,
+or generalizability.
 
 ## Public provenance
 - Collection: `CT-Phantom4Radiomics`
@@ -21,7 +23,7 @@ This report contains only measured values and clearly labeled unavailable experi
 
 ## Radiomics benchmark (synthetic CT phantom ROI)
 - ROI: `water ROI from ACR-style digital phantom`
-- Preprocessing: {'levels': 256, 'discretization': 'fixed_bin_width', 'bin_width': 2.0, 'spacing': [1.0, 1.0]}
+- Preprocessing: 256 levels, fixed bin width of 2.0, spacing of 1.0 × 1.0
 - Measured mean/std: -0.04 / 10.02 HU
 - Ground-truth targets: mean 0.00 ± 3.00; std 10.00 ± 2.00
 - Pass: True (absolute errors: mean 0.04, std 0.02)
@@ -34,7 +36,7 @@ This report contains only measured values and clearly labeled unavailable experi
 - Absolute errors (mean/std/min/max): `{'max': 0.0, 'mean': 0.0, 'min': 0.0, 'std': 0.0}`
 - Within tolerance: `True`
 - Environment: `Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43`; Python `3.10.21`
-- Result artifact: `verification/results/pyradiomics_comparison.json` (SHA-256 `7e07bee8a4275709f015a2ddcbaef403c395614facb9322302c31d109413483a`)
+- Result artifact: `pyradiomics_comparison.json` (SHA-256 `7e07bee8a4275709f015a2ddcbaef403c395614facb9322302c31d109413483a`)
 
 ## IBSI Configuration D reference verification
 - Status: `configuration_d_reference_verified`
@@ -44,7 +46,7 @@ This report contains only measured values and clearly labeled unavailable experi
 - Z-Rad statistics rows: `18` compared; `17` passed; `1` failed.
 - Default viewer slice radiomics: `not_configuration_d_compliant`. It uses a 2D unmasked slice, so no Configuration D pass/fail comparison is made for this path.
 - Boundary: All populated IBSI Configuration D reference rows were compared with the configured Z-Rad reference pipeline. This result is configuration-specific and does not certify the application's separate radiomics implementation or full IBSI compliance.
-- Result artifact: `verification/results/ibsi_configuration_d_verification.json` (SHA-256 `0212285040cbfc6ce017e91ed380f3b511727d40b671b1df54f2debd466b7e21`)
+- Result artifact: `ibsi_configuration_d_verification.json` (SHA-256 `0212285040cbfc6ce017e91ed380f3b511727d40b671b1df54f2debd466b7e21`)
 
 ## Export/privacy validation benchmark
 - Fixture set: 20 valid and 20 invalid generated challenge archives.
@@ -65,4 +67,8 @@ This report contains only measured values and clearly labeled unavailable experi
 - Image-level evaluation on CT-Phantom4Radiomics was not performed; only collection metadata is recorded.
 
 ## Limitation statement
-Measurements above are limited to the stated synthetic ROI, official Configuration D reference table and Z-Rad pipeline, generated challenge fixtures, and synthetic navigation-cache workload. They are not clinical validation, do not establish global generalizability or superiority, and do not constitute full IBSI compliance.
+Measurements above are limited to the stated synthetic ROIs, Configuration D
+reference table and Z-Rad pipeline, generated challenge fixtures, and
+synthetic navigation-cache workload. They are not clinical validation, do not
+establish generalizability or superiority, and do not constitute full IBSI
+compliance.

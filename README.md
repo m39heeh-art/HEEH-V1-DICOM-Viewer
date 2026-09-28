@@ -6,6 +6,10 @@ workflows, calibrated measurements, image-quality and radiomics-style
 calculations, experimental AI integrations, privacy-aware exports, and
 provenance reporting.
 
+Open-source research software, version `1.0.2`, released under the MIT
+License. **Keywords:** DICOM, medical imaging, research software, radiomics,
+medical-image viewer, scientific reproducibility.
+
 **Protected project identity:** the public product name is exactly
 **HEEH-V1(TM) DICOM Viewer** (display form: **HEEH-V1™ DICOM Viewer**).
 Do not rename or substitute this identity in the application, launchers,
@@ -402,9 +406,12 @@ The project is standards-aware and documents relevant boundaries, including:
 - IBSI radiomics reference boundaries.
 
 Relevant reference and boundary documentation is in
-`docs/global_standards_baseline.md`. Standards references describe design
-intent and implemented conventions; they do not by themselves establish
-certification or clinical validation.
+[`docs/global_standards_baseline.md`](docs/global_standards_baseline.md) and
+[`docs/standards_traceability.md`](docs/standards_traceability.md). Release
+measurements and their limitations are documented in
+[`docs/VERIFICATION_EVIDENCE.md`](docs/VERIFICATION_EVIDENCE.md). Standards
+references describe design intent and implemented conventions; they do not
+by themselves establish certification or clinical validation.
 
 ## Requirements
 
@@ -558,9 +565,9 @@ Run the complete suite:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-Tests requiring the optional Z-Rad/PyRadiomics comparison implementations or
-licensed IBSI reference assets are skipped with an explanatory reason when
-those extras are not installed. To run the full IBSI comparison, install
+Tests requiring optional comparison dependencies, licensed IBSI reference
+assets, or recorded benchmark inputs are skipped with an explanatory reason
+when those requirements are unavailable. To run the IBSI comparison, install
 `pip install -e ".[ibsi]"` and follow `verification/README_DATA.md`.
 
 Run linting:
@@ -709,9 +716,10 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 
 ## Citation
 
-If you use this software, please cite it using the metadata in
-`CITATION.cff` or the GitHub v1.0.2 release. A Zenodo DOI has not yet been
-minted for this release.
+If you use this software, cite the metadata in
+[`CITATION.cff`](CITATION.cff) or the
+[GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
+A Zenodo DOI has not yet been minted for this release.
 
 Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
 

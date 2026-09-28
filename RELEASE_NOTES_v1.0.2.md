@@ -1,81 +1,60 @@
-# HEEH-V1(TM) DICOM Viewer v1.0.2 — Release Notes (rev 6b)
+# HEEH-V1 DICOM Viewer 1.0.2
 
-Research and education software for DICOM measurement, tissue analysis,
-radiomics, and structured reporting. **Not a medical device.**
+HEEH-V1 is research and education software for medical-image viewing,
+measurement, exploratory analysis, and structured reporting. It is not a
+medical device and is not validated for patient care.
 
-## Release identity notice
+## Release identity
 
-The repository's `v1.0.1` tag was reassigned to the commit whose package
-metadata identifies version `1.1.1`, at the author's request. The older
-`v1.1.1` tag was removed. Consequently, `v1.0.1` is a legacy tag alias and
-does not identify a package with version `1.0.1`; use the version in the
-package metadata and release notes when identifying that commit. This release
-is version `1.0.2`.
+This release is identified as version `1.0.2` in its package metadata and by
+the [`v1.0.2` GitHub release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
 
-## What's in this revision
+The repository's `v1.0.1` tag was reassigned to a commit whose package
+metadata identifies version `1.1.1`, at the author's request. The `v1.1.1`
+tag was removed. The `v1.0.1` tag is therefore a legacy alias, not a
+version-matched `1.0.1` package. Do not infer a package version from that tag
+name.
 
-- Application: Streamlit app (`app.py`) + `core/`, `engines/`, `utils/`, `ui/`
-- Verification: **324 tests collected**. The local Windows environment
-  reported 320 passed and 4 skipped; GitHub Actions Linux jobs may report
-  318 passed and 6 skipped when optional IBSI dependencies and licensed
-  reference assets are absent. Skipped tests report the missing optional
-  dependency/data. Coverage includes PACS-ingestion conformance, ComBat
-  harmonization ground-truth and integration tests, TCIA removal-flow tests,
-  and viewer regression locks.
-- Publication package reconciled: manuscript sources, tables, and title page
-  rewritten against the canonical measured evidence; benchmark JSON/report
-  regenerated at v1.0.2; Word files regenerated from the reconciled sources
-- Evidence: `docs/VERIFICATION_EVIDENCE.md` (accuracy & standards trail,
-  Part 4 items 1-16), `docs/standards_traceability.md` (conformance matrix)
+## Included
 
-## Changes since rev 5
+- Streamlit application with DICOM, selected volumetric-image, measurement,
+  analysis, and export workflows.
+- Selected DICOM ingestion, export, and Structured Report tests; TCIA download
+  flow fixes; cohort ComBat harmonization; and viewer regression fixes.
+- Research evidence and limits in `docs/VERIFICATION_EVIDENCE.md`,
+  `docs/standards_traceability.md`, and
+  `verification/publication_package/02_Evidence/`.
+- Citation metadata in `CITATION.cff`. A Zenodo DOI has not been minted.
 
-- Viewer: "Fit to panel" mode removed; modes are 1:1 pixels (default), 2x,
-  4x — one unified source-pixel click mapping; legacy sessions migrate.
-- Kurtosis: verified against the IBSI reference table's own convention
-  ("(Excess) kurtosis" = Fisher/excess); locked by tests, no code change.
-- ComBat batch harmonization (empirical-Bayes, Johnson 2007): opt-in for the
-  cohort metrics CSV, batch = acquisition modality, per-row disclosure
-  (`combat_batch` / `combat_applied` / `combat_details`); undefined cases
-  refuse explicitly and ship raw statistics with the reason.
-- TCIA: de-selecting a "Series to download" group and re-submitting now
-  removes it from the interface; re-adding the same group no longer
-  duplicates images (UID-level selection dedup + resolved-path dedup).
-- pydicom floor corrected to >=3.0 in requirements.txt and pyproject.toml;
-  launcher version banners corrected to 1.0.2 (app.bat, launch.ps1).
-- First-run test failure after extraction root-caused (pytest basetemp
-  parents) and fixed via a shipped root conftest.py; the earlier
-  antivirus-lock attribution was disproved and retracted.
+## Verification
 
-## Changes since rev 6
+The release snapshot collected 324 tests. The recorded Windows run reported
+320 passed and 4 skipped; the skipped tests require optional licensed
+reference or benchmark data not included in the public package. The
+GitHub Actions run for this release passed on Python 3.11 and 3.12, including
+dependency, compilation, Ruff, test, and Docker smoke-test jobs.
 
-- Disclosure text corrected: the radiomics caption no longer claims Fisher
-  (excess) kurtosis "differs from IBSI kurtosis by a constant -3" (false -
-  the IBSI reference values are themselves "(Excess) kurtosis"); it now
-  states the convention matches the IBSI reference and attributes
-  non-comparability to the whole-image basis, absent ROI mask, and missing
-  resampling/re-segmentation ("not IBSI Configuration-D comparable").
-  `docs/standards_traceability.md` aligned. Text-only change; 324 tests
-  green twice, ruff clean.
-- Evidence doc gains Part 4 item 16 documenting the correction.
+See `docs/VERIFICATION_EVIDENCE.md` for the scope and limitations of the
+automated tests and quantitative benchmarks. Passing tests do not establish
+clinical accuracy, privacy effectiveness, standards certification, or
+generalizability.
 
-## Quick start
+## Install and run
 
-```
+```powershell
 python -m pip install -r requirements.lock
-pip install -e .
-python -m pytest verification/tests -q   # expected: 324 passed, first run
+python -m pip install -e .
+python -m pytest verification/tests -q
 streamlit run app.py
 ```
 
-## Optional bulk data (not shipped)
-
-No third-party validation data ship with this release. The test suite
-passes without them; the IBSI phantom tests skip automatically when the
-licensed data are absent. See `verification/README_DATA.md` for the exact
-fetch commands and the required directory layout.
+Optional validation data are not distributed with this release. See
+`verification/README_DATA.md` for acquisition instructions and licensing
+information. Some tests skip when required optional data or dependencies are
+unavailable.
 
 ## Integrity
 
-`SHA256SUMS.txt` lists the SHA-256 of every packaged file. Verify with:
-`sha256sum -c SHA256SUMS.txt` (or `Get-FileHash` on Windows).
+`SHA256SUMS.txt` lists SHA-256 hashes for the packaged files. On Unix-like
+systems, verify them with `sha256sum -c SHA256SUMS.txt`; on Windows, compare
+the listed values with `Get-FileHash`.

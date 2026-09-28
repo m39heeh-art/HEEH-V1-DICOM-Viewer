@@ -15,11 +15,13 @@ is version `1.0.2`.
 ## What's in this revision
 
 - Application: Streamlit app (`app.py`) + `core/`, `engines/`, `utils/`, `ui/`
-- Verification: **324 tests collected: 320 passed and 4 skipped** when
-  optional licensed IBSI reference data are absent, including the
-  PACS-ingestion conformance suite, ComBat harmonization ground-truth and
-  integration tests, TCIA removal-flow tests, and viewer regression locks;
-  the first run with the complete validation-data setup passes as-is
+- Verification: **324 tests collected**. The local Windows environment
+  reported 320 passed and 4 skipped; GitHub Actions Linux jobs may report
+  318 passed and 6 skipped when optional IBSI dependencies and licensed
+  reference assets are absent. Skipped tests report the missing optional
+  dependency/data. Coverage includes PACS-ingestion conformance, ComBat
+  harmonization ground-truth and integration tests, TCIA removal-flow tests,
+  and viewer regression locks.
 - Publication package reconciled: manuscript sources, tables, and title page
   rewritten against the canonical measured evidence; benchmark JSON/report
   regenerated at v1.0.2; Word files regenerated from the reconciled sources

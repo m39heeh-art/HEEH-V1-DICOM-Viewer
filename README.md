@@ -558,6 +558,11 @@ Run the complete suite:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
+Tests requiring the optional Z-Rad/PyRadiomics comparison implementations or
+licensed IBSI reference assets are skipped with an explanatory reason when
+those extras are not installed. To run the full IBSI comparison, install
+`pip install -e ".[ibsi]"` and follow `verification/README_DATA.md`.
+
 Run linting:
 
 ```powershell

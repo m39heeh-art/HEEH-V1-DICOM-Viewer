@@ -705,14 +705,10 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 ## Citation
 
 If you use this software, please cite it using the metadata in
-`CITATION.cff` or the Zenodo record for this release.
+`CITATION.cff` or the GitHub v1.0.2 release. A Zenodo DOI has not yet been
+minted for this release.
 
-[![DOI](https://zenodo.org/badge/DOI_PLACEHOLDER.svg)](https://doi.org/DOI_PLACEHOLDER)
-
-> After the Zenodo release is minted, replace both `DOI_PLACEHOLDER`
-> occurrences above with the real DOI and add the same DOI to
-> `CITATION.cff` as `preferred-identifier`.
-
+Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
 
 ## Known limitations
 

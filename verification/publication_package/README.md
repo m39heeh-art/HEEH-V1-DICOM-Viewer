@@ -11,6 +11,12 @@ to `docs/VERIFICATION_EVIDENCE.md` and `docs/standards_traceability.md`.
 > numeric artifact in `02_Evidence/` from scratch, so the evidence remains
 > fully reproducible without the manuscript.
 
+> **Public test result (2026-09-28).** The published snapshot reports 320
+> passed and 4 skipped tests when optional licensed IBSI reference assets are
+> absent. Pytest provides a skip reason for each omitted data-dependent test.
+> Results from a local environment containing those optional assets must not
+> be described as the clean public-package result.
+
 ## Included
 
 - `02_Evidence/` — canonical, machine-readable benchmark artifacts:

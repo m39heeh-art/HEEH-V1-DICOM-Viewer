@@ -3,13 +3,23 @@
 Research and education software for DICOM measurement, tissue analysis,
 radiomics, and structured reporting. **Not a medical device.**
 
+## Release identity notice
+
+The repository's `v1.0.1` tag was reassigned to the commit whose package
+metadata identifies version `1.1.1`, at the author's request. The older
+`v1.1.1` tag was removed. Consequently, `v1.0.1` is a legacy tag alias and
+does not identify a package with version `1.0.1`; use the version in the
+package metadata and release notes when identifying that commit. This release
+is version `1.0.2`.
+
 ## What's in this revision
 
 - Application: Streamlit app (`app.py`) + `core/`, `engines/`, `utils/`, `ui/`
-- Verification: **324 tests, all passing (run twice)**, including the
+- Verification: **324 tests collected: 320 passed and 4 skipped** when
+  optional licensed IBSI reference data are absent, including the
   PACS-ingestion conformance suite, ComBat harmonization ground-truth and
   integration tests, TCIA removal-flow tests, and viewer regression locks;
-  the first run from a fresh extraction passes as-is
+  the first run with the complete validation-data setup passes as-is
 - Publication package reconciled: manuscript sources, tables, and title page
   rewritten against the canonical measured evidence; benchmark JSON/report
   regenerated at v1.0.2; Word files regenerated from the reconciled sources

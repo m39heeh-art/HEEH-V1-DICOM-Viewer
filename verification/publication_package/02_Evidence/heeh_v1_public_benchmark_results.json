@@ -1,0 +1,346 @@
+{
+  "benchmark_environment": {
+    "benchmark_script_sha256": "d6c908b5f7fd64bba04ba24a9eb8c234c97e107ba5724d8bf3e552cd89e2411d",
+    "machine_architecture": "AMD64",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "project_version": "1.0.2",
+    "python_implementation": "CPython",
+    "python_version": "3.11.9",
+    "requirements_lock_sha256": "034e31309cbfcc5c4d567ae125c9b9731e6ad428d9e69e67834fdbe2a7847614",
+    "source_revision": "unavailable; this workspace has no Git metadata"
+  },
+  "benchmark_name": "HEEH-V1 public benchmark evidence package",
+  "export_validation_benchmark": {
+    "accuracy": 1.0,
+    "estimate_scope": "Constructed fixtures only; not a real-world performance estimate.",
+    "fn": 0,
+    "fp": 0,
+    "ground_truth": "generated challenge fixtures labeled valid vs invalid archive",
+    "n_invalid": 20,
+    "n_valid": 20,
+    "sensitivity": 1.0,
+    "specificity": 1.0,
+    "status": "generated_fixture_check",
+    "tn": 20,
+    "tp": 20
+  },
+  "external_radiomics_comparison": {
+    "absolute_errors": {
+      "max": 0.0,
+      "mean": 0.0,
+      "min": 0.0,
+      "std": 0.0
+    },
+    "all_within_tolerance": true,
+    "artifact": "verification/results/pyradiomics_comparison.json",
+    "artifact_sha256": "7e07bee8a4275709f015a2ddcbaef403c395614facb9322302c31d109413483a",
+    "dataset": "deterministic synthetic water ROI; no patient data",
+    "execution_environment": {
+      "benchmark_script_sha256": "7aff0173cd7965de5feee5160b576d5a43e581c55ba96e3c7cf7a655d39614fc",
+      "machine_architecture": "x86_64",
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+      "processor": "not reported by platform",
+      "python_implementation": "CPython",
+      "python_version": "3.10.21",
+      "requirements_lock_sha256": "034e31309cbfcc5c4d567ae125c9b9731e6ad428d9e69e67834fdbe2a7847614",
+      "source_revision": "unavailable; this workspace has no Git metadata"
+    },
+    "roi_sha256": "5a3f4a3405bf7cf1ad32e3877c14319cb807d894675908cf67b855879d02ab86",
+    "roi_shape": [
+      87,
+      87
+    ],
+    "scope": "Matched first-order comparison on a synthetic ROI only.",
+    "status": "measured",
+    "tolerance": 1e-06,
+    "version": "v3.0.1"
+  },
+  "ibsi_configuration_d_verification": {
+    "application_alignment": "not_configuration_d_compliant",
+    "application_configuration_d_workflow": "reference_verified_when_3d_roi_mask_is_imported",
+    "artifact": "verification/results/ibsi_configuration_d_verification.json",
+    "artifact_sha256": "0212285040cbfc6ce017e91ed380f3b511727d40b671b1df54f2debd466b7e21",
+    "full_ibsi_status": "not_certified_beyond_configuration_d",
+    "pyradiomics_reference_comparison": {
+      "compared": 66,
+      "failed": 8,
+      "passed": 58,
+      "rows_with_reference": 270,
+      "unsupported": 204
+    },
+    "reference_source": {
+      "commit": "6da96021bc91faf4c0cb7fd7fa56a4225d2064a8",
+      "dataset": "ibsi_1_ct_radiomics_phantom",
+      "image": {
+        "bytes": 3858588,
+        "path": "verification\\data\\ibsi_reference_data\\ibsi_1_ct_radiomics_phantom\\nifti\\image\\phantom.nii.gz",
+        "sha256": "909129fdf99d5f5fd17bc568b1834d31edce8663ea6746c6020720bfc1d7bbcb"
+      },
+      "license": "CC BY-NC 3.0",
+      "mask": {
+        "bytes": 8114,
+        "path": "verification\\data\\ibsi_reference_data\\ibsi_1_ct_radiomics_phantom\\nifti\\mask\\mask.nii.gz",
+        "sha256": "0e9243e473b1255c60e6460df465d0b07b65436d6e0c691fe3d17bca0594ae78"
+      },
+      "repository": "https://github.com/theibsi/data_sets"
+    },
+    "scope": "All populated IBSI Configuration D reference rows were compared with the configured Z-Rad reference pipeline. This result is configuration-specific and does not certify the application's separate radiomics implementation or full IBSI compliance.",
+    "statistics_comparison": {
+      "compared": 18,
+      "failed": 1,
+      "family": "Statistics",
+      "passed": 17,
+      "unsupported": 0
+    },
+    "status": "configuration_d_reference_verified",
+    "zrad_comparison": {
+      "compared": 270,
+      "comparison_precision_policy": "For published rows with zero listed tolerance, comparison allows half a unit at the final displayed decimal place to account for rounding in the published reference value.",
+      "failed": 0,
+      "passed": 270,
+      "rows_with_reference": 270,
+      "unsupported": 0
+    }
+  },
+  "project_identity": "HEEH-V1(TM) DICOM Viewer",
+  "public_dataset_provenance": {
+    "collection": "CT-Phantom4Radiomics",
+    "data_description_url": "https://doi.org/10.7937/a1v1-rc66",
+    "download_status": "metadata_only",
+    "file_size_bytes": 90849198,
+    "image_api_url": "https://nbia.cancerimagingarchive.net/nbia-api/services/v4/getImage",
+    "license_name": "Creative Commons Attribution 4.0 International License",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "metadata_url": "https://nbia.cancerimagingarchive.net/nbia-api/services/v4/getSeries?Collection=CT-Phantom4Radiomics&format=json",
+    "modality": "CT",
+    "note": "No archive was downloaded in this environment; provenance records exact public metadata and licensing status only.",
+    "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.329084730054548979029758794636987310879",
+    "sha256": null,
+    "site": "HES-SO Valais",
+    "study_instance_uid": "1.3.6.1.4.1.14519.5.2.1.202237558327911947882539784272436897971",
+    "version": "metadata-only; collection snapshot retrieved via TCIA/NBIA API"
+  },
+  "radiomics_benchmark": {
+    "absolute_errors": {
+      "max_abs_error": 0.4718170166015625,
+      "mean_abs_error": 0.04362616348113613,
+      "min_abs_error": 0.022220611572265625,
+      "std_abs_error": 0.02252734548769908
+    },
+    "expected_values": {
+      "max": 37.0,
+      "mean": 0.0,
+      "min": -45.0,
+      "std": 10.0
+    },
+    "measured_values": {
+      "max": 37.47181701660156,
+      "mean": -0.04362616348113613,
+      "min": -45.022220611572266,
+      "std": 10.022527345487699
+    },
+    "pass": true,
+    "preprocessing": {
+      "bin_width": 2.0,
+      "discretization": "fixed_bin_width",
+      "levels": 256,
+      "spacing": [
+        1.0,
+        1.0
+      ]
+    },
+    "provenance": {
+      "bin_width": 2.0,
+      "discretization": "fixed_bin_width",
+      "feature_coverage": {
+        "first_order": {
+          "implementation": "RadiomicsExtractor.histogram_features",
+          "note": "Computed from the declared sample discretization and source intensities.",
+          "status": "supported"
+        },
+        "glcm": {
+          "implementation": "RadiomicsExtractor.glcm_features",
+          "note": "2D co-occurrence statistics using explicit levels/bin-width discretization.",
+          "status": "supported"
+        },
+        "gldm": {
+          "implementation": "RadiomicsExtractor.gldm_features",
+          "note": "2D dependence matrix using a declared gray-level tolerance and 4- or 8-neighborhood; not a 3D IBSI result.",
+          "status": "supported"
+        },
+        "glrlm": {
+          "implementation": "RadiomicsExtractor.glrlm_features",
+          "note": "2D run-length matrix averaged over cardinal coordinates using the declared discretized image and connectivity 1.",
+          "status": "supported"
+        },
+        "glszm": {
+          "implementation": "RadiomicsExtractor.glszm_features",
+          "note": "2D size-zone matrix over connected regions in the declared discretized image.",
+          "status": "supported"
+        },
+        "ngtdm": {
+          "implementation": "RadiomicsExtractor.ngtdm_features",
+          "note": "2D neighborhood gray-tone difference features using a declared 4- or 8-neighborhood; not a 3D IBSI result.",
+          "status": "supported"
+        }
+      },
+      "levels": 256,
+      "profile": "CT_IBSI_SUBSET_V1",
+      "spacing": [
+        1.0,
+        1.0
+      ],
+      "status": "Selected IBSI-aligned features; official benchmark validation is required before claiming full compliance.",
+      "supported_feature_classes": [
+        "first_order",
+        "glcm",
+        "glrlm",
+        "glszm",
+        "gldm",
+        "ngtdm"
+      ],
+      "unsupported_feature_classes": []
+    },
+    "roi": "water ROI from ACR-style digital phantom",
+    "source": "verification.tests.test_acr_phantom._build_phantom(seed=7)",
+    "tolerances": {
+      "max_abs_tol": 10.0,
+      "mean_abs_tol": 3.0,
+      "min_abs_tol": 10.0,
+      "std_abs_tol": 2.0
+    }
+  },
+  "release_claims_preserved": true,
+  "release_version_notes": "No v1.0.1 release metadata or claims were altered; this is a new development benchmark package.",
+  "runtime_memory_benchmark": {
+    "mean_elapsed_seconds": 0.003887235003639944,
+    "mean_hit_rate": 0.0,
+    "mean_peak_bytes": 31319.6,
+    "mean_peak_mb": 0.029868698120117186,
+    "measurement_scope": "Synthetic navigation-cache workload only. Peak memory is Python allocation memory measured by tracemalloc; it excludes native library allocations, process RSS, image decoding, model inference, and end-to-end application workloads.",
+    "median_elapsed_seconds": 0.0039013000205159187,
+    "protocol": {
+      "cache_size": 3,
+      "image_count": 8,
+      "operations": 128,
+      "repetitions": 20
+    },
+    "samples": [
+      {
+        "elapsed_seconds": 0.004239900037646294,
+        "hit_rate": 0.0,
+        "peak_bytes": 32272
+      },
+      {
+        "elapsed_seconds": 0.004082400002516806,
+        "hit_rate": 0.0,
+        "peak_bytes": 31248
+      },
+      {
+        "elapsed_seconds": 0.004188999999314547,
+        "hit_rate": 0.0,
+        "peak_bytes": 31248
+      },
+      {
+        "elapsed_seconds": 0.003956300031859428,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.004054000019095838,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.003658300032839179,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.0036412000190466642,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.003688500029966235,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.00382539996644482,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.003764399967622012,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.0037499000318348408,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.0037524999934248626,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.003954899962991476,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.003920999995898455,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.0039013000205159187,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.00390549999428913,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.004199999966658652,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.0037551000132225454,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.0037521999911405146,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      },
+      {
+        "elapsed_seconds": 0.00375289999647066,
+        "hit_rate": 0.0,
+        "peak_bytes": 31272
+      }
+    ],
+    "std_elapsed_seconds": 0.00018528542793243695
+  },
+  "scenario_summary": "Measured benchmark package for HEEH-V1 development evaluation.\n- Radiomics ROI: mean=-0.04 HU (target 0.00 ± 3.00, pass=True); std=10.02 HU (target 10.00 ± 2.00, pass=True).\n- Generated export fixtures: 20 valid and 20 invalid cases classified correctly.\n- Runtime/memory: mean elapsed 0.003887s over 20 runs; mean peak memory 0.030 MB.\n- PyRadiomics synthetic comparator: status=measured, all within tolerance=True.",
+  "unavailable_experiments": [
+    {
+      "name": "Full IBSI Phase 1/2 compliance",
+      "reason": "The recorded Configuration D verification is not a complete Phase 1/2 workflow or a full compliance certification.",
+      "status": "not_run"
+    },
+    {
+      "name": "Image-level analysis of CT-Phantom4Radiomics",
+      "reason": "The public collection is metadata-only in this benchmark; the image archive was not downloaded.",
+      "status": "not_run"
+    }
+  ]
+}

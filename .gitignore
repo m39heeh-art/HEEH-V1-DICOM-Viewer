@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.pytest-tmp/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+streamlit.log
+*.tmp
+*.bak
+*_Report.txt
+pytest_results.txt
+streamlit*.out.log
+.my_temp/
+.tmp/
+New folder/
+
+# Medical image data (never commit patient/imaging data)
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.nrrd
+*.mha
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Runtime caches
+sovereign_cache/
+cache_logs/
+node_modules/
+Global_Medical_Datasets/
+TCIA_Data_Retriever_windows_amd64/
+verification/data/
+verification/results/
+verification/publication_package/
+verification/samples/
+
+# Re-include the curated public evidence bundle and documentation
+# screenshots that ship with the release (contents are reviewed and
+# intentionally limited to generated artifacts and UI captures).
+!verification/publication_package/
+!verification/publication_package/**
+!verification/samples/
+!verification/samples/**
+
+# Local fine-tune outputs (weights + reports may be large; never commit)
+models/finetuned/
+reports/finetune/
+data/train/
+data/finetune/
+*.pt
+*.onnx
+!tests/**/*.onnx

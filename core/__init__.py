@@ -1,0 +1,58 @@
+"""
+Core package for HEEH-V1™ DICOM Viewer.
+
+Exports fundamental constants, validation layers, and base classes.
+"""
+
+from core.constants import (
+    HU_MIN,
+    HU_MAX,
+    PURE_GRAY,
+    PROBABILITY_THRESHOLD,
+    TISSUE_MIX_THRESHOLD,
+    CONFIDENCE_THRESHOLD,
+    MIN_VOXELS_FOR_ANALYSIS,
+    STATISTICAL_POWER_THRESHOLD,
+    CI_CONFIDENCE_LEVEL,
+    HESSIAN_SIGMA_SCALES,
+    HESSIAN_SIGMA_SINGLE,
+    PERCENTILE_CLIP,
+    L2_MAX_THRESHOLD,
+    L2_MAX_BASE_ANALYSIS,
+    TISSUE_RANGES,
+    DISPLAY_PRESETS,
+    AI_MODEL_REGISTRY,
+    VALID_EXTENSIONS,
+    DEFAULT_TARGET_SIZE,
+    DEFAULT_MONAI_SPACING,
+    DEFAULT_MAX_WORKERS,
+)
+
+from core.physiological_validator import PhysiologicalValidator
+
+__all__ = [
+    # Constants
+    "HU_MIN",
+    "HU_MAX",
+    "PURE_GRAY",
+    "PROBABILITY_THRESHOLD",
+    "TISSUE_MIX_THRESHOLD",
+    "CONFIDENCE_THRESHOLD",
+    "MIN_VOXELS_FOR_ANALYSIS",
+    "STATISTICAL_POWER_THRESHOLD",
+    "CI_CONFIDENCE_LEVEL",
+    "HESSIAN_SIGMA_SCALES",
+    "HESSIAN_SIGMA_SINGLE",
+    "PERCENTILE_CLIP",
+    "L2_MAX_THRESHOLD",
+    "L2_MAX_BASE_ANALYSIS",
+    "TISSUE_RANGES",
+    "DISPLAY_PRESETS",
+    "AI_MODEL_REGISTRY",
+    "VALID_EXTENSIONS",
+    "DEFAULT_TARGET_SIZE",
+    "DEFAULT_MONAI_SPACING",
+    "DEFAULT_MAX_WORKERS",
+    # Classes
+    "PhysiologicalValidator",
+]

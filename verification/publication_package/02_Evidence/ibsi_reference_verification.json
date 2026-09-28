@@ -1,0 +1,65 @@
+{
+  "absolute_errors": {
+    "max": 0.0,
+    "mean": 0.0,
+    "min": 0.0,
+    "std": 0.0
+  },
+  "heeh_v1": {
+    "max": 723.0,
+    "mean": -46.88272018905282,
+    "min": -1000.0,
+    "std": 231.06883660940622
+  },
+  "image": {
+    "roi_voxels": 125256,
+    "shape_zyx": [
+      60,
+      201,
+      204
+    ],
+    "spacing_xyz": [
+      0.9769999980926514,
+      0.9769999980926514,
+      3.0
+    ]
+  },
+  "preprocessing": {
+    "bin_width": 2.0,
+    "features": [
+      "mean",
+      "std",
+      "min",
+      "max"
+    ],
+    "label": 1,
+    "resampling": "none"
+  },
+  "pyradiomics": {
+    "features": {
+      "max": 723.0,
+      "mean": -46.88272018905282,
+      "min": -1000.0,
+      "std": 231.06883660940622
+    },
+    "version": "v3.0.1"
+  },
+  "scope": "Official IBSI CT phantom acquired and measured with a matched first-order smoke test; this is not an IBSI compliance certificate.",
+  "source": {
+    "commit": "6da96021bc91faf4c0cb7fd7fa56a4225d2064a8",
+    "dataset": "ibsi_1_ct_radiomics_phantom",
+    "image": {
+      "bytes": 3858588,
+      "path": "data/ibsi_reference_data/ibsi_1_ct_radiomics_phantom/nifti/image/phantom.nii.gz",
+      "sha256": "909129fdf99d5f5fd17bc568b1834d31edce8663ea6746c6020720bfc1d7bbcb"
+    },
+    "license": "CC BY-NC 3.0",
+    "mask": {
+      "bytes": 8114,
+      "path": "data/ibsi_reference_data/ibsi_1_ct_radiomics_phantom/nifti/mask/mask.nii.gz",
+      "sha256": "0e9243e473b1255c60e6460df465d0b07b65436d6e0c691fe3d17bca0594ae78"
+    },
+    "repository": "https://github.com/theibsi/data_sets"
+  },
+  "status": "measured"
+}

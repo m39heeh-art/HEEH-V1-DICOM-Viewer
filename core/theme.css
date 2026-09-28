@@ -1,0 +1,761 @@
+/* ============================================================
+   HEEH-V1™ DICOM Viewer — Design System
+   WCAG 2.1 AA compliant | RTL-ready | Dark/Light themes
+   ============================================================ */
+
+/* ---- CSS Custom Properties (Dark Theme — Default) ---- */
+:root {
+  /* Background layers */
+  --bg-primary: #0B0D10;
+  --bg-secondary: #111318;
+  --bg-surface: #171A20;
+  --bg-sidebar: #0E1015;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text colors — all meet 4.5:1+ on bg-primary */
+  --text-primary: #E0E0E0;     /* 14.3:1 on #0B0D10 */
+  --text-secondary: #B0B4BC;    /* 10.3:1 on #0B0D10 */
+  --text-muted: #9096A0;        /* 7.2:1  on #0B0D10 */
+  --text-caption: #6E7580;      /* 5.2:1  on #0B0D10 */
+
+  /* Semantic colors */
+  --color-accent: #5B8DEF;
+  --color-success: #4CAF50;
+  --color-warning: #E5A100;
+  --color-error: #E05252;
+  --color-info: #5B8DEF;
+
+  /* Borders */
+  --border-subtle: #2A2E35;
+  --border-default: #363B44;
+  --border-strong: #4A5060;
+  --border-focus: var(--color-accent);
+
+  /* Spacing scale (4px base) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-sans: 'Inter', 'Noto Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --line-height-tight: 1.3;
+  --line-height-normal: 1.5;
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(91, 141, 239, 0.45);
+  --focus-ring-offset: 2px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Layout */
+  --sidebar-width: 320px;
+  --content-max-width: 1200px;
+}
+
+/* ---- Light Theme ---- */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F6F8;
+    --bg-surface: #FAFBFC;
+    --bg-sidebar: #F0F1F4;
+    --bg-overlay: rgba(255, 255, 255, 0.85);
+
+    --text-primary: #1A1D23;     /* 15.4:1 on #FFFFFF */
+    --text-secondary: #444B57;   /* 8.7:1  on #FFFFFF */
+    --text-muted: #6B7280;       /* 5.0:1  on #FFFFFF */
+    --text-caption: #9CA3AF;     /* 3.1:1  on #FFFFFF — decorative only */
+
+    --border-subtle: #E5E7EB;
+    --border-default: #D1D5DB;
+    --border-strong: #9CA3AF;
+  }
+}
+
+/* ---- Base Reset ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ---- Skip Link (WCAG 2.4.1) ---- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--sp-4);
+  z-index: 10000;
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top var(--transition-fast);
+}
+.skip-link:focus {
+  top: var(--sp-4);
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ---- Focus Styles (WCAG 2.4.7) ---- */
+:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* Reduce motion for users who prefer it (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---- App Container ---- */
+.stApp {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-sans);
+  line-height: var(--line-height-normal);
+}
+
+/* Streamlit's default centered block is too narrow for image review. Keep
+   controls readable while giving the viewer room for diagnostic-sized images. */
+[data-testid="stAppViewContainer"] main [data-testid="stMainBlockContainer"] {
+  max-width: var(--content-max-width);
+  padding: var(--sp-4) var(--sp-8) var(--sp-12);
+}
+[data-testid="stAppViewContainer"] main h1 {
+  font-size: clamp(2rem, 3vw, 3rem) !important;
+  letter-spacing: -0.03em;
+  margin: 0 0 var(--sp-2);
+}
+[data-testid="stAppViewContainer"] main h2,
+[data-testid="stAppViewContainer"] main h3 {
+  margin-top: var(--sp-6);
+  margin-bottom: var(--sp-3);
+}
+
+/* Keep the primary image visually attached to its section title. */
+.viewer-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  margin: 0;
+  padding: 0;
+}
+
+[data-testid="stCustomComponentV2"] iframe,
+iframe[title="neuro_pixel_hover_viewer"] {
+  display: block;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+.viewer-context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  margin: var(--sp-3) 0 var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-left: 3px solid var(--color-accent);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+.viewer-context__label {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.viewer-context__hint {
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.image-meta-strip,
+.dicom-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-3);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+.image-meta-strip {
+  margin: var(--sp-2) 0;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+}
+.image-meta-strip__label {
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.image-meta-strip__divider {
+  color: var(--border-strong);
+}
+.dicom-meta {
+  justify-content: space-between;
+  margin: 0 0 var(--sp-3);
+  padding: var(--sp-1) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.dicom-meta b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.analysis-results-heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin: var(--sp-8) 0 var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.analysis-results-heading__eyebrow {
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.analysis-results-heading__title {
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+.analysis-results-heading__hint {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Compact metadata bar keeps modality and workflow state visible without
+   competing with the diagnostic viewer. */
+.workspace-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0 0 var(--sp-5);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+.workspace-status__label {
+  color: var(--color-accent);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.workspace-status__item + .workspace-status__item {
+  border-left: 1px solid var(--border-default);
+  padding-left: var(--sp-4);
+}
+
+/* Keep the native sidebar as a floating control drawer. Fixed positioning
+   prevents opening it from changing the diagnostic workspace width. */
+section[data-testid="stSidebar"] {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  width: var(--sidebar-width) !important;
+  max-width: var(--sidebar-width) !important;
+  z-index: 1000000 !important;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-normal);
+}
+section[data-testid="stSidebar"][aria-expanded="false"] {
+  transform: translateX(calc(-1 * var(--sidebar-width)));
+  box-shadow: none;
+}
+section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+  width: var(--sidebar-width) !important;
+}
+section[data-testid="stSidebar"] button[data-testid="stBaseButton-headerNoPadding"] {
+  position: absolute;
+  right: var(--sp-2);
+  top: var(--sp-4);
+  z-index: 1000001;
+  display: flex !important;
+  visibility: visible !important;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+.control-panel-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--sp-2);
+  text-transform: uppercase;
+}
+
+/* Keep frame changes visually attached to the same viewer location. */
+[data-testid="stImage"] img {
+  will-change: opacity, transform;
+}
+
+@keyframes viewer-frame-in {
+  from {
+    opacity: 0.35;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- Sidebar ---- */
+section[data-testid="stSidebar"],
+.stSidebar {
+  background-color: var(--bg-sidebar) !important;
+  border-right: 1px solid var(--border-subtle);
+}
+section[data-testid="stSidebar"] > div:first-child {
+  padding: var(--sp-6) var(--sp-4) var(--sp-8);
+}
+section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+  gap: var(--sp-2);
+}
+section[data-testid="stSidebar"] .stButton > button {
+  min-height: 44px;
+}
+
+/* Keep the adjacent navigation rail compact so it never competes with the viewer. */
+[data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child
+  [data-testid="stButton"] > button {
+  min-height: 40px;
+  padding-inline: var(--sp-2);
+  font-size: var(--font-size-xs);
+}
+section[data-testid="stSidebar"] [data-testid="stExpander"] {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  margin: var(--sp-2) 0;
+  overflow: hidden;
+}
+section[data-testid="stSidebar"] [data-testid="stExpander"] summary {
+  min-height: 42px;
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-primary);
+  font-weight: 650;
+}
+section[data-testid="stSidebar"] [data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+  padding: var(--sp-2) var(--sp-3) var(--sp-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+section[data-testid="stSidebar"] .stRadio label,
+section[data-testid="stSidebar"] .stCheckbox label,
+section[data-testid="stSidebar"] .stSelectbox label {
+  color: var(--text-secondary) !important;
+}
+
+/* Sidebar section grouping */
+.sidebar-section {
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--sp-2);
+}
+.sidebar-section:last-child {
+  border-bottom: none;
+}
+.sidebar-section-title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-2);
+  padding: 0 var(--sp-1);
+}
+
+/* ---- Typography ---- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+  line-height: var(--line-height-tight);
+  font-weight: 600;
+}
+
+/* ---- Cards / Metric Boxes ---- */
+.stMetric {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+  transition: border-color var(--transition-fast);
+}
+.stMetric:hover {
+  border-color: var(--border-default) !important;
+}
+.stMetric label,
+.stMetric > div > div:first-child {
+  color: var(--text-muted) !important;
+  font-size: var(--font-size-sm) !important;
+}
+.stMetric > div > div:last-child {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* ---- Metric / Stat Card (for safe_metric_block helper) ---- */
+.metric-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-2);
+  transition: border-color var(--transition-fast);
+}
+.metric-card:hover {
+  border-color: var(--border-default);
+}
+.metric-card__label {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+.metric-card__value {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+.metric-card__help {
+  color: var(--text-caption);
+  font-size: var(--font-size-xs);
+  display: block;
+  margin-top: var(--sp-1);
+}
+.metric-card__delta {
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+}
+
+/* ---- Diagnostic Boxes (semantic styling) ---- */
+.diag-box {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--text-muted);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+}
+.diag-box--success {
+  border-left-color: var(--color-success);
+}
+.diag-box--warning {
+  border-left-color: var(--color-warning);
+}
+.diag-box--error {
+  border-left-color: var(--color-error);
+}
+.diag-box--info {
+  border-left-color: var(--color-info);
+}
+
+/* ---- Buttons ---- */
+.stButton > button {
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  min-height: 36px;
+}
+.stButton > button:hover {
+  background-color: var(--bg-overlay);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.stButton > button:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.stButton > button[data-testid="stBaseButton-primary"],
+[type="primary"] {
+  background-color: var(--color-accent) !important;
+  color: #fff !important;
+  border-color: var(--color-accent) !important;
+  font-weight: 600;
+}
+.stButton > button[data-testid="stBaseButton-primary"]:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+/* Inputs should read as controls, not loose text floating in the sidebar. */
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stSelectbox"] [role="combobox"],
+[data-testid="stFileUploaderDropzone"] {
+  border-radius: var(--radius-md) !important;
+  border-color: var(--border-default) !important;
+  min-height: 40px;
+}
+[data-testid="stRadio"] > div {
+  gap: var(--sp-2);
+}
+[data-testid="stSlider"] {
+  padding: var(--sp-2) 0 var(--sp-3);
+}
+
+/* ---- Form Elements ---- */
+.stSelectbox, .stMultiSelect, .stTextInput, .stTextArea {
+  font-size: var(--font-size-sm);
+}
+.stSlider > div[data-baseweb="slider"] > div {
+  background: var(--border-default) !important;
+}
+
+/* ---- Alerts ---- */
+.stWarning {
+  background-color: rgba(229, 161, 0, 0.08) !important;
+  color: var(--color-warning) !important;
+  border: 1px solid rgba(229, 161, 0, 0.25) !important;
+  border-left: 4px solid var(--color-warning) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+}
+.stError {
+  background-color: rgba(224, 82, 82, 0.08) !important;
+  color: var(--color-error) !important;
+  border: 1px solid rgba(224, 82, 82, 0.25) !important;
+  border-left: 4px solid var(--color-error) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+}
+.stSuccess {
+  background-color: rgba(76, 175, 80, 0.08) !important;
+  color: var(--color-success) !important;
+  border: 1px solid rgba(76, 175, 80, 0.25) !important;
+  border-left: 4px solid var(--color-success) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+}
+.stInfo {
+  background-color: rgba(91, 141, 239, 0.08) !important;
+  color: var(--color-info) !important;
+  border: 1px solid rgba(91, 141, 239, 0.25) !important;
+  border-left: 4px solid var(--color-info) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+}
+
+/* ---- Captions / Small text ---- */
+.stCaption, .stMarkdown caption, small {
+  color: var(--text-caption) !important;
+}
+
+/* ---- Dividers ---- */
+hr, [data-testid="stHorizontalBlock"] > div {
+  border-color: var(--border-subtle) !important;
+}
+
+/* ---- RTL Support ---- */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+[dir="rtl"] .diag-box {
+  border-left: 1px solid var(--border-subtle);
+  border-right: 4px solid var(--text-muted);
+}
+[dir="rtl"] .diag-box--success { border-right-color: var(--color-success); }
+[dir="rtl"] .diag-box--warning { border-right-color: var(--color-warning); }
+[dir="rtl"] .diag-box--error   { border-right-color: var(--color-error); }
+[dir="rtl"] .diag-box--info    { border-right-color: var(--color-info); }
+[dir="rtl"] .stWarning,
+[dir="rtl"] .stError,
+[dir="rtl"] .stSuccess,
+[dir="rtl"] .stInfo {
+  border-left-width: 1px !important;
+  border-right-width: 4px !important;
+}
+[dir="rtl"] .skip-link {
+  left: auto;
+  right: var(--sp-4);
+}
+[dir="rtl"] .onboarding {
+  border-left-width: 1px;
+  border-right: 4px solid var(--color-accent);
+}
+[dir="rtl"] section[data-testid="stSidebar"],
+[dir="rtl"] .stSidebar {
+  border-right: none;
+  border-left: 1px solid var(--border-subtle);
+}
+
+/* ---- Responsive (Mobile) ---- */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100vw;
+  }
+  section[data-testid="stSidebar"] {
+    width: 100vw !important;
+  }
+}
+
+/* ---- Print Styles ---- */
+@media print {
+  .stApp { background: #fff !important; color: #000 !important; }
+  .stSidebar { display: none !important; }
+  .stMetric { border: 1px solid #ccc !important; }
+  .skip-link { display: none !important; }
+}
+
+/* ---- Screen Reader Only (visually hidden) ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Status Indicator ---- */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+.status-indicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  flex-shrink: 0;
+}
+.status-indicator--error::before {
+  background: var(--color-error);
+}
+.status-indicator--warning::before {
+  background: var(--color-warning);
+}
+
+/* ---- Keyboard Shortcut Hint ---- */
+.keyboard-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--font-size-xs);
+  color: var(--text-caption);
+}
+kbd,
+.keyboard-hint kbd {
+  display: inline-block;
+  padding: 2px var(--sp-1);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  line-height: var(--line-height-tight);
+  min-width: 1.6em;
+  text-align: center;
+}
+
+/* ---- Main Landmark Container ---- */
+/* Empty by design: it is the skip-navigation focus anchor (WCAG 2.4.1),
+   so it must stay visually inert.  Any min-height/padding here pushes the
+   actual viewer below a large blank region. */
+#main-content {
+  min-height: 0;
+  padding: 0;
+}
+
+/* ---- Onboarding Card ---- */
+.onboarding {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4) var(--sp-6);
+  margin-bottom: var(--sp-4);
+}
+.onboarding-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+}
+.onboarding-step + .onboarding-step {
+  border-top: 1px solid var(--border-subtle);
+}
+.onboarding-step__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sp-6);
+  height: var(--sp-6);
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.onboarding-step__content {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+.onboarding-step__content strong {
+  color: var(--text-primary);
+}

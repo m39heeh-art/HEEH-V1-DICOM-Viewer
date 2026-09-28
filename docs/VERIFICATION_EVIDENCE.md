@@ -9,8 +9,8 @@ reference comparisons and states what each result does not establish.
 - **Version:** 1.0.2
 - **Release tag:** [`v1.0.2`](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2)
 - **Release commit:** `9042e58750425a5d6960ec27eada6adf891c957e`
-- **Zenodo version DOI:** [10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23015732)
-- **Zenodo version-family DOI:** [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910)
+- **Zenodo record:** <https://zenodo.org/records/23020151>
+- **Citable version-family DOI:** [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910)
 - **License:** MIT
 - **Citation metadata:** `CITATION.cff`
 - **File integrity:** `SHA256SUMS.txt` lists SHA-256 hashes for packaged files
@@ -24,14 +24,19 @@ The version-specific Zenodo record archives the tagged release commit above.
 Subsequent documentation-only updates on the publication branch are not part
 of that archived file.
 
+Zenodo assigned version DOI `10.5281/zenodo.23020151`, but DOI.org and
+DataCite returned 404 at the latest check. Use the resolvable family DOI
+above until the version DOI resolves. The earlier duplicate DOI
+`10.5281/zenodo.23015732` is not the identifier for this record.
+
 ## Automated verification
 
 The GitHub Actions run for the release commit passed on Python 3.11 and 3.12.
 The workflow completed its dependency, compilation, Ruff, test, and Docker
 smoke-test jobs successfully.
 
-On Windows, the release snapshot reported 320 tests passed and 4 skipped.
-Those skips require optional licensed IBSI reference data or recorded
+On Windows, the release snapshot collected 324 tests: 320 passed and 4 were
+skipped. Those skips require optional licensed IBSI reference data or recorded
 benchmark data that the public package does not include. The test run also
 reported two non-failing floating-point precision warnings for a nearly
 constant synthetic color fixture.

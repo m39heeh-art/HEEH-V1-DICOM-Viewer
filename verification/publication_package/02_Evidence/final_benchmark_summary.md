@@ -46,9 +46,9 @@ described as an image-level benchmark.
 - `ibsi_configuration_d_verification.json` — reference-table comparison
 - `../benchmark_source/public_benchmark_evidence.py` — evidence-generation script
 
-The reports in this folder are the included evidence artifacts. The source
-result records contain historical output paths from the benchmark workspace;
-those paths are not links to files in the public package.
+The reports in this folder are the included evidence artifacts. The recorded
+benchmark workspaces lacked Git metadata, so the measurements cannot be tied
+to an exact source revision.
 
 ## Limitations
 

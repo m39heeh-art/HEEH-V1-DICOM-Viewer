@@ -2,7 +2,7 @@ cff-version: 1.2.0
 title: "HEEH-V1(TM) DICOM Viewer"
 message: "If you use this software, please cite the repository and release."
 type: software
-doi: "10.5281/zenodo.23015732"
+doi: "10.5281/zenodo.22768910"
 authors:
   - family-names: "Heeh"
     given-names: "Mohamad Yousef"

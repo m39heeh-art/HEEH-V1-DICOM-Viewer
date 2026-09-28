@@ -33,7 +33,7 @@
       "std": 0.0
     },
     "all_within_tolerance": true,
-    "artifact": "verification/results/pyradiomics_comparison.json",
+    "artifact": "verification/publication_package/02_Evidence/pyradiomics_comparison.json",
     "artifact_sha256": "7e07bee8a4275709f015a2ddcbaef403c395614facb9322302c31d109413483a",
     "dataset": "deterministic synthetic water ROI; no patient data",
     "execution_environment": {
@@ -59,7 +59,7 @@
   "ibsi_configuration_d_verification": {
     "application_alignment": "not_configuration_d_compliant",
     "application_configuration_d_workflow": "reference_verified_when_3d_roi_mask_is_imported",
-    "artifact": "verification/results/ibsi_configuration_d_verification.json",
+    "artifact": "verification/publication_package/02_Evidence/ibsi_configuration_d_verification.json",
     "artifact_sha256": "0212285040cbfc6ce017e91ed380f3b511727d40b671b1df54f2debd466b7e21",
     "full_ibsi_status": "not_certified_beyond_configuration_d",
     "pyradiomics_reference_comparison": {

@@ -722,10 +722,12 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 If you use this software, cite the metadata in
 [`CITATION.cff`](CITATION.cff) or the
 [GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
-The version-specific Zenodo record is
-[10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23020151); its
-version-family record is
-[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910).
+The v1.0.2 Zenodo record is available at
+<https://zenodo.org/records/23020151>. Its assigned version DOI,
+`10.5281/zenodo.23020151`, did not resolve through DOI.org at the latest
+check. Cite the resolvable version-family DOI,
+[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910), until
+the version DOI resolves.
 
 Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
 

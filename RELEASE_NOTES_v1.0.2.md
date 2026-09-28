@@ -28,14 +28,15 @@ name.
 
 ## Zenodo archive
 
-The version-specific v1.0.2 record is
-[10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23015732). Its
-version-family record is
-[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910).
-The version-specific record identifies the GitHub `v1.0.2` tag at commit
-`9042e58750425a5d6960ec27eada6adf891c957e`. Documentation changes made
-after that tagged archive are present on the publication branch but are not
-part of the Zenodo v1.0.2 file.
+The v1.0.2 Zenodo record is available at
+<https://zenodo.org/records/23020151> and identifies the GitHub `v1.0.2`
+tag at commit `9042e58750425a5d6960ec27eada6adf891c957e`. Its assigned
+version DOI, `10.5281/zenodo.23020151`, did not resolve through DOI.org at
+the latest check. Cite the resolvable version-family DOI,
+[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910), until
+the version DOI resolves. Documentation changes made after the tagged
+archive are present on the publication branch but are not part of the
+Zenodo v1.0.2 file.
 
 ## Verification
 

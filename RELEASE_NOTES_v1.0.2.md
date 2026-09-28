@@ -24,7 +24,18 @@ name.
 - Research evidence and limits in `docs/VERIFICATION_EVIDENCE.md`,
   `docs/standards_traceability.md`, and
   `verification/publication_package/02_Evidence/`.
-- Citation metadata in `CITATION.cff`. A Zenodo DOI has not been minted.
+- Citation metadata in `CITATION.cff`.
+
+## Zenodo archive
+
+The version-specific v1.0.2 record is
+[10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23015732). Its
+version-family record is
+[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910).
+The version-specific record identifies the GitHub `v1.0.2` tag at commit
+`9042e58750425a5d6960ec27eada6adf891c957e`. Documentation changes made
+after that tagged archive are present on the publication branch but are not
+part of the Zenodo v1.0.2 file.
 
 ## Verification
 

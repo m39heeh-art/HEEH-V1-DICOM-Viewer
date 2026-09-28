@@ -719,9 +719,17 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 If you use this software, cite the metadata in
 [`CITATION.cff`](CITATION.cff) or the
 [GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
-A Zenodo DOI has not yet been minted for this release.
+The version-specific Zenodo record is
+[10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23015732); its
+version-family record is
+[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910).
 
 Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
+
+The Zenodo record archives the contents of the `v1.0.2` tag
+(`9042e58750425a5d6960ec27eada6adf891c957e`). Documentation updates made
+later on `publication-v1.0.2` are not included in that immutable release
+archive.
 
 ## Known limitations
 

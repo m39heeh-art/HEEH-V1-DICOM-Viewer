@@ -724,17 +724,18 @@ If you use this software, cite the metadata in
 [GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
 The v1.0.2 Zenodo record is available at
 <https://zenodo.org/records/23020151>. Its assigned version DOI,
-`10.5281/zenodo.23020151`, did not resolve through DOI.org at the latest
-check. Cite the resolvable version-family DOI,
-[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910), until
-the version DOI resolves.
+`10.5281/zenodo.23020151`, resolves to this record as of 2026-09-28. Use the
+version-family DOI, [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910),
+when citing the software across all versions. `CITATION.cff` records the
+version DOI; `.zenodo.json` identifies the family DOI in its `isVersionOf`
+relation.
 
 Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
 
 The Zenodo record archives the contents of the `v1.0.2` tag
-(`9042e58750425a5d6960ec27eada6adf891c957e`). Documentation updates made
-later on `publication-v1.0.2` are not included in that immutable release
-archive.
+(`9042e58750425a5d6960ec27eada6adf891c957e`). Documentation and manifest
+updates made later on `publication-v1.0.2` are not included in that immutable
+release archive.
 
 ## Known limitations
 

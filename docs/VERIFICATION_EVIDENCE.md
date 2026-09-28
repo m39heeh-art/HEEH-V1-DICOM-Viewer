@@ -10,10 +10,11 @@ reference comparisons and states what each result does not establish.
 - **Release tag:** [`v1.0.2`](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2)
 - **Release commit:** `9042e58750425a5d6960ec27eada6adf891c957e`
 - **Zenodo record:** <https://zenodo.org/records/23020151>
-- **Citable version-family DOI:** [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910)
+- **Version DOI:** [10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151) (resolves to this record as of 2026-09-28)
+- **Version-family DOI:** [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910) (use when referring to all software versions)
 - **License:** MIT
 - **Citation metadata:** `CITATION.cff`
-- **File integrity:** `SHA256SUMS.txt` lists SHA-256 hashes for packaged files
+- **File integrity:** `SHA256SUMS.txt` hashes files in the current repository snapshot, not the immutable Zenodo archive
 
 The benchmark artifacts record their inputs, parameters, dependencies, and
 limitations. The public package does not include licensed IBSI reference
@@ -24,10 +25,17 @@ The version-specific Zenodo record archives the tagged release commit above.
 Subsequent documentation-only updates on the publication branch are not part
 of that archived file.
 
-Zenodo assigned version DOI `10.5281/zenodo.23020151`, but DOI.org and
-DataCite returned 404 at the latest check. Use the resolvable family DOI
-above until the version DOI resolves. The earlier duplicate DOI
+Zenodo assigned version DOI `10.5281/zenodo.23020151`; it resolves to this
+record as of 2026-09-28. Use the version-family DOI above when citing the
+software across all versions. `CITATION.cff` records the version DOI;
+`.zenodo.json` records the family DOI as the `isVersionOf` relation. The
+earlier duplicate DOI
 `10.5281/zenodo.23015732` is not the identifier for this record.
+
+The SHA-256 manifest is maintained for this repository snapshot, including
+post-tag documentation and evidence updates. It is not a replacement for
+checksums accompanying the immutable Zenodo archive. Run
+`python scripts/generate_sha256_manifest.py --check` to verify it.
 
 ## Automated verification
 

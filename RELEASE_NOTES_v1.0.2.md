@@ -31,11 +31,13 @@ name.
 The v1.0.2 Zenodo record is available at
 <https://zenodo.org/records/23020151> and identifies the GitHub `v1.0.2`
 tag at commit `9042e58750425a5d6960ec27eada6adf891c957e`. Its assigned
-version DOI, `10.5281/zenodo.23020151`, did not resolve through DOI.org at
-the latest check. Cite the resolvable version-family DOI,
-[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910), until
-the version DOI resolves. Documentation changes made after the tagged
-archive are present on the publication branch but are not part of the
+version DOI, [10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151),
+resolves to this record as of 2026-09-28. Cite the version-family DOI,
+[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910), when
+referring to all software versions. `CITATION.cff` records the version DOI,
+while `.zenodo.json` identifies the family DOI in its `isVersionOf`
+relation. Documentation and integrity-manifest changes made after the
+tagged archive are present on the publication branch but are not part of the
 Zenodo v1.0.2 file.
 
 ## Verification
@@ -67,6 +69,8 @@ unavailable.
 
 ## Integrity
 
-`SHA256SUMS.txt` lists SHA-256 hashes for the packaged files. On Unix-like
-systems, verify them with `sha256sum -c SHA256SUMS.txt`; on Windows, compare
-the listed values with `Get-FileHash`.
+`SHA256SUMS.txt` covers files in the current repository snapshot, excluding
+the manifest itself; it is not a checksum list for the immutable Zenodo
+archive. Verify with `sha256sum -c SHA256SUMS.txt` or
+`python scripts/generate_sha256_manifest.py --check`. Regenerate after
+repository-file changes with `python scripts/generate_sha256_manifest.py`.

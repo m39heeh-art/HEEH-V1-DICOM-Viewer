@@ -723,7 +723,7 @@ If you use this software, cite the metadata in
 [`CITATION.cff`](CITATION.cff) or the
 [GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
 The version-specific Zenodo record is
-[10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23015732); its
+[10.5281/zenodo.23015732](https://doi.org/10.5281/zenodo.23020151); its
 version-family record is
 [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910).
 

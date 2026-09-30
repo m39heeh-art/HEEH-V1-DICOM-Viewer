@@ -43,7 +43,8 @@ The GitHub Actions run for the release commit passed on Python 3.11 and 3.12.
 The workflow completed its dependency, compilation, Ruff, test, and Docker
 smoke-test jobs successfully.
 
-On Windows, the release snapshot collected 324 tests: 320 passed and 4 were
+The current full suite collects 328 tests: 328 passed and 0 skipped locally
+(2026-09-30). The release snapshot had collected 324 tests: 320 passed and 4 were
 skipped. Those skips require optional licensed IBSI reference data or recorded
 benchmark data that the public package does not include. The test run also
 reported two non-failing floating-point precision warnings for a nearly
@@ -68,8 +69,10 @@ to these protocols:
 | Generated archive challenge fixtures | 20 valid and 20 invalid fixtures classified correctly | Constructed test fixtures; not real-world sensitivity or specificity |
 | Navigation-cache microbenchmark | Mean elapsed time `0.003887 s`; mean Python allocation peak `0.030 MB` | Synthetic cache workload using `tracemalloc`; not end-to-end runtime or process memory |
 
-The CT-Phantom4Radiomics collection appears only in the metadata-level
-provenance record. Its image archive was not downloaded or used for image-level
+The synthetic and fixture benchmarks use metadata-level provenance for the
+CT-Phantom4Radiomics collection. In addition, the exact recorded series was
+downloaded (44,282,129 bytes) and evaluated on real image data (see the
+full-series study below); the remainder of the collection was not used for image-level
 evaluation.
 
 ## DICOM Structured Report check
@@ -79,6 +82,33 @@ generated Structured Report (SR) fixture. It reports zero actionable errors
 after review of a residual validator flag. This result applies only to the
 tested object and validator configuration. It does not establish compatibility
 with every DICOM consumer, PACS, or SR content combination.
+
+## Real-data full-series study (2026-09-30)
+
+The recorded TCIA series (CT-Phantom4Radiomics; CC BY 4.0;
+DOI 10.7937/a1v1-rc66) was downloaded in full via the NBIA API and
+evaluated with the application's own loading, radiomics, de-identification,
+and export-validation code paths. Artifacts:
+`verification/results/tcia_real_evaluation.json` (single-slice protocol) and
+`verification/results/tcia_full_series_study.json` (full series), with
+human-readable reports under `docs/` and mirrored evidence copies in
+`verification/publication_package/02_Evidence/`.
+
+- First-order agreement with PyRadiomics v3.0.1: 172/172 slice ROIs exact
+  (max absolute error 0.0 at 1e-6); unchanged across ROI radii 12/18/24/30/36 mm.
+- Air-region CT-number calibration: every slice within +/-30 HU of -1000 HU
+  (worst-slice deviation 14.39 HU).
+- Export/privacy round trips: 172/172 de-identified slices accepted;
+  11/11 deterministic manifest-corruption probes rejected.
+- Recorded IBSI morphology disagreements (58/66 passing): data-driven
+  decomposition shows signed, convention-shaped deviations (volumes
+  -3.34% to -3.23%; surface area +8.31%; surface-derived ratios -9.71% to
+  +12.00%; PCA -2.83% to +0.45%), while PyRadiomics' internal mesh-vs-voxel
+  volume gap on a smooth real 3D ROI is 0.09%. Full reconciliation with the
+  official reference segmentation remains out of scope.
+
+These results describe this single public phantom series and geometric
+ROIs; they do not establish clinical accuracy or generalizability.
 
 ## Scope and non-claims
 

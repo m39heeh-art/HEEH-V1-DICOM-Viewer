@@ -1,6 +1,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
-[![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg?branch=publication-v1.0.2)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
+[![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/tests-328%20passed-brightgreen)](verification/tests)
+[![real-data study](https://img.shields.io/badge/real--data%20study-172%2F172%20exact-blue)](docs/tcia_full_series_study_report.md)
 # HEEH-V1(TM) DICOM Viewer
 
 HEEH-V1(TM) DICOM Viewer is a Streamlit web application for **medical-image
@@ -560,6 +562,30 @@ Example:
 Fine-tuning remains research-only and requires independent dataset governance,
 split review, model validation, and reproducibility documentation.
 
+## Real-data benchmark study (v1.0.2)
+
+Beyond synthetic fixtures, the recorded public TCIA CT phantom series
+(CT-Phantom4Radiomics, CC BY 4.0, DOI 10.7937/a1v1-rc66) was downloaded
+in full and evaluated with the application's own code paths:
+
+- **Exact comparator agreement:** 172/172 slice ROIs match PyRadiomics
+  v3.0.1 with 0.0 absolute error (tolerance 1e-6), stable across ROI
+  radii of 12-36 mm.
+- **CT-number calibration:** air regions within 30 HU of the -1000 HU
+  reference on every slice (worst 14.39 HU).
+- **Export gate:** all 172 de-identified slices pass; 11/11 corrupted
+  manifest probes rejected.
+- **IBSI morphology root cause:** the recorded 58/66 reference-table
+  result is quantitatively attributed to segmentation/grid conventions
+  (volumes -3.3%, surface +8.3%, ratios up to +12.0%), with PyRadiomics'
+  internal volume definitions agreeing to 0.09% on a real 3D ROI.
+
+Reproduce with `scripts/tcia_real_evaluation.py` and
+`scripts/tcia_full_series_study.py` (the series is fetched by NBIA UID
+recorded in the scripts; ~44 MB). Reports:
+[docs/tcia_real_evaluation_report.md](docs/tcia_real_evaluation_report.md),
+[docs/tcia_full_series_study_report.md](docs/tcia_full_series_study_report.md).
+
 ## Testing and validation
 
 Run the complete suite:
@@ -606,7 +632,9 @@ Evidence labels used in this project:
   the exact scope and results are reported.
 - **Not established**: no adequate evidence is currently available.
 
-The 270/270 IBSI comparison is limited to the specific Configuration D CT
+The full suite currently collects 328 tests (328 passed, 0 failed,
+0 skipped locally; green on CI for Python 3.11/3.12). The 270/270 IBSI
+comparison is limited to the specific Configuration D CT
 phantom workflow in `verification/tests/test_ibsi_validation.py` and its
 recorded verifier output. It uses the Z-Rad reference pipeline; the separate
 default viewer radiomics call analyzes a 2D unmasked slice and is reported as

@@ -1,3 +1,6 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
+[![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
+[![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg?branch=publication-v1.0.2)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
 # HEEH-V1(TM) DICOM Viewer
 
 HEEH-V1(TM) DICOM Viewer is a Streamlit web application for **medical-image
@@ -5,6 +8,10 @@ research and education**. It supports DICOM and common volumetric-image
 workflows, calibrated measurements, image-quality and radiomics-style
 calculations, experimental AI integrations, privacy-aware exports, and
 provenance reporting.
+
+Open-source research software, version `1.0.2`, released under the MIT
+License. **Keywords:** DICOM, medical imaging, research software, radiomics,
+medical-image viewer, scientific reproducibility.
 
 **Protected project identity:** the public product name is exactly
 **HEEH-V1(TM) DICOM Viewer** (display form: **HEEH-V1™ DICOM Viewer**).
@@ -402,9 +409,12 @@ The project is standards-aware and documents relevant boundaries, including:
 - IBSI radiomics reference boundaries.
 
 Relevant reference and boundary documentation is in
-`docs/global_standards_baseline.md`. Standards references describe design
-intent and implemented conventions; they do not by themselves establish
-certification or clinical validation.
+[`docs/global_standards_baseline.md`](docs/global_standards_baseline.md) and
+[`docs/standards_traceability.md`](docs/standards_traceability.md). Release
+measurements and their limitations are documented in
+[`docs/VERIFICATION_EVIDENCE.md`](docs/VERIFICATION_EVIDENCE.md). Standards
+references describe design intent and implemented conventions; they do not
+by themselves establish certification or clinical validation.
 
 ## Requirements
 
@@ -558,6 +568,11 @@ Run the complete suite:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
+Tests requiring optional comparison dependencies, licensed IBSI reference
+assets, or recorded benchmark inputs are skipped with an explanatory reason
+when those requirements are unavailable. To run the IBSI comparison, install
+`pip install -e ".[ibsi]"` and follow `verification/README_DATA.md`.
+
 Run linting:
 
 ```powershell
@@ -704,15 +719,23 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 
 ## Citation
 
-If you use this software, please cite it using the metadata in
-`CITATION.cff` or the Zenodo record for this release.
+If you use this software, cite the metadata in
+[`CITATION.cff`](CITATION.cff) or the
+[GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
+The v1.0.2 Zenodo record is available at
+<https://zenodo.org/records/23020151>. Its assigned version DOI,
+`10.5281/zenodo.23020151`, resolves to this record as of 2026-09-28. Use the
+version-family DOI, [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910),
+when citing the software across all versions. `CITATION.cff` records the
+version DOI; `.zenodo.json` identifies the family DOI in its `isVersionOf`
+relation.
 
-[![DOI](https://zenodo.org/badge/DOI_PLACEHOLDER.svg)](https://doi.org/DOI_PLACEHOLDER)
+Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
 
-> After the Zenodo release is minted, replace both `DOI_PLACEHOLDER`
-> occurrences above with the real DOI and add the same DOI to
-> `CITATION.cff` as `preferred-identifier`.
-
+The Zenodo record archives the contents of the `v1.0.2` tag
+(`9042e58750425a5d6960ec27eada6adf891c957e`). Documentation and manifest
+updates made later on `publication-v1.0.2` are not included in that immutable
+release archive.
 
 ## Known limitations
 

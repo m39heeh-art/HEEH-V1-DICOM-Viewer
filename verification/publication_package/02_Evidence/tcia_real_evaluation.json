@@ -1,0 +1,142 @@
+{
+  "environment": {
+    "machine_architecture": "AMD64",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python_implementation": "CPython",
+    "python_version": "3.11.9"
+  },
+  "generated_at_utc": "2026-09-30T11:24:03.054884+00:00",
+  "hu_calibration_probe": {
+    "air_abs_deviation_hu": 6.2305589778318335,
+    "air_mean_hu": -993.7694410221682,
+    "air_pixel_count": 122563,
+    "air_reference_hu": -1000.0,
+    "air_std_hu": 12.200062846207148,
+    "air_within_30hu_of_reference": true,
+    "note": "CT-number accuracy is assessed on the phantom's air regions (HU <= -950), which should reproduce -1000 HU within tolerance. The whole-slice mean is dominated by tissue-equivalent inserts and is recorded for completeness only.",
+    "slice": "middle axial slice of the real series",
+    "soft_tissue_insert_mean_hu": 33.30204569352834,
+    "soft_tissue_insert_voxels": 104610,
+    "whole_slice_mean_hu": -526.8067016601562
+  },
+  "input_fingerprints": {
+    "dicom_file_count": 172,
+    "downloaded_zip_sha256": "fe6d292dc6989ca85d8323781067a3781ddc21c62105403ee83af512725539ea",
+    "ordered_source_files_aggregate_sha256": "33f6c4d9a382db93c85f2652db64e871bc631fd21bf1997fa413355451b39a5b",
+    "paths_recorded": false,
+    "zip_bytes": 44282129
+  },
+  "real_export_validation": {
+    "archive_bytes": 278636,
+    "deidentification_markers": {
+      "identity_removed": "",
+      "patient_id": "NEURO_34319c148f30bb44",
+      "patient_name": "ANONYMOUS"
+    },
+    "estimate_scope": "One real de-identified CT slice exported through the application's own packaging path and validated by the application's own gate; not a clinical performance estimate.",
+    "sensitivity": 1.0,
+    "source_slice": "00000013.dcm",
+    "specificity": 0.0,
+    "tamper_method": "manifest sha256 value corrupted before re-compression, archive rebuilt",
+    "tampered_manifest_rejected": true,
+    "tn": 0,
+    "tp": 1,
+    "valid_archive_accepted": true
+  },
+  "real_roi_radiomics": {
+    "definition": {
+      "center_col": 255.5,
+      "center_row": 255.5,
+      "definition": "centered ellipsoid cylinder on the mid axial slice; radius given in mm",
+      "mask_sha256": "174fc22291499562bbbe2c126b7df3f7cf8e4c5f3c29168268e95d141e21e792",
+      "radius_mm": 24.0,
+      "radius_pixels_col": 35.10857142857143,
+      "radius_pixels_row": 35.10857142857143,
+      "voxels": 3884
+    },
+    "extras": {
+      "entropy": 2.3759,
+      "kurtosis": 2.7469,
+      "skewness": -1.506
+    },
+    "measured_firstorder": {
+      "max": 157.0,
+      "mean": 58.674047373841404,
+      "min": -95.0,
+      "std": 36.666333556431496
+    },
+    "preprocessing": {
+      "bin_width": 25.0,
+      "discretization": "fixed_bin_width",
+      "levels": 256,
+      "spacing_applied_to_extractor": [
+        0.68359375,
+        0.68359375
+      ]
+    },
+    "pyradiomics_reference_comparison": {
+      "absolute_errors": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "std": 0.0
+      },
+      "all_within_tolerance": true,
+      "comparator": "PyRadiomics v3.0.1 (matched first-order; binWidth 25.0; voxelArrayShift 0.0; tolerance 1e-6)",
+      "tolerance": 1e-06,
+      "values": {
+        "max": 157.0,
+        "mean": 58.674047373841404,
+        "min": -95.0,
+        "std": 36.666333556431496
+      }
+    },
+    "slice_index": 86
+  },
+  "schema": "heeh-v1.tcia-real-evaluation",
+  "schema_version": 1,
+  "scope_and_non_claims": [
+    "Single real public phantom series; results describe this series only.",
+    "The radiomics ROI is a defined geometric region, not a clinical lesion; no diagnostic meaning is attached to its values.",
+    "PyRadiomics agreement is matched first-order only, at one preprocessing setting.",
+    "The export check exercises the real packaging path on one real de-identified slice; it does not estimate clinical privacy performance at scale.",
+    "No clinical accuracy, diagnostic, or full IBSI compliance claim is made."
+  ],
+  "series_geometry": {
+    "columns": 512,
+    "hu_range_volume": [
+      -1024.0,
+      919.0
+    ],
+    "rows": 512,
+    "slices_loaded": 172,
+    "spacing_mm_xyz": [
+      0.68359375,
+      0.68359375,
+      2.0
+    ]
+  },
+  "series_provenance": {
+    "collection": "CT-Phantom4Radiomics",
+    "data_doi": "https://doi.org/10.7937/a1v1-rc66",
+    "download": "NBIA API v4 getImage (real archive download; 173 ZIP entries: LICENSE + 172 DICOM slices)",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "privacy_note": "Public research phantom collection derived from real patient data as described by the data submitter; the processed series is a task-based anthropomorphic phantom scan published for research use. No human-subject identifiable data are stored in this repository.",
+    "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.329084730054548979029758794636987310879",
+    "study_instance_uid": "1.3.6.1.4.1.14519.5.2.1.202237558327911947882539784272436897971"
+  },
+  "software": {
+    "name": "HEEH-V1 DICOM Viewer",
+    "packages": {
+      "SimpleITK": "2.5.6",
+      "numpy": "2.4.6",
+      "pydicom": "3.0.2",
+      "pyradiomics": "3.0.1",
+      "z-rad": "26.9.0"
+    },
+    "requirements_lock_sha256": "034e31309cbfcc5c4d567ae125c9b9731e6ad428d9e69e67834fdbe2a7847614",
+    "script_sha256": "df7f6ec016eccda5018e7ab4d8df940a129f8cb13e43febeb4f2dca56b3f9b38",
+    "version": "1.0.2"
+  }
+}

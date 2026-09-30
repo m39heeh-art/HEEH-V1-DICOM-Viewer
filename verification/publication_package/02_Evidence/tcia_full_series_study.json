@@ -1,0 +1,5135 @@
+{
+  "air_calibration_all_slices": {
+    "all_within_tolerance": true,
+    "max_deviation_hu": 14.390120480933092,
+    "per_slice": [
+      {
+        "air_mean_hu": -1001.1253802250278,
+        "air_pixels": 244592,
+        "slice": 0
+      },
+      {
+        "air_mean_hu": -1000.9794535108088,
+        "air_pixels": 244616,
+        "slice": 1
+      },
+      {
+        "air_mean_hu": -1000.9150196416673,
+        "air_pixels": 244633,
+        "slice": 2
+      },
+      {
+        "air_mean_hu": -1000.9056068655497,
+        "air_pixels": 244700,
+        "slice": 3
+      },
+      {
+        "air_mean_hu": -1000.8746648683996,
+        "air_pixels": 244680,
+        "slice": 4
+      },
+      {
+        "air_mean_hu": -1000.7765794347437,
+        "air_pixels": 244597,
+        "slice": 5
+      },
+      {
+        "air_mean_hu": -1000.6321824040301,
+        "air_pixels": 244556,
+        "slice": 6
+      },
+      {
+        "air_mean_hu": -999.8514612182134,
+        "air_pixels": 244522,
+        "slice": 7
+      },
+      {
+        "air_mean_hu": -995.9817610397475,
+        "air_pixels": 244367,
+        "slice": 8
+      },
+      {
+        "air_mean_hu": -985.6098795190669,
+        "air_pixels": 242279,
+        "slice": 9
+      },
+      {
+        "air_mean_hu": -997.3706947693989,
+        "air_pixels": 150021,
+        "slice": 10
+      },
+      {
+        "air_mean_hu": -1009.1948656518733,
+        "air_pixels": 102681,
+        "slice": 11
+      },
+      {
+        "air_mean_hu": -1006.5646194887141,
+        "air_pixels": 101587,
+        "slice": 12
+      },
+      {
+        "air_mean_hu": -997.2180997559066,
+        "air_pixels": 108565,
+        "slice": 13
+      },
+      {
+        "air_mean_hu": -992.8718297338283,
+        "air_pixels": 114738,
+        "slice": 14
+      },
+      {
+        "air_mean_hu": -990.5407295956077,
+        "air_pixels": 113652,
+        "slice": 15
+      },
+      {
+        "air_mean_hu": -988.8209954909601,
+        "air_pixels": 114215,
+        "slice": 16
+      },
+      {
+        "air_mean_hu": -988.5964265899161,
+        "air_pixels": 115352,
+        "slice": 17
+      },
+      {
+        "air_mean_hu": -988.7881315846055,
+        "air_pixels": 116275,
+        "slice": 18
+      },
+      {
+        "air_mean_hu": -988.8310920997584,
+        "air_pixels": 117123,
+        "slice": 19
+      },
+      {
+        "air_mean_hu": -988.8486346857177,
+        "air_pixels": 117299,
+        "slice": 20
+      },
+      {
+        "air_mean_hu": -989.0181269911579,
+        "air_pixels": 117394,
+        "slice": 21
+      },
+      {
+        "air_mean_hu": -989.4203813001571,
+        "air_pixels": 117755,
+        "slice": 22
+      },
+      {
+        "air_mean_hu": -989.7563638214313,
+        "air_pixels": 117893,
+        "slice": 23
+      },
+      {
+        "air_mean_hu": -989.6160479812954,
+        "air_pixels": 118046,
+        "slice": 24
+      },
+      {
+        "air_mean_hu": -989.3661353230456,
+        "air_pixels": 117940,
+        "slice": 25
+      },
+      {
+        "air_mean_hu": -989.3582237595056,
+        "air_pixels": 117957,
+        "slice": 26
+      },
+      {
+        "air_mean_hu": -989.6684276026718,
+        "air_pixels": 118119,
+        "slice": 27
+      },
+      {
+        "air_mean_hu": -989.9852339230744,
+        "air_pixels": 118244,
+        "slice": 28
+      },
+      {
+        "air_mean_hu": -990.1811102844194,
+        "air_pixels": 118276,
+        "slice": 29
+      },
+      {
+        "air_mean_hu": -990.2605692226944,
+        "air_pixels": 118126,
+        "slice": 30
+      },
+      {
+        "air_mean_hu": -990.1582216355266,
+        "air_pixels": 118176,
+        "slice": 31
+      },
+      {
+        "air_mean_hu": -990.0916186582419,
+        "air_pixels": 118382,
+        "slice": 32
+      },
+      {
+        "air_mean_hu": -990.1004893688829,
+        "air_pixels": 118520,
+        "slice": 33
+      },
+      {
+        "air_mean_hu": -990.0954368743728,
+        "air_pixels": 118581,
+        "slice": 34
+      },
+      {
+        "air_mean_hu": -990.0352974905559,
+        "air_pixels": 118592,
+        "slice": 35
+      },
+      {
+        "air_mean_hu": -989.765064205322,
+        "air_pixels": 118526,
+        "slice": 36
+      },
+      {
+        "air_mean_hu": -989.4858489375132,
+        "air_pixels": 118825,
+        "slice": 37
+      },
+      {
+        "air_mean_hu": -989.5915856571025,
+        "air_pixels": 118916,
+        "slice": 38
+      },
+      {
+        "air_mean_hu": -989.8564873391028,
+        "air_pixels": 118554,
+        "slice": 39
+      },
+      {
+        "air_mean_hu": -990.159864146735,
+        "air_pixels": 118363,
+        "slice": 40
+      },
+      {
+        "air_mean_hu": -990.6022750304013,
+        "air_pixels": 118416,
+        "slice": 41
+      },
+      {
+        "air_mean_hu": -990.5759645793802,
+        "air_pixels": 118575,
+        "slice": 42
+      },
+      {
+        "air_mean_hu": -989.9941688255795,
+        "air_pixels": 118501,
+        "slice": 43
+      },
+      {
+        "air_mean_hu": -989.8822247929139,
+        "air_pixels": 118429,
+        "slice": 44
+      },
+      {
+        "air_mean_hu": -990.0629639650303,
+        "air_pixels": 118274,
+        "slice": 45
+      },
+      {
+        "air_mean_hu": -989.9876470090533,
+        "air_pixels": 118190,
+        "slice": 46
+      },
+      {
+        "air_mean_hu": -989.9222959814398,
+        "air_pixels": 118102,
+        "slice": 47
+      },
+      {
+        "air_mean_hu": -990.0107741657004,
+        "air_pixels": 118153,
+        "slice": 48
+      },
+      {
+        "air_mean_hu": -990.0974332066721,
+        "air_pixels": 118163,
+        "slice": 49
+      },
+      {
+        "air_mean_hu": -990.096568033294,
+        "air_pixels": 117979,
+        "slice": 50
+      },
+      {
+        "air_mean_hu": -990.0568139400726,
+        "air_pixels": 117876,
+        "slice": 51
+      },
+      {
+        "air_mean_hu": -989.9271645692077,
+        "air_pixels": 117841,
+        "slice": 52
+      },
+      {
+        "air_mean_hu": -989.8537905370388,
+        "air_pixels": 117701,
+        "slice": 53
+      },
+      {
+        "air_mean_hu": -989.8721380227424,
+        "air_pixels": 117314,
+        "slice": 54
+      },
+      {
+        "air_mean_hu": -989.782473358791,
+        "air_pixels": 117581,
+        "slice": 55
+      },
+      {
+        "air_mean_hu": -989.5965345903937,
+        "air_pixels": 117735,
+        "slice": 56
+      },
+      {
+        "air_mean_hu": -989.4995085495433,
+        "air_pixels": 118018,
+        "slice": 57
+      },
+      {
+        "air_mean_hu": -990.4952769374668,
+        "air_pixels": 118673,
+        "slice": 58
+      },
+      {
+        "air_mean_hu": -992.3299321147953,
+        "air_pixels": 119761,
+        "slice": 59
+      },
+      {
+        "air_mean_hu": -992.283052889609,
+        "air_pixels": 120345,
+        "slice": 60
+      },
+      {
+        "air_mean_hu": -991.7115838660053,
+        "air_pixels": 121557,
+        "slice": 61
+      },
+      {
+        "air_mean_hu": -992.3134719266656,
+        "air_pixels": 122180,
+        "slice": 62
+      },
+      {
+        "air_mean_hu": -993.0157667598451,
+        "air_pixels": 122346,
+        "slice": 63
+      },
+      {
+        "air_mean_hu": -993.5614356075766,
+        "air_pixels": 122429,
+        "slice": 64
+      },
+      {
+        "air_mean_hu": -993.90723721295,
+        "air_pixels": 122409,
+        "slice": 65
+      },
+      {
+        "air_mean_hu": -994.084370429084,
+        "air_pixels": 122377,
+        "slice": 66
+      },
+      {
+        "air_mean_hu": -994.0639982352076,
+        "air_pixels": 122394,
+        "slice": 67
+      },
+      {
+        "air_mean_hu": -994.0149799885648,
+        "air_pixels": 122430,
+        "slice": 68
+      },
+      {
+        "air_mean_hu": -993.9976149636527,
+        "air_pixels": 122430,
+        "slice": 69
+      },
+      {
+        "air_mean_hu": -994.053760279622,
+        "air_pixels": 122451,
+        "slice": 70
+      },
+      {
+        "air_mean_hu": -993.9778129952456,
+        "air_pixels": 122414,
+        "slice": 71
+      },
+      {
+        "air_mean_hu": -993.7797629750715,
+        "air_pixels": 122350,
+        "slice": 72
+      },
+      {
+        "air_mean_hu": -993.7569101436002,
+        "air_pixels": 122284,
+        "slice": 73
+      },
+      {
+        "air_mean_hu": -993.9232222758468,
+        "air_pixels": 122249,
+        "slice": 74
+      },
+      {
+        "air_mean_hu": -994.1192368709419,
+        "air_pixels": 122286,
+        "slice": 75
+      },
+      {
+        "air_mean_hu": -994.1320172178615,
+        "air_pixels": 122431,
+        "slice": 76
+      },
+      {
+        "air_mean_hu": -993.9636519467798,
+        "air_pixels": 122510,
+        "slice": 77
+      },
+      {
+        "air_mean_hu": -993.413365750977,
+        "air_pixels": 122567,
+        "slice": 78
+      },
+      {
+        "air_mean_hu": -993.1419717345033,
+        "air_pixels": 122623,
+        "slice": 79
+      },
+      {
+        "air_mean_hu": -993.6081331922169,
+        "air_pixels": 122830,
+        "slice": 80
+      },
+      {
+        "air_mean_hu": -993.5777091951402,
+        "air_pixels": 122804,
+        "slice": 81
+      },
+      {
+        "air_mean_hu": -993.605816635022,
+        "air_pixels": 122717,
+        "slice": 82
+      },
+      {
+        "air_mean_hu": -993.6972237627639,
+        "air_pixels": 122612,
+        "slice": 83
+      },
+      {
+        "air_mean_hu": -993.7507077992543,
+        "air_pixels": 122563,
+        "slice": 84
+      },
+      {
+        "air_mean_hu": -993.8537232306085,
+        "air_pixels": 122528,
+        "slice": 85
+      },
+      {
+        "air_mean_hu": -993.7694410221682,
+        "air_pixels": 122563,
+        "slice": 86
+      },
+      {
+        "air_mean_hu": -993.9035375281338,
+        "air_pixels": 122628,
+        "slice": 87
+      },
+      {
+        "air_mean_hu": -994.0276288122055,
+        "air_pixels": 122698,
+        "slice": 88
+      },
+      {
+        "air_mean_hu": -993.9738168728469,
+        "air_pixels": 122789,
+        "slice": 89
+      },
+      {
+        "air_mean_hu": -994.0813369475852,
+        "air_pixels": 122847,
+        "slice": 90
+      },
+      {
+        "air_mean_hu": -994.1181702771764,
+        "air_pixels": 122882,
+        "slice": 91
+      },
+      {
+        "air_mean_hu": -994.0432301292019,
+        "air_pixels": 122831,
+        "slice": 92
+      },
+      {
+        "air_mean_hu": -993.9087732160312,
+        "air_pixels": 122760,
+        "slice": 93
+      },
+      {
+        "air_mean_hu": -993.8131812627291,
+        "air_pixels": 122750,
+        "slice": 94
+      },
+      {
+        "air_mean_hu": -993.8799606081323,
+        "air_pixels": 122868,
+        "slice": 95
+      },
+      {
+        "air_mean_hu": -993.9604762059762,
+        "air_pixels": 122888,
+        "slice": 96
+      },
+      {
+        "air_mean_hu": -993.8772457768415,
+        "air_pixels": 122953,
+        "slice": 97
+      },
+      {
+        "air_mean_hu": -993.9650680587403,
+        "air_pixels": 122982,
+        "slice": 98
+      },
+      {
+        "air_mean_hu": -994.1361943938606,
+        "air_pixels": 123008,
+        "slice": 99
+      },
+      {
+        "air_mean_hu": -994.2293986093604,
+        "air_pixels": 122965,
+        "slice": 100
+      },
+      {
+        "air_mean_hu": -994.1915264452444,
+        "air_pixels": 122782,
+        "slice": 101
+      },
+      {
+        "air_mean_hu": -994.1302093523773,
+        "air_pixels": 122664,
+        "slice": 102
+      },
+      {
+        "air_mean_hu": -994.1587196791862,
+        "air_pixels": 122688,
+        "slice": 103
+      },
+      {
+        "air_mean_hu": -994.2075207211025,
+        "air_pixels": 122701,
+        "slice": 104
+      },
+      {
+        "air_mean_hu": -994.2956616724,
+        "air_pixels": 122674,
+        "slice": 105
+      },
+      {
+        "air_mean_hu": -994.4453891006222,
+        "air_pixels": 122796,
+        "slice": 106
+      },
+      {
+        "air_mean_hu": -994.5147318629965,
+        "air_pixels": 122829,
+        "slice": 107
+      },
+      {
+        "air_mean_hu": -994.4890977902576,
+        "air_pixels": 122865,
+        "slice": 108
+      },
+      {
+        "air_mean_hu": -994.4148414035602,
+        "air_pixels": 122859,
+        "slice": 109
+      },
+      {
+        "air_mean_hu": -994.2723017307347,
+        "air_pixels": 122838,
+        "slice": 110
+      },
+      {
+        "air_mean_hu": -994.1397600762283,
+        "air_pixels": 122789,
+        "slice": 111
+      },
+      {
+        "air_mean_hu": -994.1435206688342,
+        "air_pixels": 122721,
+        "slice": 112
+      },
+      {
+        "air_mean_hu": -994.3301550046452,
+        "air_pixels": 122706,
+        "slice": 113
+      },
+      {
+        "air_mean_hu": -994.4748426392632,
+        "air_pixels": 122807,
+        "slice": 114
+      },
+      {
+        "air_mean_hu": -994.4919362721141,
+        "air_pixels": 122772,
+        "slice": 115
+      },
+      {
+        "air_mean_hu": -994.5343707250343,
+        "air_pixels": 122808,
+        "slice": 116
+      },
+      {
+        "air_mean_hu": -994.9024598704132,
+        "air_pixels": 122852,
+        "slice": 117
+      },
+      {
+        "air_mean_hu": -994.7333848531684,
+        "air_pixels": 122930,
+        "slice": 118
+      },
+      {
+        "air_mean_hu": -994.4710198569907,
+        "air_pixels": 122929,
+        "slice": 119
+      },
+      {
+        "air_mean_hu": -994.5611779648597,
+        "air_pixels": 122822,
+        "slice": 120
+      },
+      {
+        "air_mean_hu": -994.5624826866984,
+        "air_pixels": 122738,
+        "slice": 121
+      },
+      {
+        "air_mean_hu": -994.6657457663032,
+        "air_pixels": 122706,
+        "slice": 122
+      },
+      {
+        "air_mean_hu": -994.7837989782699,
+        "air_pixels": 122733,
+        "slice": 123
+      },
+      {
+        "air_mean_hu": -994.8277055924402,
+        "air_pixels": 122755,
+        "slice": 124
+      },
+      {
+        "air_mean_hu": -994.8561828504403,
+        "air_pixels": 122767,
+        "slice": 125
+      },
+      {
+        "air_mean_hu": -994.8719493332899,
+        "air_pixels": 122842,
+        "slice": 126
+      },
+      {
+        "air_mean_hu": -994.8566242307818,
+        "air_pixels": 122852,
+        "slice": 127
+      },
+      {
+        "air_mean_hu": -994.8064195923681,
+        "air_pixels": 122905,
+        "slice": 128
+      },
+      {
+        "air_mean_hu": -994.799599703846,
+        "air_pixels": 122909,
+        "slice": 129
+      },
+      {
+        "air_mean_hu": -994.8088224524172,
+        "air_pixels": 122891,
+        "slice": 130
+      },
+      {
+        "air_mean_hu": -994.8307386659718,
+        "air_pixels": 122816,
+        "slice": 131
+      },
+      {
+        "air_mean_hu": -994.7245756157134,
+        "air_pixels": 122825,
+        "slice": 132
+      },
+      {
+        "air_mean_hu": -994.660071942446,
+        "air_pixels": 122876,
+        "slice": 133
+      },
+      {
+        "air_mean_hu": -994.6273870062244,
+        "air_pixels": 122905,
+        "slice": 134
+      },
+      {
+        "air_mean_hu": -994.6216735142172,
+        "air_pixels": 122915,
+        "slice": 135
+      },
+      {
+        "air_mean_hu": -994.7885343164783,
+        "air_pixels": 122871,
+        "slice": 136
+      },
+      {
+        "air_mean_hu": -995.1874644013735,
+        "air_pixels": 122898,
+        "slice": 137
+      },
+      {
+        "air_mean_hu": -995.5377417596277,
+        "air_pixels": 122901,
+        "slice": 138
+      },
+      {
+        "air_mean_hu": -995.2969780891098,
+        "air_pixels": 122770,
+        "slice": 139
+      },
+      {
+        "air_mean_hu": -994.75442129724,
+        "air_pixels": 122645,
+        "slice": 140
+      },
+      {
+        "air_mean_hu": -995.0560915980768,
+        "air_pixels": 122710,
+        "slice": 141
+      },
+      {
+        "air_mean_hu": -995.1770884260617,
+        "air_pixels": 122724,
+        "slice": 142
+      },
+      {
+        "air_mean_hu": -995.0489122463945,
+        "air_pixels": 122730,
+        "slice": 143
+      },
+      {
+        "air_mean_hu": -995.0321450682655,
+        "air_pixels": 122756,
+        "slice": 144
+      },
+      {
+        "air_mean_hu": -995.037089220996,
+        "air_pixels": 122785,
+        "slice": 145
+      },
+      {
+        "air_mean_hu": -994.9509314392304,
+        "air_pixels": 122767,
+        "slice": 146
+      },
+      {
+        "air_mean_hu": -994.9052011920077,
+        "air_pixels": 122818,
+        "slice": 147
+      },
+      {
+        "air_mean_hu": -994.8412938848305,
+        "air_pixels": 122793,
+        "slice": 148
+      },
+      {
+        "air_mean_hu": -994.6998363098874,
+        "air_pixels": 122793,
+        "slice": 149
+      },
+      {
+        "air_mean_hu": -994.4396121093591,
+        "air_pixels": 122715,
+        "slice": 150
+      },
+      {
+        "air_mean_hu": -994.2807539359171,
+        "air_pixels": 122716,
+        "slice": 151
+      },
+      {
+        "air_mean_hu": -994.1238197652158,
+        "air_pixels": 122751,
+        "slice": 152
+      },
+      {
+        "air_mean_hu": -993.9541999038532,
+        "air_pixels": 122729,
+        "slice": 153
+      },
+      {
+        "air_mean_hu": -993.8795782916409,
+        "air_pixels": 122644,
+        "slice": 154
+      },
+      {
+        "air_mean_hu": -993.7496857502,
+        "air_pixels": 122514,
+        "slice": 155
+      },
+      {
+        "air_mean_hu": -993.7438061085289,
+        "air_pixels": 122419,
+        "slice": 156
+      },
+      {
+        "air_mean_hu": -994.5969364781779,
+        "air_pixels": 122147,
+        "slice": 157
+      },
+      {
+        "air_mean_hu": -997.070427073608,
+        "air_pixels": 121033,
+        "slice": 158
+      },
+      {
+        "air_mean_hu": -1000.4856171081161,
+        "air_pixels": 117605,
+        "slice": 159
+      },
+      {
+        "air_mean_hu": -1007.5992561690739,
+        "air_pixels": 101636,
+        "slice": 160
+      },
+      {
+        "air_mean_hu": -1013.1850278002478,
+        "air_pixels": 97661,
+        "slice": 161
+      },
+      {
+        "air_mean_hu": -1009.4699199538875,
+        "air_pixels": 107563,
+        "slice": 162
+      },
+      {
+        "air_mean_hu": -1001.5784350363924,
+        "air_pixels": 168579,
+        "slice": 163
+      },
+      {
+        "air_mean_hu": -993.3825186803366,
+        "air_pixels": 241698,
+        "slice": 164
+      },
+      {
+        "air_mean_hu": -999.5272246638349,
+        "air_pixels": 244374,
+        "slice": 165
+      },
+      {
+        "air_mean_hu": -1000.6143130917308,
+        "air_pixels": 244727,
+        "slice": 166
+      },
+      {
+        "air_mean_hu": -1000.8124198331712,
+        "air_pixels": 244802,
+        "slice": 167
+      },
+      {
+        "air_mean_hu": -1000.9084758780441,
+        "air_pixels": 244777,
+        "slice": 168
+      },
+      {
+        "air_mean_hu": -1000.9732778733437,
+        "air_pixels": 244741,
+        "slice": 169
+      },
+      {
+        "air_mean_hu": -1001.034010714417,
+        "air_pixels": 244717,
+        "slice": 170
+      },
+      {
+        "air_mean_hu": -1001.0594437590385,
+        "air_pixels": 244786,
+        "slice": 171
+      }
+    ],
+    "reference_hu": -1000.0,
+    "tolerance_hu": 30.0,
+    "worst_slice": 9
+  },
+  "all_slices_firstorder_agreement": {
+    "agreement_rate": 1.0,
+    "max_absolute_error": 0.0,
+    "n": 172,
+    "per_slice": [
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -999.0,
+          "mean": -1002.2605561277034,
+          "min": -1007.0,
+          "std": 1.0906773279331492
+        },
+        "pyradiomics": {
+          "max": -999.0,
+          "mean": -1002.2605561277034,
+          "min": -1007.0,
+          "std": 1.0906773279331492
+        },
+        "roi_voxels": 3884,
+        "slice": 0
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.9312564366633,
+          "min": -1006.0,
+          "std": 1.078610201215475
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.9312564366633,
+          "min": -1006.0,
+          "std": 1.078610201215475
+        },
+        "roi_voxels": 3884,
+        "slice": 1
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.869464469619,
+          "min": -1006.0,
+          "std": 1.0812533357308287
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.869464469619,
+          "min": -1006.0,
+          "std": 1.0812533357308287
+        },
+        "roi_voxels": 3884,
+        "slice": 2
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.942842430484,
+          "min": -1006.0,
+          "std": 1.102066103316008
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.942842430484,
+          "min": -1006.0,
+          "std": 1.102066103316008
+        },
+        "roi_voxels": 3884,
+        "slice": 3
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.8905767250258,
+          "min": -1006.0,
+          "std": 1.0656241683690069
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.8905767250258,
+          "min": -1006.0,
+          "std": 1.0656241683690069
+        },
+        "roi_voxels": 3884,
+        "slice": 4
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.6784243048404,
+          "min": -1005.0,
+          "std": 1.0591847267898493
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.6784243048404,
+          "min": -1005.0,
+          "std": 1.0591847267898493
+        },
+        "roi_voxels": 3884,
+        "slice": 5
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -997.0,
+          "mean": -1001.3934088568486,
+          "min": -1006.0,
+          "std": 1.0685648848645712
+        },
+        "pyradiomics": {
+          "max": -997.0,
+          "mean": -1001.3934088568486,
+          "min": -1006.0,
+          "std": 1.0685648848645712
+        },
+        "roi_voxels": 3884,
+        "slice": 6
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -997.0,
+          "mean": -1001.4145211122554,
+          "min": -1005.0,
+          "std": 1.1520166584633815
+        },
+        "pyradiomics": {
+          "max": -997.0,
+          "mean": -1001.4145211122554,
+          "min": -1005.0,
+          "std": 1.1520166584633815
+        },
+        "roi_voxels": 3884,
+        "slice": 7
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -996.0,
+          "mean": -1001.0605046343975,
+          "min": -1005.0,
+          "std": 1.49240968438443
+        },
+        "pyradiomics": {
+          "max": -996.0,
+          "mean": -1001.0605046343975,
+          "min": -1005.0,
+          "std": 1.49240968438443
+        },
+        "roi_voxels": 3884,
+        "slice": 8
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -979.0,
+          "mean": -987.6537075180227,
+          "min": -995.0,
+          "std": 2.7487117388722533
+        },
+        "pyradiomics": {
+          "max": -979.0,
+          "mean": -987.6537075180227,
+          "min": -995.0,
+          "std": 2.7487117388722533
+        },
+        "roi_voxels": 3884,
+        "slice": 9
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -916.0,
+          "mean": -929.7842430484037,
+          "min": -942.0,
+          "std": 5.643438897858521
+        },
+        "pyradiomics": {
+          "max": -916.0,
+          "mean": -929.7842430484037,
+          "min": -942.0,
+          "std": 5.643438897858521
+        },
+        "roi_voxels": 3884,
+        "slice": 10
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -663.0,
+          "mean": -708.8470648815654,
+          "min": -742.0,
+          "std": 12.465246812630983
+        },
+        "pyradiomics": {
+          "max": -663.0,
+          "mean": -708.8470648815654,
+          "min": -742.0,
+          "std": 12.465246812630983
+        },
+        "roi_voxels": 3884,
+        "slice": 11
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -265.0,
+          "mean": -342.4006179196704,
+          "min": -420.0,
+          "std": 23.669163686279173
+        },
+        "pyradiomics": {
+          "max": -265.0,
+          "mean": -342.4006179196704,
+          "min": -420.0,
+          "std": 23.669163686279173
+        },
+        "roi_voxels": 3884,
+        "slice": 12
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 67.0,
+          "mean": -117.41580844490217,
+          "min": -325.0,
+          "std": 46.40465200210012
+        },
+        "pyradiomics": {
+          "max": 67.0,
+          "mean": -117.41580844490217,
+          "min": -325.0,
+          "std": 46.40465200210012
+        },
+        "roi_voxels": 3884,
+        "slice": 13
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 174.0,
+          "mean": -27.70417095777549,
+          "min": -311.0,
+          "std": 57.53811500903211
+        },
+        "pyradiomics": {
+          "max": 174.0,
+          "mean": -27.70417095777549,
+          "min": -311.0,
+          "std": 57.53811500903211
+        },
+        "roi_voxels": 3884,
+        "slice": 14
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 166.0,
+          "mean": 17.42147270854789,
+          "min": -240.0,
+          "std": 48.205941900292366
+        },
+        "pyradiomics": {
+          "max": 166.0,
+          "mean": 17.42147270854789,
+          "min": -240.0,
+          "std": 48.205941900292366
+        },
+        "roi_voxels": 3884,
+        "slice": 15
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 150.0,
+          "mean": 40.078269824922764,
+          "min": -163.0,
+          "std": 35.8335931355829
+        },
+        "pyradiomics": {
+          "max": 150.0,
+          "mean": 40.078269824922764,
+          "min": -163.0,
+          "std": 35.8335931355829
+        },
+        "roi_voxels": 3884,
+        "slice": 16
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 132.0,
+          "mean": 51.18151390319259,
+          "min": -79.0,
+          "std": 27.986042905386316
+        },
+        "pyradiomics": {
+          "max": 132.0,
+          "mean": 51.18151390319259,
+          "min": -79.0,
+          "std": 27.986042905386316
+        },
+        "roi_voxels": 3884,
+        "slice": 17
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 185.0,
+          "mean": 55.29454170957776,
+          "min": -53.0,
+          "std": 28.42702115037908
+        },
+        "pyradiomics": {
+          "max": 185.0,
+          "mean": 55.29454170957776,
+          "min": -53.0,
+          "std": 28.42702115037908
+        },
+        "roi_voxels": 3884,
+        "slice": 18
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 59.33316168898043,
+          "min": -29.0,
+          "std": 26.259718855900807
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 59.33316168898043,
+          "min": -29.0,
+          "std": 26.259718855900807
+        },
+        "roi_voxels": 3884,
+        "slice": 19
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 154.0,
+          "mean": 63.10144181256437,
+          "min": -22.0,
+          "std": 24.694842166757272
+        },
+        "pyradiomics": {
+          "max": 154.0,
+          "mean": 63.10144181256437,
+          "min": -22.0,
+          "std": 24.694842166757272
+        },
+        "roi_voxels": 3884,
+        "slice": 20
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 64.8143666323378,
+          "min": -22.0,
+          "std": 24.163189390253248
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 64.8143666323378,
+          "min": -22.0,
+          "std": 24.163189390253248
+        },
+        "roi_voxels": 3884,
+        "slice": 21
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 69.15705458290422,
+          "min": -26.0,
+          "std": 23.891523413452695
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 69.15705458290422,
+          "min": -26.0,
+          "std": 23.891523413452695
+        },
+        "roi_voxels": 3884,
+        "slice": 22
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 166.0,
+          "mean": 75.53115345005149,
+          "min": -14.0,
+          "std": 23.27785879766551
+        },
+        "pyradiomics": {
+          "max": 166.0,
+          "mean": 75.53115345005149,
+          "min": -14.0,
+          "std": 23.27785879766551
+        },
+        "roi_voxels": 3884,
+        "slice": 23
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 162.0,
+          "mean": 76.71035015447991,
+          "min": -4.0,
+          "std": 23.96863909621403
+        },
+        "pyradiomics": {
+          "max": 162.0,
+          "mean": 76.71035015447991,
+          "min": -4.0,
+          "std": 23.96863909621403
+        },
+        "roi_voxels": 3884,
+        "slice": 24
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 154.0,
+          "mean": 74.3676622039135,
+          "min": -11.0,
+          "std": 24.184053196997905
+        },
+        "pyradiomics": {
+          "max": 154.0,
+          "mean": 74.3676622039135,
+          "min": -11.0,
+          "std": 24.184053196997905
+        },
+        "roi_voxels": 3884,
+        "slice": 25
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 169.0,
+          "mean": 76.47116374871267,
+          "min": -7.0,
+          "std": 24.6135411598863
+        },
+        "pyradiomics": {
+          "max": 169.0,
+          "mean": 76.47116374871267,
+          "min": -7.0,
+          "std": 24.6135411598863
+        },
+        "roi_voxels": 3884,
+        "slice": 26
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 181.0,
+          "mean": 80.13748712667353,
+          "min": -6.0,
+          "std": 24.602800269910357
+        },
+        "pyradiomics": {
+          "max": 181.0,
+          "mean": 80.13748712667353,
+          "min": -6.0,
+          "std": 24.602800269910357
+        },
+        "roi_voxels": 3884,
+        "slice": 27
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 167.0,
+          "mean": 77.64598352214212,
+          "min": -5.0,
+          "std": 23.658509764561504
+        },
+        "pyradiomics": {
+          "max": 167.0,
+          "mean": 77.64598352214212,
+          "min": -5.0,
+          "std": 23.658509764561504
+        },
+        "roi_voxels": 3884,
+        "slice": 28
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 150.0,
+          "mean": 74.54454170957776,
+          "min": -30.0,
+          "std": 23.106408212552843
+        },
+        "pyradiomics": {
+          "max": 150.0,
+          "mean": 74.54454170957776,
+          "min": -30.0,
+          "std": 23.106408212552843
+        },
+        "roi_voxels": 3884,
+        "slice": 29
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 74.5669412976313,
+          "min": -24.0,
+          "std": 22.750853557751075
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 74.5669412976313,
+          "min": -24.0,
+          "std": 22.750853557751075
+        },
+        "roi_voxels": 3884,
+        "slice": 30
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 152.0,
+          "mean": 74.71292481977343,
+          "min": -11.0,
+          "std": 22.615608196152643
+        },
+        "pyradiomics": {
+          "max": 152.0,
+          "mean": 74.71292481977343,
+          "min": -11.0,
+          "std": 22.615608196152643
+        },
+        "roi_voxels": 3884,
+        "slice": 31
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 161.0,
+          "mean": 73.8491246138002,
+          "min": -12.0,
+          "std": 23.111445770402845
+        },
+        "pyradiomics": {
+          "max": 161.0,
+          "mean": 73.8491246138002,
+          "min": -12.0,
+          "std": 23.111445770402845
+        },
+        "roi_voxels": 3884,
+        "slice": 32
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 175.0,
+          "mean": 74.57621009268794,
+          "min": -16.0,
+          "std": 24.210300096131366
+        },
+        "pyradiomics": {
+          "max": 175.0,
+          "mean": 74.57621009268794,
+          "min": -16.0,
+          "std": 24.210300096131366
+        },
+        "roi_voxels": 3884,
+        "slice": 33
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 170.0,
+          "mean": 78.27342945417095,
+          "min": 5.0,
+          "std": 23.646924506144497
+        },
+        "pyradiomics": {
+          "max": 170.0,
+          "mean": 78.27342945417095,
+          "min": 5.0,
+          "std": 23.646924506144497
+        },
+        "roi_voxels": 3884,
+        "slice": 34
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 161.0,
+          "mean": 79.10195674562307,
+          "min": -6.0,
+          "std": 23.784626366036747
+        },
+        "pyradiomics": {
+          "max": 161.0,
+          "mean": 79.10195674562307,
+          "min": -6.0,
+          "std": 23.784626366036747
+        },
+        "roi_voxels": 3884,
+        "slice": 35
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 161.0,
+          "mean": 75.65190525231719,
+          "min": -17.0,
+          "std": 24.48319257819729
+        },
+        "pyradiomics": {
+          "max": 161.0,
+          "mean": 75.65190525231719,
+          "min": -17.0,
+          "std": 24.48319257819729
+        },
+        "roi_voxels": 3884,
+        "slice": 36
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 151.0,
+          "mean": 73.81771369721936,
+          "min": -11.0,
+          "std": 22.844383222672327
+        },
+        "pyradiomics": {
+          "max": 151.0,
+          "mean": 73.81771369721936,
+          "min": -11.0,
+          "std": 22.844383222672327
+        },
+        "roi_voxels": 3884,
+        "slice": 37
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 159.0,
+          "mean": 74.96601441812564,
+          "min": -4.0,
+          "std": 22.146022708564104
+        },
+        "pyradiomics": {
+          "max": 159.0,
+          "mean": 74.96601441812564,
+          "min": -4.0,
+          "std": 22.146022708564104
+        },
+        "roi_voxels": 3884,
+        "slice": 38
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 76.80998970133882,
+          "min": -16.0,
+          "std": 22.680037069244484
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 76.80998970133882,
+          "min": -16.0,
+          "std": 22.680037069244484
+        },
+        "roi_voxels": 3884,
+        "slice": 39
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 81.30587023686921,
+          "min": -26.0,
+          "std": 22.15850020531092
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 81.30587023686921,
+          "min": -26.0,
+          "std": 22.15850020531092
+        },
+        "roi_voxels": 3884,
+        "slice": 40
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 173.0,
+          "mean": 86.17790937178167,
+          "min": -18.0,
+          "std": 22.741166983091645
+        },
+        "pyradiomics": {
+          "max": 173.0,
+          "mean": 86.17790937178167,
+          "min": -18.0,
+          "std": 22.741166983091645
+        },
+        "roi_voxels": 3884,
+        "slice": 41
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 173.0,
+          "mean": 86.48635427394439,
+          "min": -12.0,
+          "std": 24.313214700174395
+        },
+        "pyradiomics": {
+          "max": 173.0,
+          "mean": 86.48635427394439,
+          "min": -12.0,
+          "std": 24.313214700174395
+        },
+        "roi_voxels": 3884,
+        "slice": 42
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 164.0,
+          "mean": 79.42893923789907,
+          "min": -15.0,
+          "std": 23.62621619006623
+        },
+        "pyradiomics": {
+          "max": 164.0,
+          "mean": 79.42893923789907,
+          "min": -15.0,
+          "std": 23.62621619006623
+        },
+        "roi_voxels": 3884,
+        "slice": 43
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 154.0,
+          "mean": 72.49330587023687,
+          "min": -7.0,
+          "std": 22.643721242946718
+        },
+        "pyradiomics": {
+          "max": 154.0,
+          "mean": 72.49330587023687,
+          "min": -7.0,
+          "std": 22.643721242946718
+        },
+        "roi_voxels": 3884,
+        "slice": 44
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 155.0,
+          "mean": 69.4335736354274,
+          "min": -15.0,
+          "std": 24.152556789800467
+        },
+        "pyradiomics": {
+          "max": 155.0,
+          "mean": 69.4335736354274,
+          "min": -15.0,
+          "std": 24.152556789800467
+        },
+        "roi_voxels": 3884,
+        "slice": 45
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 163.0,
+          "mean": 68.35581874356333,
+          "min": -34.0,
+          "std": 23.705106947457992
+        },
+        "pyradiomics": {
+          "max": 163.0,
+          "mean": 68.35581874356333,
+          "min": -34.0,
+          "std": 23.705106947457992
+        },
+        "roi_voxels": 3884,
+        "slice": 46
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 168.0,
+          "mean": 69.62255406797117,
+          "min": -37.0,
+          "std": 23.570766120681604
+        },
+        "pyradiomics": {
+          "max": 168.0,
+          "mean": 69.62255406797117,
+          "min": -37.0,
+          "std": 23.570766120681604
+        },
+        "roi_voxels": 3884,
+        "slice": 47
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 71.90628218331616,
+          "min": -30.0,
+          "std": 23.900389141411438
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 71.90628218331616,
+          "min": -30.0,
+          "std": 23.900389141411438
+        },
+        "roi_voxels": 3884,
+        "slice": 48
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 164.0,
+          "mean": 71.32723995880535,
+          "min": -33.0,
+          "std": 23.41524518356089
+        },
+        "pyradiomics": {
+          "max": 164.0,
+          "mean": 71.32723995880535,
+          "min": -33.0,
+          "std": 23.41524518356089
+        },
+        "roi_voxels": 3884,
+        "slice": 49
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 166.0,
+          "mean": 70.5015447991761,
+          "min": -19.0,
+          "std": 24.25681654718761
+        },
+        "pyradiomics": {
+          "max": 166.0,
+          "mean": 70.5015447991761,
+          "min": -19.0,
+          "std": 24.25681654718761
+        },
+        "roi_voxels": 3884,
+        "slice": 50
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 151.0,
+          "mean": 73.34294541709578,
+          "min": -31.0,
+          "std": 24.117039951895112
+        },
+        "pyradiomics": {
+          "max": 151.0,
+          "mean": 73.34294541709578,
+          "min": -31.0,
+          "std": 24.117039951895112
+        },
+        "roi_voxels": 3884,
+        "slice": 51
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 165.0,
+          "mean": 79.74227600411946,
+          "min": -15.0,
+          "std": 23.411945918902376
+        },
+        "pyradiomics": {
+          "max": 165.0,
+          "mean": 79.74227600411946,
+          "min": -15.0,
+          "std": 23.411945918902376
+        },
+        "roi_voxels": 3884,
+        "slice": 52
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 171.0,
+          "mean": 83.37332646755922,
+          "min": -11.0,
+          "std": 23.653440366019183
+        },
+        "pyradiomics": {
+          "max": 171.0,
+          "mean": 83.37332646755922,
+          "min": -11.0,
+          "std": 23.653440366019183
+        },
+        "roi_voxels": 3884,
+        "slice": 53
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 172.0,
+          "mean": 84.73403707518023,
+          "min": -22.0,
+          "std": 25.097914641168728
+        },
+        "pyradiomics": {
+          "max": 172.0,
+          "mean": 84.73403707518023,
+          "min": -22.0,
+          "std": 25.097914641168728
+        },
+        "roi_voxels": 3884,
+        "slice": 54
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 176.0,
+          "mean": 87.49536560247168,
+          "min": 0.0,
+          "std": 24.53373072948571
+        },
+        "pyradiomics": {
+          "max": 176.0,
+          "mean": 87.49536560247168,
+          "min": 0.0,
+          "std": 24.53373072948571
+        },
+        "roi_voxels": 3884,
+        "slice": 55
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 176.0,
+          "mean": 89.21601441812564,
+          "min": -2.0,
+          "std": 24.08240746062754
+        },
+        "pyradiomics": {
+          "max": 176.0,
+          "mean": 89.21601441812564,
+          "min": -2.0,
+          "std": 24.08240746062754
+        },
+        "roi_voxels": 3884,
+        "slice": 56
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 173.0,
+          "mean": 87.59474768280124,
+          "min": -22.0,
+          "std": 24.097041051739307
+        },
+        "pyradiomics": {
+          "max": 173.0,
+          "mean": 87.59474768280124,
+          "min": -22.0,
+          "std": 24.097041051739307
+        },
+        "roi_voxels": 3884,
+        "slice": 57
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 170.0,
+          "mean": 90.37178166838311,
+          "min": -15.0,
+          "std": 22.937098575417238
+        },
+        "pyradiomics": {
+          "max": 170.0,
+          "mean": 90.37178166838311,
+          "min": -15.0,
+          "std": 22.937098575417238
+        },
+        "roi_voxels": 3884,
+        "slice": 58
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 185.0,
+          "mean": 96.83779608650876,
+          "min": 30.0,
+          "std": 22.005135925260998
+        },
+        "pyradiomics": {
+          "max": 185.0,
+          "mean": 96.83779608650876,
+          "min": 30.0,
+          "std": 22.005135925260998
+        },
+        "roi_voxels": 3884,
+        "slice": 59
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 211.0,
+          "mean": 93.26390319258496,
+          "min": 8.0,
+          "std": 27.07036117180727
+        },
+        "pyradiomics": {
+          "max": 211.0,
+          "mean": 93.26390319258496,
+          "min": 8.0,
+          "std": 27.07036117180727
+        },
+        "roi_voxels": 3884,
+        "slice": 60
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 202.0,
+          "mean": 74.56951596292483,
+          "min": -68.0,
+          "std": 42.040630115487225
+        },
+        "pyradiomics": {
+          "max": 202.0,
+          "mean": 74.56951596292483,
+          "min": -68.0,
+          "std": 42.040630115487225
+        },
+        "roi_voxels": 3884,
+        "slice": 61
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 186.0,
+          "mean": 57.32929969104016,
+          "min": -112.0,
+          "std": 46.19379381973442
+        },
+        "pyradiomics": {
+          "max": 186.0,
+          "mean": 57.32929969104016,
+          "min": -112.0,
+          "std": 46.19379381973442
+        },
+        "roi_voxels": 3884,
+        "slice": 62
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 223.0,
+          "mean": 51.09062821833162,
+          "min": -101.0,
+          "std": 48.41757543959427
+        },
+        "pyradiomics": {
+          "max": 223.0,
+          "mean": 51.09062821833162,
+          "min": -101.0,
+          "std": 48.41757543959427
+        },
+        "roi_voxels": 3884,
+        "slice": 63
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 244.0,
+          "mean": 47.09346035015448,
+          "min": -80.0,
+          "std": 46.470041382706185
+        },
+        "pyradiomics": {
+          "max": 244.0,
+          "mean": 47.09346035015448,
+          "min": -80.0,
+          "std": 46.470041382706185
+        },
+        "roi_voxels": 3884,
+        "slice": 64
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 158.0,
+          "mean": 39.2922245108136,
+          "min": -101.0,
+          "std": 37.32377516930506
+        },
+        "pyradiomics": {
+          "max": 158.0,
+          "mean": 39.2922245108136,
+          "min": -101.0,
+          "std": 37.32377516930506
+        },
+        "roi_voxels": 3884,
+        "slice": 65
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 106.0,
+          "mean": 34.88568486096808,
+          "min": -104.0,
+          "std": 34.35385336478025
+        },
+        "pyradiomics": {
+          "max": 106.0,
+          "mean": 34.88568486096808,
+          "min": -104.0,
+          "std": 34.35385336478025
+        },
+        "roi_voxels": 3884,
+        "slice": 66
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 111.0,
+          "mean": 35.441812564366636,
+          "min": -107.0,
+          "std": 36.1818408176469
+        },
+        "pyradiomics": {
+          "max": 111.0,
+          "mean": 35.441812564366636,
+          "min": -107.0,
+          "std": 36.1818408176469
+        },
+        "roi_voxels": 3884,
+        "slice": 67
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 134.0,
+          "mean": 38.48429454170958,
+          "min": -89.0,
+          "std": 38.40279247822217
+        },
+        "pyradiomics": {
+          "max": 134.0,
+          "mean": 38.48429454170958,
+          "min": -89.0,
+          "std": 38.40279247822217
+        },
+        "roi_voxels": 3884,
+        "slice": 68
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 186.0,
+          "mean": 42.473223480947475,
+          "min": -81.0,
+          "std": 41.439644468641866
+        },
+        "pyradiomics": {
+          "max": 186.0,
+          "mean": 42.473223480947475,
+          "min": -81.0,
+          "std": 41.439644468641866
+        },
+        "roi_voxels": 3884,
+        "slice": 69
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 158.0,
+          "mean": 44.92996910401648,
+          "min": -98.0,
+          "std": 40.28193940877867
+        },
+        "pyradiomics": {
+          "max": 158.0,
+          "mean": 44.92996910401648,
+          "min": -98.0,
+          "std": 40.28193940877867
+        },
+        "roi_voxels": 3884,
+        "slice": 70
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 134.0,
+          "mean": 44.60607621009269,
+          "min": -94.0,
+          "std": 40.05901059327363
+        },
+        "pyradiomics": {
+          "max": 134.0,
+          "mean": 44.60607621009269,
+          "min": -94.0,
+          "std": 40.05901059327363
+        },
+        "roi_voxels": 3884,
+        "slice": 71
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 138.0,
+          "mean": 44.62538619979403,
+          "min": -90.0,
+          "std": 42.93721596901816
+        },
+        "pyradiomics": {
+          "max": 138.0,
+          "mean": 44.62538619979403,
+          "min": -90.0,
+          "std": 42.93721596901816
+        },
+        "roi_voxels": 3884,
+        "slice": 72
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 135.0,
+          "mean": 47.426364572605564,
+          "min": -94.0,
+          "std": 45.646810321762
+        },
+        "pyradiomics": {
+          "max": 135.0,
+          "mean": 47.426364572605564,
+          "min": -94.0,
+          "std": 45.646810321762
+        },
+        "roi_voxels": 3884,
+        "slice": 73
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 142.0,
+          "mean": 53.61740473738414,
+          "min": -102.0,
+          "std": 47.18413178535483
+        },
+        "pyradiomics": {
+          "max": 142.0,
+          "mean": 53.61740473738414,
+          "min": -102.0,
+          "std": 47.18413178535483
+        },
+        "roi_voxels": 3884,
+        "slice": 74
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 165.0,
+          "mean": 60.66658084449022,
+          "min": -118.0,
+          "std": 49.454905189684716
+        },
+        "pyradiomics": {
+          "max": 165.0,
+          "mean": 60.66658084449022,
+          "min": -118.0,
+          "std": 49.454905189684716
+        },
+        "roi_voxels": 3884,
+        "slice": 75
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 163.0,
+          "mean": 67.47631307929969,
+          "min": -112.0,
+          "std": 49.045431818744866
+        },
+        "pyradiomics": {
+          "max": 163.0,
+          "mean": 67.47631307929969,
+          "min": -112.0,
+          "std": 49.045431818744866
+        },
+        "roi_voxels": 3884,
+        "slice": 76
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 172.0,
+          "mean": 74.35504634397529,
+          "min": -94.0,
+          "std": 44.85105052315729
+        },
+        "pyradiomics": {
+          "max": 172.0,
+          "mean": 74.35504634397529,
+          "min": -94.0,
+          "std": 44.85105052315729
+        },
+        "roi_voxels": 3884,
+        "slice": 77
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 231.0,
+          "mean": 78.58779608650876,
+          "min": -71.0,
+          "std": 42.76824554944445
+        },
+        "pyradiomics": {
+          "max": 231.0,
+          "mean": 78.58779608650876,
+          "min": -71.0,
+          "std": 42.76824554944445
+        },
+        "roi_voxels": 3884,
+        "slice": 78
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 269.0,
+          "mean": 75.36122554067971,
+          "min": -75.0,
+          "std": 43.49530971484305
+        },
+        "pyradiomics": {
+          "max": 269.0,
+          "mean": 75.36122554067971,
+          "min": -75.0,
+          "std": 43.49530971484305
+        },
+        "roi_voxels": 3884,
+        "slice": 79
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 283.0,
+          "mean": 67.69181256436663,
+          "min": -74.0,
+          "std": 43.85465443558012
+        },
+        "pyradiomics": {
+          "max": 283.0,
+          "mean": 67.69181256436663,
+          "min": -74.0,
+          "std": 43.85465443558012
+        },
+        "roi_voxels": 3884,
+        "slice": 80
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 187.0,
+          "mean": 62.405252317198766,
+          "min": -104.0,
+          "std": 43.40918563792542
+        },
+        "pyradiomics": {
+          "max": 187.0,
+          "mean": 62.405252317198766,
+          "min": -104.0,
+          "std": 43.40918563792542
+        },
+        "roi_voxels": 3884,
+        "slice": 81
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 145.0,
+          "mean": 61.03887744593203,
+          "min": -115.0,
+          "std": 43.15534035325846
+        },
+        "pyradiomics": {
+          "max": 145.0,
+          "mean": 61.03887744593203,
+          "min": -115.0,
+          "std": 43.15534035325846
+        },
+        "roi_voxels": 3884,
+        "slice": 82
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 147.0,
+          "mean": 60.56282183316169,
+          "min": -108.0,
+          "std": 42.02662607865733
+        },
+        "pyradiomics": {
+          "max": 147.0,
+          "mean": 60.56282183316169,
+          "min": -108.0,
+          "std": 42.02662607865733
+        },
+        "roi_voxels": 3884,
+        "slice": 83
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 140.0,
+          "mean": 59.831359423274975,
+          "min": -99.0,
+          "std": 41.04682131126063
+        },
+        "pyradiomics": {
+          "max": 140.0,
+          "mean": 59.831359423274975,
+          "min": -99.0,
+          "std": 41.04682131126063
+        },
+        "roi_voxels": 3884,
+        "slice": 84
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 131.0,
+          "mean": 58.395983522142124,
+          "min": -90.0,
+          "std": 39.029686400625096
+        },
+        "pyradiomics": {
+          "max": 131.0,
+          "mean": 58.395983522142124,
+          "min": -90.0,
+          "std": 39.029686400625096
+        },
+        "roi_voxels": 3884,
+        "slice": 85
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 58.674047373841404,
+          "min": -95.0,
+          "std": 36.666333556431496
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 58.674047373841404,
+          "min": -95.0,
+          "std": 36.666333556431496
+        },
+        "roi_voxels": 3884,
+        "slice": 86
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 221.0,
+          "mean": 59.74459320288363,
+          "min": -96.0,
+          "std": 35.47850278333314
+        },
+        "pyradiomics": {
+          "max": 221.0,
+          "mean": 59.74459320288363,
+          "min": -96.0,
+          "std": 35.47850278333314
+        },
+        "roi_voxels": 3884,
+        "slice": 87
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 61.50566426364573,
+          "min": -106.0,
+          "std": 32.989695342820326
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 61.50566426364573,
+          "min": -106.0,
+          "std": 32.989695342820326
+        },
+        "roi_voxels": 3884,
+        "slice": 88
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 173.0,
+          "mean": 64.51519052523172,
+          "min": -109.0,
+          "std": 33.19127424231838
+        },
+        "pyradiomics": {
+          "max": 173.0,
+          "mean": 64.51519052523172,
+          "min": -109.0,
+          "std": 33.19127424231838
+        },
+        "roi_voxels": 3884,
+        "slice": 89
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 271.0,
+          "mean": 66.81848609680742,
+          "min": -90.0,
+          "std": 36.13833357571745
+        },
+        "pyradiomics": {
+          "max": 271.0,
+          "mean": 66.81848609680742,
+          "min": -90.0,
+          "std": 36.13833357571745
+        },
+        "roi_voxels": 3884,
+        "slice": 90
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 307.0,
+          "mean": 67.22863027806385,
+          "min": -84.0,
+          "std": 37.954160167562584
+        },
+        "pyradiomics": {
+          "max": 307.0,
+          "mean": 67.22863027806385,
+          "min": -84.0,
+          "std": 37.954160167562584
+        },
+        "roi_voxels": 3884,
+        "slice": 91
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 215.0,
+          "mean": 64.69876416065911,
+          "min": -121.0,
+          "std": 37.76678378255231
+        },
+        "pyradiomics": {
+          "max": 215.0,
+          "mean": 64.69876416065911,
+          "min": -121.0,
+          "std": 37.76678378255231
+        },
+        "roi_voxels": 3884,
+        "slice": 92
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 136.0,
+          "mean": 62.06616889804325,
+          "min": -124.0,
+          "std": 40.78131120517192
+        },
+        "pyradiomics": {
+          "max": 136.0,
+          "mean": 62.06616889804325,
+          "min": -124.0,
+          "std": 40.78131120517192
+        },
+        "roi_voxels": 3884,
+        "slice": 93
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 147.0,
+          "mean": 59.90911431513903,
+          "min": -116.0,
+          "std": 44.86588011042143
+        },
+        "pyradiomics": {
+          "max": 147.0,
+          "mean": 59.90911431513903,
+          "min": -116.0,
+          "std": 44.86588011042143
+        },
+        "roi_voxels": 3884,
+        "slice": 94
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 139.0,
+          "mean": 58.29685890834192,
+          "min": -113.0,
+          "std": 50.3761002176702
+        },
+        "pyradiomics": {
+          "max": 139.0,
+          "mean": 58.29685890834192,
+          "min": -113.0,
+          "std": 50.3761002176702
+        },
+        "roi_voxels": 3884,
+        "slice": 95
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 154.0,
+          "mean": 56.33187435633368,
+          "min": -129.0,
+          "std": 54.71789183068095
+        },
+        "pyradiomics": {
+          "max": 154.0,
+          "mean": 56.33187435633368,
+          "min": -129.0,
+          "std": 54.71789183068095
+        },
+        "roi_voxels": 3884,
+        "slice": 96
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 141.0,
+          "mean": 48.458290422245106,
+          "min": -91.0,
+          "std": 47.37861133802217
+        },
+        "pyradiomics": {
+          "max": 141.0,
+          "mean": 48.458290422245106,
+          "min": -91.0,
+          "std": 47.37861133802217
+        },
+        "roi_voxels": 3884,
+        "slice": 97
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 117.0,
+          "mean": 37.23738414006179,
+          "min": -95.0,
+          "std": 36.65563693077701
+        },
+        "pyradiomics": {
+          "max": 117.0,
+          "mean": 37.23738414006179,
+          "min": -95.0,
+          "std": 36.65563693077701
+        },
+        "roi_voxels": 3884,
+        "slice": 98
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 114.0,
+          "mean": 28.74382080329557,
+          "min": -94.0,
+          "std": 37.646774560844335
+        },
+        "pyradiomics": {
+          "max": 114.0,
+          "mean": 28.74382080329557,
+          "min": -94.0,
+          "std": 37.646774560844335
+        },
+        "roi_voxels": 3884,
+        "slice": 99
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 122.0,
+          "mean": 26.303295571575696,
+          "min": -91.0,
+          "std": 40.98203845913331
+        },
+        "pyradiomics": {
+          "max": 122.0,
+          "mean": 26.303295571575696,
+          "min": -91.0,
+          "std": 40.98203845913331
+        },
+        "roi_voxels": 3884,
+        "slice": 100
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 117.0,
+          "mean": 25.701081359423274,
+          "min": -92.0,
+          "std": 42.347326657544215
+        },
+        "pyradiomics": {
+          "max": 117.0,
+          "mean": 25.701081359423274,
+          "min": -92.0,
+          "std": 42.347326657544215
+        },
+        "roi_voxels": 3884,
+        "slice": 101
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 123.0,
+          "mean": 25.035787847579815,
+          "min": -84.0,
+          "std": 44.59217887084379
+        },
+        "pyradiomics": {
+          "max": 123.0,
+          "mean": 25.035787847579815,
+          "min": -84.0,
+          "std": 44.59217887084379
+        },
+        "roi_voxels": 3884,
+        "slice": 102
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 137.0,
+          "mean": 23.524974253347064,
+          "min": -84.0,
+          "std": 48.42497296400622
+        },
+        "pyradiomics": {
+          "max": 137.0,
+          "mean": 23.524974253347064,
+          "min": -84.0,
+          "std": 48.42497296400622
+        },
+        "roi_voxels": 3884,
+        "slice": 103
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 144.0,
+          "mean": 21.083934088568487,
+          "min": -100.0,
+          "std": 52.813788451883966
+        },
+        "pyradiomics": {
+          "max": 144.0,
+          "mean": 21.083934088568487,
+          "min": -100.0,
+          "std": 52.813788451883966
+        },
+        "roi_voxels": 3884,
+        "slice": 104
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 142.0,
+          "mean": 20.425077239958807,
+          "min": -134.0,
+          "std": 56.55589544282778
+        },
+        "pyradiomics": {
+          "max": 142.0,
+          "mean": 20.425077239958807,
+          "min": -134.0,
+          "std": 56.55589544282778
+        },
+        "roi_voxels": 3884,
+        "slice": 105
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 147.0,
+          "mean": 24.075695159629248,
+          "min": -130.0,
+          "std": 58.48654581707259
+        },
+        "pyradiomics": {
+          "max": 147.0,
+          "mean": 24.075695159629248,
+          "min": -130.0,
+          "std": 58.48654581707259
+        },
+        "roi_voxels": 3884,
+        "slice": 106
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 143.0,
+          "mean": 29.925334706488158,
+          "min": -122.0,
+          "std": 59.60966049104881
+        },
+        "pyradiomics": {
+          "max": 143.0,
+          "mean": 29.925334706488158,
+          "min": -122.0,
+          "std": 59.60966049104881
+        },
+        "roi_voxels": 3884,
+        "slice": 107
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 35.597064881565395,
+          "min": -124.0,
+          "std": 62.08074707341661
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 35.597064881565395,
+          "min": -124.0,
+          "std": 62.08074707341661
+        },
+        "roi_voxels": 3884,
+        "slice": 108
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 43.17533470648816,
+          "min": -109.0,
+          "std": 63.516675553705305
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 43.17533470648816,
+          "min": -109.0,
+          "std": 63.516675553705305
+        },
+        "roi_voxels": 3884,
+        "slice": 109
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 49.65396498455201,
+          "min": -110.0,
+          "std": 64.47829317424637
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 49.65396498455201,
+          "min": -110.0,
+          "std": 64.47829317424637
+        },
+        "roi_voxels": 3884,
+        "slice": 110
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 167.0,
+          "mean": 51.18228630278064,
+          "min": -107.0,
+          "std": 64.42630239340862
+        },
+        "pyradiomics": {
+          "max": 167.0,
+          "mean": 51.18228630278064,
+          "min": -107.0,
+          "std": 64.42630239340862
+        },
+        "roi_voxels": 3884,
+        "slice": 111
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 148.0,
+          "mean": 52.975540679711635,
+          "min": -110.0,
+          "std": 62.32116469210088
+        },
+        "pyradiomics": {
+          "max": 148.0,
+          "mean": 52.975540679711635,
+          "min": -110.0,
+          "std": 62.32116469210088
+        },
+        "roi_voxels": 3884,
+        "slice": 112
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 143.0,
+          "mean": 57.744850669412976,
+          "min": -108.0,
+          "std": 57.52801705603032
+        },
+        "pyradiomics": {
+          "max": 143.0,
+          "mean": 57.744850669412976,
+          "min": -108.0,
+          "std": 57.52801705603032
+        },
+        "roi_voxels": 3884,
+        "slice": 113
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 62.585993820803296,
+          "min": -118.0,
+          "std": 54.857310173021766
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 62.585993820803296,
+          "min": -118.0,
+          "std": 54.857310173021766
+        },
+        "roi_voxels": 3884,
+        "slice": 114
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 66.58032955715757,
+          "min": -103.0,
+          "std": 52.2118494576115
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 66.58032955715757,
+          "min": -103.0,
+          "std": 52.2118494576115
+        },
+        "roi_voxels": 3884,
+        "slice": 115
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 73.15962924819773,
+          "min": -109.0,
+          "std": 44.97871973623461
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 73.15962924819773,
+          "min": -109.0,
+          "std": 44.97871973623461
+        },
+        "roi_voxels": 3884,
+        "slice": 116
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 158.0,
+          "mean": 80.65808444902163,
+          "min": -92.0,
+          "std": 36.746444989953325
+        },
+        "pyradiomics": {
+          "max": 158.0,
+          "mean": 80.65808444902163,
+          "min": -92.0,
+          "std": 36.746444989953325
+        },
+        "roi_voxels": 3884,
+        "slice": 117
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 142.0,
+          "mean": 82.43434603501545,
+          "min": -63.0,
+          "std": 30.219137247500072
+        },
+        "pyradiomics": {
+          "max": 142.0,
+          "mean": 82.43434603501545,
+          "min": -63.0,
+          "std": 30.219137247500072
+        },
+        "roi_voxels": 3884,
+        "slice": 118
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 137.0,
+          "mean": 81.05895983522142,
+          "min": -51.0,
+          "std": 25.217843358123314
+        },
+        "pyradiomics": {
+          "max": 137.0,
+          "mean": 81.05895983522142,
+          "min": -51.0,
+          "std": 25.217843358123314
+        },
+        "roi_voxels": 3884,
+        "slice": 119
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 141.0,
+          "mean": 81.04582904222451,
+          "min": -35.0,
+          "std": 22.23055765665057
+        },
+        "pyradiomics": {
+          "max": 141.0,
+          "mean": 81.04582904222451,
+          "min": -35.0,
+          "std": 22.23055765665057
+        },
+        "roi_voxels": 3884,
+        "slice": 120
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 141.0,
+          "mean": 84.11483007209063,
+          "min": -48.0,
+          "std": 20.214763406347995
+        },
+        "pyradiomics": {
+          "max": 141.0,
+          "mean": 84.11483007209063,
+          "min": -48.0,
+          "std": 20.214763406347995
+        },
+        "roi_voxels": 3884,
+        "slice": 121
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 140.0,
+          "mean": 88.71987641606592,
+          "min": -52.0,
+          "std": 18.285999055773086
+        },
+        "pyradiomics": {
+          "max": 140.0,
+          "mean": 88.71987641606592,
+          "min": -52.0,
+          "std": 18.285999055773086
+        },
+        "roi_voxels": 3884,
+        "slice": 122
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 141.0,
+          "mean": 92.99253347064881,
+          "min": 18.0,
+          "std": 16.496892815686767
+        },
+        "pyradiomics": {
+          "max": 141.0,
+          "mean": 92.99253347064881,
+          "min": 18.0,
+          "std": 16.496892815686767
+        },
+        "roi_voxels": 3884,
+        "slice": 123
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 93.68022657054583,
+          "min": 35.0,
+          "std": 15.08036181296874
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 93.68022657054583,
+          "min": 35.0,
+          "std": 15.08036181296874
+        },
+        "roi_voxels": 3884,
+        "slice": 124
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 151.0,
+          "mean": 92.36277033985581,
+          "min": 20.0,
+          "std": 14.455103409188231
+        },
+        "pyradiomics": {
+          "max": 151.0,
+          "mean": 92.36277033985581,
+          "min": 20.0,
+          "std": 14.455103409188231
+        },
+        "roi_voxels": 3884,
+        "slice": 125
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 144.0,
+          "mean": 92.07723995880535,
+          "min": 1.0,
+          "std": 15.581310829678293
+        },
+        "pyradiomics": {
+          "max": 144.0,
+          "mean": 92.07723995880535,
+          "min": 1.0,
+          "std": 15.581310829678293
+        },
+        "roi_voxels": 3884,
+        "slice": 126
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 145.0,
+          "mean": 94.53861997940268,
+          "min": 0.0,
+          "std": 15.922630966027603
+        },
+        "pyradiomics": {
+          "max": 145.0,
+          "mean": 94.53861997940268,
+          "min": 0.0,
+          "std": 15.922630966027603
+        },
+        "roi_voxels": 3884,
+        "slice": 127
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 152.0,
+          "mean": 97.13130792996911,
+          "min": 13.0,
+          "std": 15.598422054359236
+        },
+        "pyradiomics": {
+          "max": 152.0,
+          "mean": 97.13130792996911,
+          "min": 13.0,
+          "std": 15.598422054359236
+        },
+        "roi_voxels": 3884,
+        "slice": 128
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 98.45932028836252,
+          "min": 33.0,
+          "std": 15.729862419347695
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 98.45932028836252,
+          "min": 33.0,
+          "std": 15.729862419347695
+        },
+        "roi_voxels": 3884,
+        "slice": 129
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 144.0,
+          "mean": 96.49665293511843,
+          "min": 35.0,
+          "std": 14.848817223510379
+        },
+        "pyradiomics": {
+          "max": 144.0,
+          "mean": 96.49665293511843,
+          "min": 35.0,
+          "std": 14.848817223510379
+        },
+        "roi_voxels": 3884,
+        "slice": 130
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 145.0,
+          "mean": 92.21318228630278,
+          "min": -2.0,
+          "std": 15.65005342682073
+        },
+        "pyradiomics": {
+          "max": 145.0,
+          "mean": 92.21318228630278,
+          "min": -2.0,
+          "std": 15.65005342682073
+        },
+        "roi_voxels": 3884,
+        "slice": 131
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 140.0,
+          "mean": 87.25695159629248,
+          "min": -18.0,
+          "std": 18.113510686473955
+        },
+        "pyradiomics": {
+          "max": 140.0,
+          "mean": 87.25695159629248,
+          "min": -18.0,
+          "std": 18.113510686473955
+        },
+        "roi_voxels": 3884,
+        "slice": 132
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 135.0,
+          "mean": 83.69644696189495,
+          "min": -21.0,
+          "std": 19.530094492282036
+        },
+        "pyradiomics": {
+          "max": 135.0,
+          "mean": 83.69644696189495,
+          "min": -21.0,
+          "std": 19.530094492282036
+        },
+        "roi_voxels": 3884,
+        "slice": 133
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 130.0,
+          "mean": 81.3143666323378,
+          "min": -14.0,
+          "std": 20.62619817286755
+        },
+        "pyradiomics": {
+          "max": 130.0,
+          "mean": 81.3143666323378,
+          "min": -14.0,
+          "std": 20.62619817286755
+        },
+        "roi_voxels": 3884,
+        "slice": 134
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 139.0,
+          "mean": 81.34474768280124,
+          "min": -18.0,
+          "std": 21.77119445612784
+        },
+        "pyradiomics": {
+          "max": 139.0,
+          "mean": 81.34474768280124,
+          "min": -18.0,
+          "std": 21.77119445612784
+        },
+        "roi_voxels": 3884,
+        "slice": 135
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 144.0,
+          "mean": 85.63697219361482,
+          "min": -28.0,
+          "std": 22.54149469780962
+        },
+        "pyradiomics": {
+          "max": 144.0,
+          "mean": 85.63697219361482,
+          "min": -28.0,
+          "std": 22.54149469780962
+        },
+        "roi_voxels": 3884,
+        "slice": 136
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 147.0,
+          "mean": 92.16838311019568,
+          "min": -22.0,
+          "std": 23.655482299094288
+        },
+        "pyradiomics": {
+          "max": 147.0,
+          "mean": 92.16838311019568,
+          "min": -22.0,
+          "std": 23.655482299094288
+        },
+        "roi_voxels": 3884,
+        "slice": 137
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 156.0,
+          "mean": 96.82904222451081,
+          "min": -18.0,
+          "std": 24.437979697774217
+        },
+        "pyradiomics": {
+          "max": 156.0,
+          "mean": 96.82904222451081,
+          "min": -18.0,
+          "std": 24.437979697774217
+        },
+        "roi_voxels": 3884,
+        "slice": 138
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 155.0,
+          "mean": 96.90010298661174,
+          "min": -6.0,
+          "std": 23.918433527287704
+        },
+        "pyradiomics": {
+          "max": 155.0,
+          "mean": 96.90010298661174,
+          "min": -6.0,
+          "std": 23.918433527287704
+        },
+        "roi_voxels": 3884,
+        "slice": 139
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 156.0,
+          "mean": 95.09938208032956,
+          "min": 11.0,
+          "std": 21.529645923311417
+        },
+        "pyradiomics": {
+          "max": 156.0,
+          "mean": 95.09938208032956,
+          "min": 11.0,
+          "std": 21.529645923311417
+        },
+        "roi_voxels": 3884,
+        "slice": 140
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 95.70108135942327,
+          "min": 11.0,
+          "std": 19.633065198489213
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 95.70108135942327,
+          "min": 11.0,
+          "std": 19.633065198489213
+        },
+        "roi_voxels": 3884,
+        "slice": 141
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 153.0,
+          "mean": 97.27111225540679,
+          "min": 6.0,
+          "std": 18.852328178599564
+        },
+        "pyradiomics": {
+          "max": 153.0,
+          "mean": 97.27111225540679,
+          "min": 6.0,
+          "std": 18.852328178599564
+        },
+        "roi_voxels": 3884,
+        "slice": 142
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 94.61791967044284,
+          "min": -16.0,
+          "std": 21.920280810501968
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 94.61791967044284,
+          "min": -16.0,
+          "std": 21.920280810501968
+        },
+        "roi_voxels": 3884,
+        "slice": 143
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 149.0,
+          "mean": 85.46369721936148,
+          "min": -72.0,
+          "std": 28.786859599644814
+        },
+        "pyradiomics": {
+          "max": 149.0,
+          "mean": 85.46369721936148,
+          "min": -72.0,
+          "std": 28.786859599644814
+        },
+        "roi_voxels": 3884,
+        "slice": 144
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 138.0,
+          "mean": 71.01493305870237,
+          "min": -94.0,
+          "std": 35.81390399455574
+        },
+        "pyradiomics": {
+          "max": 138.0,
+          "mean": 71.01493305870237,
+          "min": -94.0,
+          "std": 35.81390399455574
+        },
+        "roi_voxels": 3884,
+        "slice": 145
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 130.0,
+          "mean": 57.93125643666323,
+          "min": -93.0,
+          "std": 40.76600052156642
+        },
+        "pyradiomics": {
+          "max": 130.0,
+          "mean": 57.93125643666323,
+          "min": -93.0,
+          "std": 40.76600052156642
+        },
+        "roi_voxels": 3884,
+        "slice": 146
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 127.0,
+          "mean": 50.61302780638517,
+          "min": -106.0,
+          "std": 46.22252678831444
+        },
+        "pyradiomics": {
+          "max": 127.0,
+          "mean": 50.61302780638517,
+          "min": -106.0,
+          "std": 46.22252678831444
+        },
+        "roi_voxels": 3884,
+        "slice": 147
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 145.0,
+          "mean": 50.428681771369725,
+          "min": -116.0,
+          "std": 48.802738894420465
+        },
+        "pyradiomics": {
+          "max": 145.0,
+          "mean": 50.428681771369725,
+          "min": -116.0,
+          "std": 48.802738894420465
+        },
+        "roi_voxels": 3884,
+        "slice": 148
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 144.0,
+          "mean": 53.9250772399588,
+          "min": -106.0,
+          "std": 51.43127857069352
+        },
+        "pyradiomics": {
+          "max": 144.0,
+          "mean": 53.9250772399588,
+          "min": -106.0,
+          "std": 51.43127857069352
+        },
+        "roi_voxels": 3884,
+        "slice": 149
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 165.0,
+          "mean": 59.261328527291454,
+          "min": -114.0,
+          "std": 52.8109928508944
+        },
+        "pyradiomics": {
+          "max": 165.0,
+          "mean": 59.261328527291454,
+          "min": -114.0,
+          "std": 52.8109928508944
+        },
+        "roi_voxels": 3884,
+        "slice": 150
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 157.0,
+          "mean": 65.53398558187436,
+          "min": -101.0,
+          "std": 50.21687905264165
+        },
+        "pyradiomics": {
+          "max": 157.0,
+          "mean": 65.53398558187436,
+          "min": -101.0,
+          "std": 50.21687905264165
+        },
+        "roi_voxels": 3884,
+        "slice": 151
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 150.0,
+          "mean": 70.66117404737385,
+          "min": -116.0,
+          "std": 46.510649326625526
+        },
+        "pyradiomics": {
+          "max": 150.0,
+          "mean": 70.66117404737385,
+          "min": -116.0,
+          "std": 46.510649326625526
+        },
+        "roi_voxels": 3884,
+        "slice": 152
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 152.0,
+          "mean": 74.67327497425335,
+          "min": -77.0,
+          "std": 42.19927343156502
+        },
+        "pyradiomics": {
+          "max": 152.0,
+          "mean": 74.67327497425335,
+          "min": -77.0,
+          "std": 42.19927343156502
+        },
+        "roi_voxels": 3884,
+        "slice": 153
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 161.0,
+          "mean": 78.40808444902163,
+          "min": -66.0,
+          "std": 38.602426332832316
+        },
+        "pyradiomics": {
+          "max": 161.0,
+          "mean": 78.40808444902163,
+          "min": -66.0,
+          "std": 38.602426332832316
+        },
+        "roi_voxels": 3884,
+        "slice": 154
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 166.0,
+          "mean": 81.53630278063852,
+          "min": -87.0,
+          "std": 36.53615748313333
+        },
+        "pyradiomics": {
+          "max": 166.0,
+          "mean": 81.53630278063852,
+          "min": -87.0,
+          "std": 36.53615748313333
+        },
+        "roi_voxels": 3884,
+        "slice": 155
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 165.0,
+          "mean": 81.96292481977343,
+          "min": -86.0,
+          "std": 34.00090362422994
+        },
+        "pyradiomics": {
+          "max": 165.0,
+          "mean": 81.96292481977343,
+          "min": -86.0,
+          "std": 34.00090362422994
+        },
+        "roi_voxels": 3884,
+        "slice": 156
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 158.0,
+          "mean": 77.07878475798147,
+          "min": -71.0,
+          "std": 32.745184989961366
+        },
+        "pyradiomics": {
+          "max": 158.0,
+          "mean": 77.07878475798147,
+          "min": -71.0,
+          "std": 32.745184989961366
+        },
+        "roi_voxels": 3884,
+        "slice": 157
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 148.0,
+          "mean": 61.06127703398558,
+          "min": -96.0,
+          "std": 32.75996171662987
+        },
+        "pyradiomics": {
+          "max": 148.0,
+          "mean": 61.06127703398558,
+          "min": -96.0,
+          "std": 32.75996171662987
+        },
+        "roi_voxels": 3884,
+        "slice": 158
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": 115.0,
+          "mean": 25.529093717816682,
+          "min": -144.0,
+          "std": 32.09525645998495
+        },
+        "pyradiomics": {
+          "max": 115.0,
+          "mean": 25.529093717816682,
+          "min": -144.0,
+          "std": 32.09525645998495
+        },
+        "roi_voxels": 3884,
+        "slice": 159
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -20.0,
+          "mean": -91.24279093717817,
+          "min": -205.0,
+          "std": 24.14522258060808
+        },
+        "pyradiomics": {
+          "max": -20.0,
+          "mean": -91.24279093717817,
+          "min": -205.0,
+          "std": 24.14522258060808
+        },
+        "roi_voxels": 3884,
+        "slice": 160
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -325.0,
+          "mean": -397.26081359423273,
+          "min": -485.0,
+          "std": 29.190524381264606
+        },
+        "pyradiomics": {
+          "max": -325.0,
+          "mean": -397.26081359423273,
+          "min": -485.0,
+          "std": 29.190524381264606
+        },
+        "roi_voxels": 3884,
+        "slice": 161
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -721.0,
+          "mean": -785.5352729145211,
+          "min": -850.0,
+          "std": 30.300444434999193
+        },
+        "pyradiomics": {
+          "max": -721.0,
+          "mean": -785.5352729145211,
+          "min": -850.0,
+          "std": 30.300444434999193
+        },
+        "roi_voxels": 3884,
+        "slice": 162
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -921.0,
+          "mean": -945.5556127703398,
+          "min": -970.0,
+          "std": 11.705568618138381
+        },
+        "pyradiomics": {
+          "max": -921.0,
+          "mean": -945.5556127703398,
+          "min": -970.0,
+          "std": 11.705568618138381
+        },
+        "roi_voxels": 3884,
+        "slice": 163
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -976.0,
+          "mean": -984.6959320288363,
+          "min": -993.0,
+          "std": 3.2260324242609544
+        },
+        "pyradiomics": {
+          "max": -976.0,
+          "mean": -984.6959320288363,
+          "min": -993.0,
+          "std": 3.2260324242609544
+        },
+        "roi_voxels": 3884,
+        "slice": 164
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -995.0,
+          "mean": -999.8468074150361,
+          "min": -1004.0,
+          "std": 1.2922420034400681
+        },
+        "pyradiomics": {
+          "max": -995.0,
+          "mean": -999.8468074150361,
+          "min": -1004.0,
+          "std": 1.2922420034400681
+        },
+        "roi_voxels": 3884,
+        "slice": 165
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -997.0,
+          "mean": -1001.2427909371781,
+          "min": -1006.0,
+          "std": 1.0512177414888184
+        },
+        "pyradiomics": {
+          "max": -997.0,
+          "mean": -1001.2427909371781,
+          "min": -1006.0,
+          "std": 1.0512177414888184
+        },
+        "roi_voxels": 3884,
+        "slice": 166
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.4067971163748,
+          "min": -1005.0,
+          "std": 1.0101519392154057
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.4067971163748,
+          "min": -1005.0,
+          "std": 1.0101519392154057
+        },
+        "roi_voxels": 3884,
+        "slice": 167
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.6266735324408,
+          "min": -1006.0,
+          "std": 1.0327635605987968
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.6266735324408,
+          "min": -1006.0,
+          "std": 1.0327635605987968
+        },
+        "roi_voxels": 3884,
+        "slice": 168
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1001.8202883625129,
+          "min": -1005.0,
+          "std": 1.0468629609306965
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1001.8202883625129,
+          "min": -1005.0,
+          "std": 1.0468629609306965
+        },
+        "roi_voxels": 3884,
+        "slice": 169
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -998.0,
+          "mean": -1002.091658084449,
+          "min": -1006.0,
+          "std": 1.0412909036967346
+        },
+        "pyradiomics": {
+          "max": -998.0,
+          "mean": -1002.091658084449,
+          "min": -1006.0,
+          "std": 1.0412909036967346
+        },
+        "roi_voxels": 3884,
+        "slice": 170
+      },
+      {
+        "absolute_errors": {
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "std": 0.0
+        },
+        "all_within_tolerance": true,
+        "app": {
+          "max": -999.0,
+          "mean": -1002.3681771369722,
+          "min": -1006.0,
+          "std": 1.0669535992912806
+        },
+        "pyradiomics": {
+          "max": -999.0,
+          "mean": -1002.3681771369722,
+          "min": -1006.0,
+          "std": 1.0669535992912806
+        },
+        "roi_voxels": 3884,
+        "slice": 171
+      }
+    ],
+    "tolerance": 1e-06,
+    "within_tolerance": 172
+  },
+  "export_privacy_all_slices": {
+    "acceptance_rate": 1.0,
+    "accepted": 172,
+    "n": 172,
+    "tamper_checks": 11,
+    "tamper_records": [
+      {
+        "rejected": true,
+        "slice": 0
+      },
+      {
+        "rejected": true,
+        "slice": 17
+      },
+      {
+        "rejected": true,
+        "slice": 34
+      },
+      {
+        "rejected": true,
+        "slice": 51
+      },
+      {
+        "rejected": true,
+        "slice": 68
+      },
+      {
+        "rejected": true,
+        "slice": 85
+      },
+      {
+        "rejected": true,
+        "slice": 102
+      },
+      {
+        "rejected": true,
+        "slice": 119
+      },
+      {
+        "rejected": true,
+        "slice": 136
+      },
+      {
+        "rejected": true,
+        "slice": 153
+      },
+      {
+        "rejected": true,
+        "slice": 170
+      }
+    ],
+    "tamper_rejected": 11
+  },
+  "extends": {
+    "downloaded_zip_sha256": "fe6d292dc6989ca85d8323781067a3781ddc21c62105403ee83af512725539ea",
+    "ordered_source_files_aggregate_sha256": "33f6c4d9a382db93c85f2652db64e871bc631fd21bf1997fa413355451b39a5b",
+    "series_provenance": {
+      "collection": "CT-Phantom4Radiomics",
+      "data_doi": "https://doi.org/10.7937/a1v1-rc66",
+      "download": "NBIA API v4 getImage (real archive download; 173 ZIP entries: LICENSE + 172 DICOM slices)",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "privacy_note": "Public research phantom collection derived from real patient data as described by the data submitter; the processed series is a task-based anthropomorphic phantom scan published for research use. No human-subject identifiable data are stored in this repository.",
+      "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.329084730054548979029758794636987310879",
+      "study_instance_uid": "1.3.6.1.4.1.14519.5.2.1.202237558327911947882539784272436897971"
+    },
+    "single_slice_protocol": "verification/results/tcia_real_evaluation.json"
+  },
+  "generated_at_utc": "2026-09-30T12:05:16.169113+00:00",
+  "morphology_root_cause": {
+    "finding": "On a smooth real 3D sphere at the series' anisotropic spacing, PyRadiomics' mesh and voxel-count volume definitions agree to within 0.09%. In the recorded IBSI phantom comparison, PyRadiomics' two volume definitions also agree closely with each other, while both deviate from the official expected values by -3.34% to -3.23%; surface area deviates by +8.31%, and surface-derived ratios compound to -9.71% to +12.00%. The dominant source is therefore the reference phantom's mask/grid convention (the official values derive from the IBSI reference segmentation), with marching-cubes surface extraction on anisotropic voxels driving the larger surface and ratio deviations; PCA eigenvalue rows use a further decomposition convention. Reconciliation requires running the comparator on the IBSI reference segmentation itself and is disclosed as out of scope.",
+    "real_3d_roi": {
+      "mesh_vs_voxel_count_relative_difference": 0.0009138605771298746,
+      "pyradiomics_mesh_volume_mm3": 57899.767557779945,
+      "pyradiomics_voxel_volume_mm3": 57952.728271484375,
+      "roi": "3D sphere, 24 mm radius, centered in the real volume",
+      "roi_voxels": 62008,
+      "voxel_count_volume_mm3": 57952.728271484375,
+      "voxel_volume_mm3": 0.934600830078125
+    },
+    "recorded_table_decomposition": {
+      "failed_rows": 8,
+      "pca_rows_span": {
+        "max": 0.004463700611600456,
+        "min": -0.028269133985218235
+      },
+      "ratio_rows_span": {
+        "max": 0.11999330071012161,
+        "min": -0.09707780380568497
+      },
+      "rows": [
+        {
+          "actual": 355140.0,
+          "expected": 367000.0,
+          "feature": "Volume (mesh)",
+          "signed_relative_deviation": -0.03231607629427793,
+          "tag": "morph_volume"
+        },
+        {
+          "actual": 355720.0,
+          "expected": 368000.0,
+          "feature": "Volume (voxel counting)",
+          "signed_relative_deviation": -0.0333695652173913,
+          "tag": "morph_vol_approx"
+        },
+        {
+          "actual": 37150.26290404559,
+          "expected": 34300.0,
+          "feature": "Surface area (mesh)",
+          "signed_relative_deviation": 0.08309804384972556,
+          "tag": "morph_area_mesh"
+        },
+        {
+          "actual": 0.10460737428632536,
+          "expected": 0.0934,
+          "feature": "Surface to volume ratio",
+          "signed_relative_deviation": 0.11999330071012161,
+          "tag": "morph_av"
+        },
+        {
+          "actual": 0.6528127478484897,
+          "expected": 0.723,
+          "feature": "Sphericity",
+          "signed_relative_deviation": -0.09707780380568497,
+          "tag": "morph_sphericity"
+        },
+        {
+          "actual": 68.89571840044803,
+          "expected": 70.9,
+          "feature": "Least axis length",
+          "signed_relative_deviation": -0.028269133985218235,
+          "tag": "morph_pca_least_axis"
+        },
+        {
+          "actual": 0.8829235928375968,
+          "expected": 0.879,
+          "feature": "Elongation",
+          "signed_relative_deviation": 0.004463700611600456,
+          "tag": "morph_pca_elongation"
+        },
+        {
+          "actual": 0.7386618007343947,
+          "expected": 0.76,
+          "feature": "Flatness",
+          "signed_relative_deviation": -0.028076577981059628,
+          "tag": "morph_pca_flatness"
+        }
+      ],
+      "surface_rows_span": {
+        "max": 0.08309804384972556,
+        "min": 0.08309804384972556
+      },
+      "volume_rows_span": {
+        "max": -0.03231607629427793,
+        "min": -0.0333695652173913
+      }
+    }
+  },
+  "protocol": {
+    "comparison": "app RadiomicsExtractor vs PyRadiomics v3.0.1 (binWidth 25.0, voxelArrayShift 0.0, tolerance 1e-6; SD = sqrt(Variance))",
+    "radius_sweep_mm": [
+      12.0,
+      18.0,
+      24.0,
+      30.0,
+      36.0
+    ],
+    "roi": "centered 24 mm radius cylindrical ROI per slice unless stated",
+    "slices": 172,
+    "tamper_stride": 17
+  },
+  "radius_sensitivity_mid_slice": [
+    {
+      "absolute_errors": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "std": 0.0
+      },
+      "all_within_tolerance": true,
+      "app": {
+        "max": 122.0,
+        "mean": 66.865625,
+        "min": -8.0,
+        "std": 20.40954805214237
+      },
+      "pyradiomics": {
+        "max": 122.0,
+        "mean": 66.865625,
+        "min": -8.0,
+        "std": 20.40954805214237
+      },
+      "radius_mm": 12.0,
+      "roi_voxels": 960
+    },
+    {
+      "absolute_errors": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "std": 0.0
+      },
+      "all_within_tolerance": true,
+      "app": {
+        "max": 157.0,
+        "mean": 61.308043875685556,
+        "min": -95.0,
+        "std": 30.87568973855828
+      },
+      "pyradiomics": {
+        "max": 157.0,
+        "mean": 61.308043875685556,
+        "min": -95.0,
+        "std": 30.87568973855828
+      },
+      "radius_mm": 18.0,
+      "roi_voxels": 2188
+    },
+    {
+      "absolute_errors": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "std": 0.0
+      },
+      "all_within_tolerance": true,
+      "app": {
+        "max": 157.0,
+        "mean": 58.674047373841404,
+        "min": -95.0,
+        "std": 36.666333556431496
+      },
+      "pyradiomics": {
+        "max": 157.0,
+        "mean": 58.674047373841404,
+        "min": -95.0,
+        "std": 36.666333556431496
+      },
+      "radius_mm": 24.0,
+      "roi_voxels": 3884
+    },
+    {
+      "absolute_errors": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "std": 0.0
+      },
+      "all_within_tolerance": true,
+      "app": {
+        "max": 157.0,
+        "mean": 56.48925974884336,
+        "min": -109.0,
+        "std": 41.46050267267708
+      },
+      "pyradiomics": {
+        "max": 157.0,
+        "mean": 56.48925974884336,
+        "min": -109.0,
+        "std": 41.46050267267708
+      },
+      "radius_mm": 30.0,
+      "roi_voxels": 6052
+    },
+    {
+      "absolute_errors": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "std": 0.0
+      },
+      "all_within_tolerance": true,
+      "app": {
+        "max": 194.0,
+        "mean": 54.39063215758131,
+        "min": -124.0,
+        "std": 45.23798037849871
+      },
+      "pyradiomics": {
+        "max": 194.0,
+        "mean": 54.39063215758131,
+        "min": -124.0,
+        "std": 45.23798037849871
+      },
+      "radius_mm": 36.0,
+      "roi_voxels": 8732
+    }
+  ],
+  "runtime_seconds": 33.4,
+  "schema": "heeh-v1.tcia-full-series-study",
+  "schema_version": 1,
+  "scope_and_non_claims": [
+    "All results describe the single real recorded phantom series only.",
+    "Radiomics ROIs are geometric regions; no clinical or diagnostic meaning is attached.",
+    "PyRadiomics agreement covers matched first-order statistics on 2D ROIs and shape definitions on one 3D ROI.",
+    "The export gate exercise covers this series' slices only; it is not a clinical privacy estimate.",
+    "The morphology analysis quantifies the mesh-vs-voxel-count definitional gap; full reconciliation with the official IBSI phantom mask remains out of scope.",
+    "No clinical accuracy, diagnostic, or full IBSI compliance claim is made."
+  ]
+}

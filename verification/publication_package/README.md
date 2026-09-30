@@ -6,10 +6,13 @@ to `docs/VERIFICATION_EVIDENCE.md` and `docs/standards_traceability.md`.
 
 > **Manuscript note (2026-09-28).** The manuscript sources, tables, and
 > title page are **not included** in this public package. They are kept
-> private by the author until journal submission to comply with prior-
-> publication policies. The benchmark script below regenerates every
-> numeric artifact in `02_Evidence/` from scratch, so the evidence remains
-> fully reproducible without the manuscript.
+> private by the author pending journal submission. Their absence does not
+> affect the evidence artifacts listed below.
+
+> **Public test result.** The recorded Windows run for this snapshot reported
+> 320 passed and 4 skipped tests. Skips require optional licensed reference
+> assets or benchmark inputs not included in the public package. Pytest
+> reports a reason for each skip.
 
 ## Included
 
@@ -19,9 +22,10 @@ to `docs/VERIFICATION_EVIDENCE.md` and `docs/standards_traceability.md`.
   - pyradiomics_comparison.json (matched first-order, tolerance 1e-6, max error 0.0)
   - ibsi_configuration_d_verification.json (Z-Rad reference pipeline, 270/270)
   - Scientific Benchmark Dossier.md, final_benchmark_summary.md
-- `benchmark_source/public_benchmark_evidence.py` — the benchmark script
-  that produced every number in `02_Evidence/` (recorded SHA-256 inside
-  the JSON artifacts). Run it to re-derive the results end to end.
+- `benchmark_source/public_benchmark_evidence.py` — regenerates the synthetic
+  CT phantom, generated archive-fixture, and navigation-cache measurements.
+  It does not regenerate the separately recorded PyRadiomics or IBSI
+  reference-comparison artifacts.
 
 ## What the measured evidence is (and is not)
 
@@ -30,10 +34,9 @@ Measured in this environment and recorded in the JSON artifacts:
   tolerances (mean -0.04 HU, std 10.02 HU vs targets 0.00 ± 3.00 / 10.00 ± 2.00).
 - PyRadiomics v3.0.1 matched first-order comparison on the same ROI:
   all absolute errors 0.0 at the declared 1e-6 tolerance.
-- IBSI Configuration D: all 270 populated reference rows of the official CT
-  radiomics phantom table reproduced via the configured Z-Rad reference
-  pipeline, and the application's dedicated Configuration D workflow
-  (3D image + aligned ROI mask) verified against the same rows.
+- IBSI Configuration D: 270/270 populated reference rows passed in the
+  configured Z-Rad reference pipeline. This result does not certify the
+  application's separate radiomics implementation or full IBSI compliance.
 - Export/privacy validator: sensitivity 1.000, specificity 1.000 on 20 valid
   and 20 invalid generated fixtures.
 - Runtime/memory: mean 0.003887 s, median 0.003901 s, peak 0.030 MB over
@@ -47,32 +50,27 @@ Explicit non-claims (limitations, not hidden):
   default single-slice radiomics path is disclosed as not
   Configuration-D-compliant (published values must use the dedicated workflow).
 
-## Provenance note (2026-09-28)
+## Reproducing selected measurements
 
-Before the public release, one diagnostic string inside
-`public_benchmark_evidence.py` (a local `install_command` hint embedded in a
-PyRadiomics-unavailable error branch) was generalized, removing a personal
-local file path. The script's SHA-256 changed accordingly, and the recorded
-`benchmark_script_sha256` in `heeh_v1_public_benchmark_results.json` was
-updated to the shipped script. No measured value, tolerance, comparison, or
-test outcome was affected by this edit; the full evidence can be re-derived
-by re-running the shipped script.
+From the repository root, run the script in the project environment:
 
-## Reliability and blocker policy
-
-The benchmark JSON records environment, script hash, input hashes, and
-comparator version for every number, so each result can be re-derived from
-the archived package. Results that cannot be rerun or linked to their exact
-inputs would be labeled as recorded historical evidence rather than current
-verification; every result in the current artifacts is rerunnable.
-
-## Reproducing the evidence
-
-With the package environment installed (see the repository README):
-
-```
-python verification/publication_package/benchmark_source/public_benchmark_evidence.py
+```powershell
+.\.venv\Scripts\python.exe `
+ verification\publication_package\benchmark_source\public_benchmark_evidence.py
 ```
 
-Regenerated artifacts must match the SHA-256 hashes recorded inside the
-existing JSON files for the same environment.
+The script writes a JSON result under `results/` and a Markdown report under
+`docs/`; it does not overwrite the checked-in evidence files. Its output
+covers the synthetic phantom, generated archive fixtures, and the fixed
+navigation-cache workload. Reproducing the PyRadiomics and IBSI reference
+comparisons requires their separately documented software and reference
+inputs. Licensed data are not redistributed in this package.
+
+The JSON artifacts record environment details, script fingerprints, and
+input fingerprints where available. The benchmark workspace did not provide
+Git metadata, so its source revision is recorded as unavailable; the
+reported package version does not identify an exact source revision.
+
+The test result and benchmark measurements are separate evidence types.
+Neither establishes clinical accuracy, privacy effectiveness, regulatory
+compliance, or generalizability.

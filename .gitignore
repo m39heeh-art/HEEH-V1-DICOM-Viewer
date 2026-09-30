@@ -77,3 +77,12 @@ data/finetune/
 *.pt
 *.onnx
 !tests/**/*.onnx
+
+# Local working drafts (canonical copies live in the evidence package)
+docs/report.md
+docs/final_benchmark_summary.md
+docs/public_benchmark_report.md
+docs/publication_grade_benchmark_outline.md
+docs/evaluation_updated_ar.md
+docs/verification_report_ar.md
+verification/data/

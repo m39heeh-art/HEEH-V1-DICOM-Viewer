@@ -11,18 +11,23 @@
     "research software",
     "TCIA"
   ],
-  "publication_date": "2026-09-24",
+  "publication_date": "2026-09-28",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer",
+      "identifier": "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/tree/v1.0.2",
       "resource_type": "software",
       "relation": "isIdenticalTo"
+    },
+    {
+      "identifier": "10.5281/zenodo.22768910",
+      "resource_type": "software",
+      "relation": "isVersionOf"
     }
   ],
   "description": "<p>HEEH-V1(TM) DICOM Viewer is a research and education Streamlit application for DICOM and volumetric-image viewing, calibrated measurements, quantitative analysis, experimental AI workflows, privacy-aware exports, and TCIA data access.</p><p>This software is not a certified medical device and must not be used for diagnosis, treatment planning, triage, or patient-care decisions.</p>",
   "creators": [
     {
-      "name": "m39heeh-art",
+      "name": "Mohamad Yousef Heeh",
       "orcid": "0009-0004-2729-443X"
     }
   ],

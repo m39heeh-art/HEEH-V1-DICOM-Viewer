@@ -80,5 +80,6 @@ package (no `cache_logs/` directory yet) failed every test that uses pytest's
 `tmp_path` fixture at setup.
 
 This release ships a root `conftest.py` that creates the basetemp parent
-directory before fixtures run. Verified from a pristine extraction: the
-first test run passes fully green with no preliminary re-run.
+directory before fixtures run. A pristine extraction can run the available
+tests on its first attempt; tests requiring absent optional data still skip
+with an explanatory reason.

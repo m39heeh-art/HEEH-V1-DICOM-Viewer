@@ -213,6 +213,14 @@ def run_configuration_d(
     roi_name: str | None = None,
 ) -> dict[str, Any]:
     """Extract 3D IBSI Configuration D features using an imported ROI mask."""
+    image_path = Path(image_path)
+    mask_path = Path(mask_path)
+    mask_name = mask_path.name.lower()
+    if not mask_name.endswith((".nii", ".nii.gz")) and not (
+        roi_name and roi_name.strip()
+    ):
+        raise ValueError("Enter the ROI name stored in the DICOM RTSTRUCT.")
+
     from zrad.image import Image
     from zrad.preprocessing import (
         ImageResampler,
@@ -225,16 +233,11 @@ def run_configuration_d(
     )
     from zrad.radiomics import Radiomics
 
-    image_path = Path(image_path)
-    mask_path = Path(mask_path)
     image, image_source_files = _load_reference_image(image_path)
-    mask_name = mask_path.name.lower()
     if mask_name.endswith((".nii", ".nii.gz")):
         mask = Image.from_nifti_mask(mask_path, reference=image)
         mask_source = "NIfTI"
     else:
-        if not roi_name or not roi_name.strip():
-            raise ValueError("Enter the ROI name stored in the DICOM RTSTRUCT.")
         mask = Image.from_dicom_mask(
             mask_path,
             roi_name.strip(),

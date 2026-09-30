@@ -4,7 +4,7 @@
 e5361eed4f2f962ea41be771f6498cb09b9a0bc8a50b9a64faa9f64a3bcafd76 *./.github/ISSUE_TEMPLATE/bug_report.md
 0d42f3672e234261ed6cc33aaac9d170bf6c914ab033bdff8dfcf27a05c990ed *./.github/ISSUE_TEMPLATE/feature_request.md
 468b3ec8fea8f87ab4840ecbc2b0d816f5542749b4565c85f2880cf8f3bafd28 *./.github/PULL_REQUEST_TEMPLATE.md
-a068cfbd4ce767a4ee90bd4d0a480e29324136e2a517cb16d4e98f353190d181 *./.github/workflows/ci.yml
+210cb101e8272e375dcd12025008078d48fe6323fb2a48db47ccda33099eec3f *./.github/workflows/ci.yml
 552cd0bed846540fab7500da1ebbd235d4912e440edd40d18198f0c8412b95bb *./.gitignore
 b4f223413e33071a4c9a7b3e1b19c8d4f22f9d8fa4c02fd12cdc7817d529bceb *./.streamlit/config.toml
 e8023838c7b61b0e7ef62c40a3ba01d54ddb6187356e8af29e15f80ef9a1f016 *./.zenodo.json

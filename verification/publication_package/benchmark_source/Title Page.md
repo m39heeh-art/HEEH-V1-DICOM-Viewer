@@ -1,7 +1,7 @@
 # Title Page
 
 ## Manuscript Title
-HEEH-V1 Benchmarking Under Public Provenance, Reference-Implementation Agreement, IBSI Configuration D Verification, and a Fixed Runtime Protocol
+HEEH-V1 DICOM Viewer: A Reproducible Radiomics and Privacy-Export Benchmark with Exact PyRadiomics Agreement on a Real Public CT Series
 
 ## Running Title
 Transparent benchmark evidence for HEEH-V1

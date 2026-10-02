@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+cff-version: 1.0.2
 title: "HEEH-V1(TM) DICOM Viewer"
 message: "Use the version DOI for this v1.0.2 release. Cite the version-family DOI 10.5281/zenodo.22768910 when referring to all versions."
 type: software

@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from scripts.ibsi_reference_verification import (
+    _compare_reference_rows,
     _compare_statistics,
     _compare_zrad_rows,
     run,
@@ -51,6 +52,29 @@ def test_statistics_comparison_includes_robust_and_scale_metrics():
     assert comparison["compared"] == len(rows)
     assert comparison["passed"] == len(rows)
     assert comparison["unsupported"] == 0
+
+
+def test_statistics_kurtosis_conversion_only_applies_to_pyradiomics_fallback():
+    reference_table = {
+        "_rows": [
+            {
+                "tag": "stat_kurt",
+                "feature": "(Excess) kurtosis",
+                "reference value": "4.35",
+                "tolerance": "0.32",
+            }
+        ]
+    }
+
+    direct = _compare_statistics(reference_table, {"stat_kurt": 4.35})
+    pyradiomics = _compare_statistics(
+        reference_table, {"original_firstorder_Kurtosis": 7.35}
+    )
+
+    assert direct["passed"] == 1
+    assert direct["comparisons"][0]["actual"] == 4.35
+    assert pyradiomics["passed"] == 1
+    assert pyradiomics["comparisons"][0]["actual"] == 4.35
 
 
 def test_zero_tolerance_uses_reference_display_precision():
@@ -129,6 +153,45 @@ def test_ibsi_reference_resegmentation_without_resampling_uses_source_spacing(
         result["configuration"]["spacing"], [0.7, 0.8, 1.2], rtol=1e-6
     )
     assert result["features"]
+
+
+@pytest.mark.parametrize(
+    "resampled_pixel_spacing",
+    [None, (1.0, 1.0, 1.0)],
+)
+def test_intensity_resegmentation_preserves_original_shape_mask(
+    tmp_path: Path,
+    resampled_pixel_spacing: tuple[float, float, float] | None,
+):
+    pytest.importorskip("radiomics")
+    import SimpleITK as sitk
+
+    image_path = tmp_path / "image.nii.gz"
+    mask_path = tmp_path / "mask.nii.gz"
+    image_values = np.zeros((7, 7, 7), dtype=np.float32)
+    image_values[3, 3, 3] = 100.0
+    mask_values = np.zeros((7, 7, 7), dtype=np.uint8)
+    mask_values[1:6, 1:6, 1:6] = 1
+
+    image = sitk.GetImageFromArray(image_values)
+    mask = sitk.GetImageFromArray(mask_values)
+    mask.CopyInformation(image)
+    sitk.WriteImage(image, str(image_path))
+    sitk.WriteImage(mask, str(mask_path))
+
+    result = RadiomicsExtractor.ibsi_reference_features(
+        str(image_path),
+        str(mask_path),
+        resegment_outlier_sigma=1.0,
+        resampled_pixel_spacing=resampled_pixel_spacing,
+        feature_classes=("firstorder", "shape"),
+    )
+
+    features = result["features"]
+    assert features["original_firstorder_Mean"] == 0.0
+    assert features["original_shape_VoxelVolume"] == 125.0
+    assert result["configuration"]["resegment_shape"] is False
+    assert result["configuration"]["resegment_range"] is not None
 
 
 def test_application_radiomics_is_reported_as_not_configuration_d_comparable(
@@ -219,6 +282,58 @@ def test_application_configuration_d_pipeline_matches_official_phantom():
     assert comparison["passed"] == 270
     assert comparison["failed"] == 0
     assert comparison["unsupported"] == 0
+
+
+def test_pyradiomics_morphology_matches_ibsi_reference_mask():
+    pytest.importorskip("radiomics")
+    import SimpleITK as sitk
+
+    verification_root = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "ibsi_reference_data"
+    )
+    phantom_root = verification_root / "ibsi_1_ct_radiomics_phantom"
+    image_path = phantom_root / "nifti" / "image" / "phantom.nii.gz"
+    mask_path = phantom_root / "nifti" / "mask" / "mask.nii.gz"
+    reference_path = (
+        verification_root
+        / "ibsi_1_reference_values"
+        / "ibsi_1_reference_values_config_D.csv"
+    )
+    if not all(path.is_file() for path in (image_path, mask_path, reference_path)):
+        pytest.skip("Optional licensed IBSI phantom/reference data are not installed")
+
+    reference_table = _load_reference_table(phantom_root)
+    result = RadiomicsExtractor.ibsi_reference_features(
+        str(image_path),
+        str(mask_path),
+        bin_count=32,
+        round_resampled_intensities=True,
+        resampled_pixel_spacing=(2.0, 2.0, 2.0),
+        resegment_outlier_sigma=3.0,
+        interpolator=sitk.sitkLinear,
+        feature_classes=(
+            "firstorder",
+            "glcm",
+            "glrlm",
+            "glszm",
+            "gldm",
+            "ngtdm",
+            "shape",
+        ),
+    )
+    comparison = _compare_reference_rows(reference_table, result["features"])
+
+    assert comparison["compared"] == 66
+    assert comparison["passed"] == 66
+    assert comparison["failed"] == 0
+    assert comparison["unsupported"] == 204
+    assert all(
+        "No defensible" in row["unsupported_reason"]
+        for row in comparison["comparisons"]
+        if row["expected"] is not None and row["actual"] is None
+    )
 
 
 def test_source_file_set_fingerprint_omits_paths_and_unrelated_files(tmp_path: Path):

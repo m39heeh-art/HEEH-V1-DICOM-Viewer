@@ -27,8 +27,15 @@ def test_public_benchmark_results_are_measured_and_explicitly_blocked():
     assert results["runtime_memory_benchmark"]["measurement_scope"].startswith(
         "Synthetic navigation-cache workload only."
     )
-    assert results["benchmark_environment"]["source_revision"].startswith(
-        "unavailable;"
+    source_revision = results["benchmark_environment"]["source_revision"]
+    assert (
+        source_revision.startswith("unavailable;")
+        or len(source_revision.split(" ", 1)[0]) == 40
+    )
+    assert "metadata only" in results["public_dataset_provenance"]["note"]
+    assert any(
+        item["name"].startswith("Full-collection image-level")
+        for item in results["unavailable_experiments"]
     )
     assert results["external_radiomics_comparison"]["status"] == "measured"
     assert results["external_radiomics_comparison"]["all_within_tolerance"] is True
@@ -40,10 +47,10 @@ def test_public_benchmark_results_are_measured_and_explicitly_blocked():
     ] == 270
     assert results["ibsi_configuration_d_verification"][
         "pyradiomics_reference_comparison"
-    ]["passed"] == 58
+    ]["passed"] == 66
     assert results["ibsi_configuration_d_verification"][
         "pyradiomics_reference_comparison"
-    ]["failed"] == 8
+    ]["failed"] == 0
     assert results["ibsi_configuration_d_verification"][
         "pyradiomics_reference_comparison"
     ]["unsupported"] == 204
@@ -54,7 +61,7 @@ def test_public_benchmark_results_are_measured_and_explicitly_blocked():
         results["ibsi_configuration_d_verification"]["statistics_comparison"][
             "passed"
         ]
-        == 17
+        == 18
     )
     assert any(
         item["name"].startswith("Full IBSI")
@@ -76,8 +83,11 @@ def test_public_benchmark_report_is_generated_from_results():
     assert "Python allocation peak" in report
     assert results["benchmark_environment"]["requirements_lock_sha256"] in report
     assert "configuration-specific" in report
-    assert "PyRadiomics reference comparison (separate from Z-Rad): `66` compared" in report
-    assert "58` passed; `8` failed; `204` unsupported" in report
-    assert "Z-Rad statistics rows: `18` compared; `17` passed; `1` failed" in report
+    assert "PyRadiomics reference comparison (separate from Z-Rad): `66` assessed" in report
+    assert (
+        "66` assessed; `66` passed; `0` failed; `204` not assessed because "
+        "no defensible feature mapping was established for this comparison."
+    ) in report
+    assert "Z-Rad statistics rows: `18` compared; `18` passed; `0` failed" in report
     assert "no Configuration D pass/fail comparison is made" in report
     assert "C:\\Users\\" not in report

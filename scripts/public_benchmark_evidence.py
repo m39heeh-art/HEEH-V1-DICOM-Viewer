@@ -13,6 +13,7 @@ import hashlib
 import io
 import json
 import platform
+import subprocess
 import sys
 import time
 import tracemalloc
@@ -53,8 +54,35 @@ def _dataset_provenance() -> dict[str, Any]:
         "download_status": "metadata_only",
         "sha256": None,
         "file_size_bytes": 90849198,
-        "note": "No archive was downloaded in this environment; provenance records exact public metadata and licensing status only.",
+        "note": (
+            "This synthetic/fixture benchmark records collection metadata only; "
+            "it does not analyze collection-level image data. "
+            "A separate study downloaded and evaluated one 172-slice series; "
+            "the remainder of the collection was not evaluated."
+        ),
     }
+
+
+def _source_revision(root: Path) -> str:
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        status = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return "unavailable; Git revision metadata could not be read"
+    tree_state = "modified working tree" if status else "clean working tree"
+    return f"{commit} ({tree_state}; verify exact files with SHA256SUMS.txt)"
 
 
 def _recorded_comparison_evidence(root: Path) -> dict[str, Any]:
@@ -311,7 +339,11 @@ def build_results() -> dict[str, Any]:
         "benchmark_name": "HEEH-V1 public benchmark evidence package",
         "project_identity": "HEEH-V1(TM) DICOM Viewer",
         "release_claims_preserved": True,
-        "release_version_notes": "No v1.0.1 release metadata or claims were altered; this is a new development benchmark package.",
+        "release_version_notes": (
+            "The requested 1.0.2 version label is retained. This revised "
+            "package includes post-tag fixes and evidence updates and is not "
+            "byte-identical to the original tagged snapshot."
+        ),
         "benchmark_environment": {
             "project_version": project["project"]["version"],
             "python_version": platform.python_version(),
@@ -325,7 +357,7 @@ def build_results() -> dict[str, Any]:
             "benchmark_script_sha256": hashlib.sha256(
                 Path(__file__).read_bytes()
             ).hexdigest(),
-            "source_revision": "unavailable; this workspace has no Git metadata",
+            "source_revision": _source_revision(root),
         },
         "public_dataset_provenance": _dataset_provenance(),
         "external_radiomics_comparison": comparator,
@@ -340,9 +372,14 @@ def build_results() -> dict[str, Any]:
                 "reason": "The recorded Configuration D verification is not a complete Phase 1/2 workflow or a full compliance certification.",
             },
             {
-                "name": "Image-level analysis of CT-Phantom4Radiomics",
+                "name": "Full-collection image-level analysis of CT-Phantom4Radiomics",
                 "status": "not_run",
-                "reason": "The public collection is metadata-only in this benchmark; the image archive was not downloaded.",
+                "reason": (
+                    "The synthetic/fixture benchmark records collection metadata "
+                    "only and does not analyze image data. A separate real-data "
+                    "study evaluated one 172-slice series; the rest of the "
+                    "collection was not evaluated."
+                ),
             },
         ],
         "scenario_summary": _scenario_summary({
@@ -372,7 +409,8 @@ def _report_markdown(results: dict[str, Any]) -> str:
         f"- SeriesInstanceUID: `{ds['series_instance_uid']}`",
         f"- License: `{ds['license_name']}` ({ds['license_url']})",
         f"- DataDescriptionURI: `{ds['data_description_url']}`",
-        f"- Download status: `{ds['download_status']}`; no file hash was generated because the archive was not downloaded.",
+        f"- Synthetic/fixture benchmark provenance: `{ds['download_status']}` for the collection metadata; no collection-level images were analyzed in this benchmark.",
+        "- Separate real-data study: one 172-slice series was downloaded and evaluated (ZIP SHA-256 `fe6d292dc6989ca85d8323781067a3781ddc21c62105403ee83af512725539ea`); the rest of the collection was not evaluated.",
         "",
         "## Execution environment",
         f"- Project version: `{environment['project_version']}`",
@@ -405,7 +443,7 @@ def _report_markdown(results: dict[str, Any]) -> str:
         f"- Status: `{ibsi['status']}`",
         f"- Reference dataset: `{ibsi.get('reference_source', {}).get('dataset', 'not recorded')}` at `{ibsi.get('reference_source', {}).get('commit', 'commit unavailable')}`; license `{ibsi.get('reference_source', {}).get('license', 'not recorded')}`",
         f"- Configuration D Z-Rad comparison: `{ibsi.get('zrad_comparison', {}).get('compared', 'not available')}` compared; `{ibsi.get('zrad_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('zrad_comparison', {}).get('failed', 'not available')}` failed; `{ibsi.get('zrad_comparison', {}).get('unsupported', 'not available')}` unsupported.",
-        f"- PyRadiomics reference comparison (separate from Z-Rad): `{ibsi.get('pyradiomics_reference_comparison', {}).get('compared', 'not available')}` compared; `{ibsi.get('pyradiomics_reference_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('failed', 'not available')}` failed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('unsupported', 'not available')}` unsupported.",
+        f"- PyRadiomics reference comparison (separate from Z-Rad): `{ibsi.get('pyradiomics_reference_comparison', {}).get('compared', 'not available')}` assessed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('failed', 'not available')}` failed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('unsupported', 'not available')}` not assessed because no defensible feature mapping was established for this comparison.",
         f"- Z-Rad statistics rows: `{ibsi.get('statistics_comparison', {}).get('compared', 'not available')}` compared; `{ibsi.get('statistics_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('statistics_comparison', {}).get('failed', 'not available')}` failed.",
         f"- Default viewer slice radiomics: `{ibsi.get('application_alignment', 'not available')}`. It uses a 2D unmasked slice, so no Configuration D pass/fail comparison is made for this path.",
         f"- Boundary: {ibsi.get('scope', ibsi.get('note', 'No verification recorded.'))}",
@@ -427,7 +465,7 @@ def _report_markdown(results: dict[str, Any]) -> str:
         "",
         "## Unavailable experiments",
         "- Full IBSI Phase 1/2 compliance certification was not performed.",
-        "- Image-level evaluation on CT-Phantom4Radiomics was not performed; only collection metadata is recorded.",
+        "- Full-collection image-level evaluation on CT-Phantom4Radiomics was not performed. A separate real-data study evaluates one 172-slice series.",
         "",
         "## Limitation statement",
         "Measurements above are limited to the stated synthetic ROI, official Configuration D reference table and Z-Rad pipeline, generated challenge fixtures, and synthetic navigation-cache workload. They are not clinical validation, do not establish global generalizability or superiority, and do not constitute full IBSI compliance.",

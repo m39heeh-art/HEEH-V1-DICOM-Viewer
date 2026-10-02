@@ -566,6 +566,21 @@ def test_histogram_features_two_voxels_finite():
         assert np.isfinite(v)
 
 
+def test_histogram_moments_on_constant_data_avoid_precision_warnings():
+    """Degenerate variance uses the existing finite zero sentinel cleanly."""
+    import warnings
+    from app import RadiomicsExtractor
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        report = RadiomicsExtractor.histogram_features(
+            np.full(64, 29.0, dtype=np.float64)
+        )
+
+    assert report["skewness"] == 0.0
+    assert report["kurtosis"] == 0.0
+
+
 def test_full_report_single_voxel_finite():
     """Test that full report single voxel finite."""
     from app import RadiomicsExtractor

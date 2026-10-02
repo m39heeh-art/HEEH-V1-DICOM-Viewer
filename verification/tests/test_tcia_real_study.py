@@ -69,11 +69,12 @@ def test_full_series_study_headlines_are_stable():
 
     morphology = study["morphology_root_cause"]
     decomposition = morphology["recorded_table_decomposition"]
-    assert decomposition["failed_rows"] == 8
-    volumes = decomposition["volume_rows_span"]
-    # Volumes deviate systematically by roughly -3% (convention bias).
-    assert -0.05 < volumes["min"] < volumes["max"] < -0.02
-    assert decomposition["surface_rows_span"]["min"] > 0.05
+    assert decomposition["compared"] == 66
+    assert decomposition["passed"] == 66
+    assert decomposition["failed"] == 0
+    assert decomposition["not_assessed"] == 204
+    assert decomposition["failed_rows"] == 0
+    assert "shape features now use the original ROI mask" in morphology["finding"]
 
 
 def test_live_pipeline_still_reproduces_exact_agreement():

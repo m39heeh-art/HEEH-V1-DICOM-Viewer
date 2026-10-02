@@ -79,8 +79,8 @@ def test_cohort_export_without_combat_has_no_disclosure_columns(tmp_path):
     assert float(rows[0]["mean"]) == pytest.approx(1000.0, abs=10.0)
 
 
-def test_cohort_export_combat_applied_with_two_modality_batches(tmp_path):
-    """Two modalities (batches) with known location effects are harmonized."""
+def test_cohort_export_refuses_cross_modality_combat(tmp_path):
+    """Modality is not a defensible batch for harmonizing unlike signals."""
     from app import ClinicalApp
 
     files = [
@@ -93,19 +93,17 @@ def test_cohort_export_combat_applied_with_two_modality_batches(tmp_path):
     payload = ClinicalApp()._build_cohort_metrics_csv(files, combat=True)
     rows = _read_csv_rows(payload)
     assert len(rows) == 6
-    assert all(row["combat_applied"].startswith("yes") for row in rows)
-    assert all("empirical-bayes ComBat" in row["combat_details"] for row in rows)
-    # Batch labels are the app's acquisition-modality strings per file.
-    assert all("CT" in row["combat_batch"] or "MR" in row["combat_batch"] for row in rows)
+    assert all(row["combat_applied"] == "no" for row in rows)
+    assert all(row["combat_batch"] == "" for row in rows)
+    assert all(row["combat_details"].startswith("refused:") for row in rows)
+    assert all("modality is not a valid ComBat batch" in row["combat_details"] for row in rows)
     ct_means = [
-        float(row["mean"]) for row in rows if "CT" in row["combat_batch"]
+        float(row["mean"]) for row in rows if row["modality"].endswith("CT")
     ]
     mr_means = [
-        float(row["mean"]) for row in rows if "MR" in row["combat_batch"]
+        float(row["mean"]) for row in rows if row["modality"].endswith("MR")
     ]
-    # Location effects removed: CT and MR batch means now agree closely
-    # (before adjustment they differed by ~1500 HU).
-    assert abs(np.mean(ct_means) - np.mean(mr_means)) < 50.0
+    assert abs(np.mean(ct_means) - np.mean(mr_means)) > 1000.0
 
 
 def test_cohort_export_combat_refusal_is_explicit_not_silent(tmp_path):

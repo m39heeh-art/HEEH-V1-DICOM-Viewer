@@ -6,6 +6,7 @@ value (e.g. mean 29.0 instead of the correct central-slice 0.0) and leaving
 ``selected_slice`` blank.
 """
 import csv
+import hashlib
 import io
 
 import nibabel as nib
@@ -70,3 +71,35 @@ def test_true_rgb_raster_still_gets_luminance(cohort_app, tmp_path):
     assert row["status"] == "success"
     assert float(row["mean"]) == pytest.approx(0.114 * 255, abs=0.5)
     assert row["selected_slice"] == ""
+
+
+def test_source_hash_is_sha256_of_file_contents_not_its_name(cohort_app, tmp_path):
+    image_path = tmp_path / "original.nii.gz"
+    copy_path = tmp_path / "renamed-copy.nii.gz"
+    nib.save(
+        nib.Nifti1Image(np.arange(64, dtype=np.float32).reshape(4, 4, 4), np.eye(4)),
+        str(image_path),
+    )
+    copy_path.write_bytes(image_path.read_bytes())
+
+    payload = cohort_app._build_cohort_metrics_csv(
+        [str(image_path), str(copy_path)]
+    )
+    rows = list(csv.DictReader(io.StringIO(payload.decode("utf-8-sig"))))
+    expected_hash = hashlib.sha256(image_path.read_bytes()).hexdigest()
+
+    assert rows[0]["source_hash"] == expected_hash
+    assert rows[1]["source_hash"] == expected_hash
+    assert len(rows[0]["source_hash"]) == 64
+
+
+def test_uploaded_source_hash_restores_stream_position():
+    from io import BytesIO
+
+    source = BytesIO(b"synthetic image bytes")
+    source.seek(5)
+
+    assert ClinicalApp._sha256_target(source) == hashlib.sha256(
+        b"synthetic image bytes"
+    ).hexdigest()
+    assert source.tell() == 5

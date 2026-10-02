@@ -25,6 +25,22 @@ validity, or interoperability with a particular system.
 | XLSX output | Office Open XML | Export tests cover generated workbooks | Does not certify compatibility with every spreadsheet application |
 | NIfTI and other volume formats | Format-specific specifications and library behavior | Synthetic fixtures cover selected NIfTI, NRRD, and MetaImage paths | The full format and orientation space is not validated |
 
+For constant or machine-precision-degenerate samples, the exploratory
+skewness/kurtosis output uses the application's finite `0.0` sentinel instead
+of evaluating undefined standardized moments. Treat that sentinel as
+degenerate, not as an estimated moment.
+
+The cohort CSV records a SHA-256 hash of each source file's bytes. This
+fingerprint supports integrity and reproducibility checks; it is not
+de-identification, and known public images may be matched by hash.
+
+The cohort export does not apply ComBat harmonization. It does not collect
+validated scanner/site batch identifiers or biological covariates, and
+modality is not a valid batch label for harmonizing unlike signal scales.
+Requests through the compatibility API are refused and raw statistics are
+preserved. The standalone harmonization engine does not validate this cohort
+workflow.
+
 ## Radiomics and quantitative analysis
 
 The default slice-based radiomics view is exploratory. It does not use the
@@ -36,9 +52,13 @@ The release evidence package reports 270 of 270 populated Configuration D
 reference rows passing in the configured CT-phantom comparison workflow. The
 comparison uses licensed reference materials and the Z-Rad reference
 pipeline. The evidence package also reports a separate PyRadiomics comparison
-with 58 of 66 comparable rows passing, 8 failing, and 204 unsupported. These
-are distinct comparisons; neither result establishes full IBSI Phase 1 or
-Phase 2 compliance, performance on patient data, or generalizability.
+with all 66 assessed rows passing. A further 204 reference rows were not
+assessed because a defensible feature mapping was not established for this
+comparison; they are neither passes nor failures. This is distinct from the
+Z-Rad comparison; neither result establishes full IBSI Phase 1 or Phase 2
+compliance, performance on patient data, or generalizability. Shape features
+are computed from the original ROI mask; intensity re-segmentation is applied
+to intensity features only.
 
 See `ibsi_ct_subset.md` and
 `../verification/publication_package/02_Evidence/public_benchmark_report.md`

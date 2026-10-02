@@ -18,15 +18,15 @@ Statistical extension of the single-slice protocol to all 172 slices of the down
 ## Export/privacy round trip, all slices
 - Accepted 172/172 (1.000); tamper-rejection checked on 11 deterministically sampled slices, rejected 11/11.
 
-## Morphology 58/66 root cause (data-driven)
+## IBSI morphology reference comparison
 - Real 3D sphere ROI: voxel-count 57952.7 mm3 vs PyRadiomics MeshVolume 57899.8 mm3 (internal definitional gap 0.0914%).
-- Recorded IBSI-table failures decomposed (signed, vs official expected values): volumes {'min': -0.0333695652173913, 'max': -0.03231607629427793}, surface {'min': 0.08309804384972556, 'max': 0.08309804384972556}, ratios {'min': -0.09707780380568497, 'max': 0.11999330071012161}, PCA {'min': -0.028269133985218235, 'max': 0.004463700611600456}.
-- Finding: On a smooth real 3D sphere at the series' anisotropic spacing, PyRadiomics' mesh and voxel-count volume definitions agree to within 0.09%. In the recorded IBSI phantom comparison, PyRadiomics' two volume definitions also agree closely with each other, while both deviate from the official expected values by -3.34% to -3.23%; surface area deviates by +8.31%, and surface-derived ratios compound to -9.71% to +12.00%. The dominant source is therefore the reference phantom's mask/grid convention (the official values derive from the IBSI reference segmentation), with marching-cubes surface extraction on anisotropic voxels driving the larger surface and ratio deviations; PCA eigenvalue rows use a further decomposition convention. Reconciliation requires running the comparator on the IBSI reference segmentation itself and is disclosed as out of scope.
+- Separate PyRadiomics reference comparison: 66 rows assessed; 66 passed; 0 failed; 204 not assessed because a defensible feature mapping was not established for this comparison. They are neither passes nor failures.
+- Finding: All 66 comparable PyRadiomics reference rows pass. The earlier eight morphology failures were reproduced when intensity re-segmentation was incorrectly used as the shape mask; shape features now use the original ROI mask while intensity features use the re-segmented mask. This paired verification identifies and corrects the source of those failures. The smooth-ROI mesh-versus-voxel difference below is a separate, feature-definition-specific observation.
 
 ## Limitations
 - All results describe the single real recorded phantom series only.
 - Radiomics ROIs are geometric regions; no clinical or diagnostic meaning is attached.
 - PyRadiomics agreement covers matched first-order statistics on 2D ROIs and shape definitions on one 3D ROI.
 - The export gate exercise covers this series' slices only; it is not a clinical privacy estimate.
-- The morphology analysis quantifies the mesh-vs-voxel-count definitional gap; full reconciliation with the official IBSI phantom mask remains out of scope.
+- Morphology and other feature results are limited to the pinned IBSI CT phantom, the stated processing configuration, and features with available reference values.
 - No clinical accuracy, diagnostic, or full IBSI compliance claim is made.

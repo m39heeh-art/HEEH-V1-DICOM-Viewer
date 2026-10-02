@@ -7,9 +7,9 @@ Extends scripts/tcia_real_evaluation.py from a single-slice protocol to:
   3. De-identification + export round trip for ALL slices, with sampled
      tamper-rejection checks (deterministic manifest corruption).
   4. Air-region CT-number calibration for ALL slices (worst slice reported).
-  5. Quantitative root-cause analysis of the 8 morphology disagreements
-     (PyRadiomics mesh-based vs voxel-count volume definitions) on a real
-     3D spherical ROI.
+  5. A descriptive comparison of PyRadiomics mesh-based and voxel-count
+     volume definitions on a real 3D spherical ROI, alongside the current
+     IBSI reference-table comparison status.
 
 Writes:
   verification/results/tcia_full_series_study.json
@@ -181,6 +181,7 @@ def morphology_root_cause(volume, spacing, mid):
     recorded_path = REPO / "verification/results/ibsi_configuration_d_verification.json"
     recorded = json.loads(recorded_path.read_text(encoding="utf-8"))
     rows = recorded["absolute_errors"]["comparisons"]
+    comparison = recorded["absolute_errors"]
     failed = [
         row
         for row in rows
@@ -213,6 +214,25 @@ def morphology_root_cause(volume, spacing, mid):
             return None
         return {"min": min(values), "max": max(values)}
 
+    if failed:
+        finding = (
+            f"The current PyRadiomics reference-table comparison has "
+            f"{len(failed)} failing morphology rows. The smooth-ROI mesh and "
+            "voxel-count comparison below is descriptive only and does not "
+            "establish the cause of those failures."
+        )
+    else:
+        finding = (
+            f"All {comparison['compared']} comparable PyRadiomics reference "
+            "rows pass. The earlier eight morphology failures were reproduced "
+            "when intensity re-segmentation was incorrectly used as the shape "
+            "mask; shape features now use the original ROI mask while "
+            "intensity features use the re-segmented mask. This paired "
+            "verification identifies and corrects the source of those "
+            "failures. The smooth-ROI mesh-versus-voxel difference below is "
+            "a separate, feature-definition-specific observation."
+        )
+
     return {
         "real_3d_roi": {
             "roi": "3D sphere, 24 mm radius, centered in the real volume",
@@ -228,37 +248,17 @@ def morphology_root_cause(volume, spacing, mid):
         },
         "recorded_table_decomposition": {
             "failed_rows": len(decomposition),
+            "compared": comparison["compared"],
+            "passed": comparison["passed"],
+            "failed": comparison["failed"],
+            "not_assessed": comparison["unsupported"],
             "rows": decomposition,
             "volume_rows_span": span(volume_rows),
             "surface_rows_span": span(surface_rows),
             "ratio_rows_span": span(ratio_rows),
             "pca_rows_span": span(pca_rows),
         },
-        "finding": (
-            "On a smooth real 3D sphere at the series' anisotropic spacing, "
-            "PyRadiomics' mesh and voxel-count volume definitions agree to "
-            "within {internal:.2%}. In the recorded IBSI phantom comparison, "
-            "PyRadiomics' two volume definitions also agree closely with each "
-            "other, while both deviate from the official expected values by "
-            "{vols}; surface area deviates by {surf}, and surface-derived "
-            "ratios compound to {ratios}. The dominant source is therefore "
-            "the reference phantom's mask/grid convention (the official "
-            "values derive from the IBSI reference segmentation), with "
-            "marching-cubes surface extraction on anisotropic voxels driving "
-            "the larger surface and ratio deviations; PCA eigenvalue rows use "
-            "a further decomposition convention. Reconciliation requires "
-            "running the comparator on the IBSI reference segmentation "
-            "itself and is disclosed as out of scope."
-        ).format(
-            internal=abs(mesh_volume - voxel_count_volume) / voxel_count_volume,
-            vols=("{:.2%} to {:.2%}".format(
-                span(volume_rows)["min"], span(volume_rows)["max"]
-            ) if volume_rows else "n/a"),
-            surf=("{:+.2%}".format(surface_rows[0]["signed_relative_deviation"]) if surface_rows else "n/a"),
-            ratios=("{:+.2%} to {:+.2%}".format(
-                span(ratio_rows)["min"], span(ratio_rows)["max"]
-            ) if ratio_rows else "n/a"),
-        ),
+        "finding": finding,
     }
 
 
@@ -386,7 +386,7 @@ def build_study() -> dict:
             "Radiomics ROIs are geometric regions; no clinical or diagnostic meaning is attached.",
             "PyRadiomics agreement covers matched first-order statistics on 2D ROIs and shape definitions on one 3D ROI.",
             "The export gate exercise covers this series' slices only; it is not a clinical privacy estimate.",
-            "The morphology analysis quantifies the mesh-vs-voxel-count definitional gap; full reconciliation with the official IBSI phantom mask remains out of scope.",
+            "Morphology and other feature results are limited to the pinned IBSI CT phantom, the stated processing configuration, and features with available reference values.",
             "No clinical accuracy, diagnostic, or full IBSI compliance claim is made.",
         ],
         "runtime_seconds": round(time.perf_counter() - t0, 1),
@@ -422,9 +422,9 @@ def report_markdown(study: dict) -> str:
         "## Export/privacy round trip, all slices",
         f"- Accepted {exp['accepted']}/{exp['n']} ({exp['acceptance_rate']:.3f}); tamper-rejection checked on {exp['tamper_checks']} deterministically sampled slices, rejected {exp['tamper_rejected']}/{exp['tamper_checks']}.",
         "",
-        "## Morphology 58/66 root cause (data-driven)",
+        "## IBSI morphology reference comparison",
         f"- Real 3D sphere ROI: voxel-count {morph['real_3d_roi']['voxel_count_volume_mm3']:.1f} mm3 vs PyRadiomics MeshVolume {morph['real_3d_roi']['pyradiomics_mesh_volume_mm3']:.1f} mm3 (internal definitional gap {morph['real_3d_roi']['mesh_vs_voxel_count_relative_difference']:.4%}).",
-        f"- Recorded IBSI-table failures decomposed (signed, vs official expected values): volumes {morph['recorded_table_decomposition']['volume_rows_span']}, surface {morph['recorded_table_decomposition']['surface_rows_span']}, ratios {morph['recorded_table_decomposition']['ratio_rows_span']}, PCA {morph['recorded_table_decomposition']['pca_rows_span']}.",
+        f"- Separate PyRadiomics reference comparison: {morph['recorded_table_decomposition']['compared']} rows assessed; {morph['recorded_table_decomposition']['passed']} passed; {morph['recorded_table_decomposition']['failed']} failed; {morph['recorded_table_decomposition']['not_assessed']} not assessed because a defensible feature mapping was not established for this comparison. They are neither passes nor failures.",
         f"- Finding: {morph['finding']}",
         "",
         "## Limitations",

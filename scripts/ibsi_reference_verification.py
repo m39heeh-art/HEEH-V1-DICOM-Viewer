@@ -101,7 +101,7 @@ def _compare_statistics(reference_table: dict, features: dict) -> dict:
         expected = float(expected_text)
         tolerance = float(row.get("tolerance") or 0)
         actual = features.get(tag) if tag in features else features.get(key)
-        if tag == "stat_kurt" and actual is not None:
+        if tag == "stat_kurt" and tag not in features and actual is not None:
             # PyRadiomics reports Pearson kurtosis; IBSI reports excess kurtosis.
             actual = float(actual) - 3.0
         comparisons.append(
@@ -228,11 +228,23 @@ def _compare_reference_rows(reference_table: dict, features: dict) -> dict:
         key = f"original_{prefix}_{suffix}" if prefix and suffix else None
         reason = None
         if "merged" in family or "Co-occurrence" in family:
-            reason = "PyRadiomics aggregation is not an IBSI merged matrix."
+            reason = (
+                "No defensible mapping was established for this comparison "
+                "because aggregation semantics differ."
+            )
             key = None
         elif key is None:
-            reason = "No unambiguous PyRadiomics equivalent."
+            reason = (
+                "No defensible PyRadiomics feature mapping was established "
+                "for this comparison."
+            )
         actual = features.get(key) if key else None
+        if expected_text and actual is None and reason is None:
+            reason = (
+                "No defensible PyRadiomics feature mapping could be "
+                "established for this comparison because the mapped output "
+                "was not available."
+            )
         if family == "Statistics" and row.get("tag") == "stat_kurt" and actual is not None:
             actual = float(actual) - 3.0
         item = {
@@ -628,9 +640,10 @@ def run(data_root: Path, output: Path) -> dict:
         ),
         "scope": (
             "All populated IBSI Configuration D reference rows were compared "
-            "with the configured Z-Rad reference pipeline. This result is "
-            "configuration-specific and does not certify the application's "
-            "separate radiomics implementation or full IBSI compliance."
+            "with the configured Z-Rad pipeline shared by the dedicated "
+            "application Configuration D workflow. This comparison is "
+            "configuration-specific and does not establish full IBSI "
+            "compliance or validate the default 2D viewer path."
         ),
         "verification_summary": {
             "official_reference_values": reference_table["status"],

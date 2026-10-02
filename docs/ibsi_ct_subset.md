@@ -31,13 +31,22 @@ resampling with nearest-integer intensity rounding, trilinear mask resampling
 at a 0.5 threshold, 3-SD outlier re-segmentation, and fixed-bin-number
 discretisation with 32 bins for texture and intensity-histogram features. The
 same processing function is used by the phantom verifier and the application.
-The official phantom currently passes all 270 populated Configuration D
-reference rows through the configured Z-Rad reference pipeline. The separate
-PyRadiomics reference extraction reports 58 of 66 comparable reference-table
-rows passing, 8 failing, and 204 unsupported; this is not the default viewer
-alignment result. The default viewer's 2D, unmasked radiomics view is
-non-comparable to Configuration D and is not established as IBSI-compliant.
-Nor does a single configuration certify all IBSI phases or all input cases.
+The official phantom passes all 270 populated Configuration D reference rows
+through the configured Z-Rad reference pipeline. The separate PyRadiomics
+reference extraction assesses 66 rows, all of which pass; 204 additional rows
+were not assessed because a defensible feature mapping was not established
+for this comparison. They are neither passes nor failures. This comparison is
+not the default viewer alignment result. The
+default viewer's 2D, unmasked radiomics view is non-comparable to Configuration
+D and is not established as IBSI-compliant. Nor does a single configuration
+certify all IBSI phases or all input cases.
+
+The comparison initially had eight morphology mismatches because the
+intensity-resegmented mask was also used to calculate shape. The reference
+adapter now calculates intensity features on the re-segmented mask and shape
+features on the original ROI mask, matching PyRadiomics' non-resegmented shape
+semantics. The regression test reproduces the IBSI CT phantom comparison and
+checks all 66 comparable rows.
 When a published reference row lists zero tolerance, the verifier accounts
 for half a unit at the last displayed decimal place, since reference values
 are rounded for publication; both the published tolerance and effective

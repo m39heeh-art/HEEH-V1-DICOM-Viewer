@@ -245,8 +245,19 @@ class RadiomicsExtractor:
         mean_v = float(np.mean(f))
         # Match PyRadiomics FirstOrder StandardDeviation (population variance).
         std_v = float(np.std(f, ddof=0)) if f.size >= 2 else 0.0
-        skew_v = float(stats.skew(f)) if f.size >= 3 else 0.0
-        kurt_v = float(stats.kurtosis(f, fisher=True)) if f.size >= 4 else 0.0
+        moment_defined = std_v > (
+            np.finfo(np.float64).eps * max(1.0, abs(mean_v))
+        )
+        skew_v = (
+            float(stats.skew(f))
+            if f.size >= 3 and moment_defined
+            else 0.0
+        )
+        kurt_v = (
+            float(stats.kurtosis(f, fisher=True))
+            if f.size >= 4 and moment_defined
+            else 0.0
+        )
         # Guard against NaN for tiny inputs (single voxel, uniform slices).
         if not np.isfinite(std_v):
             std_v = 0.0
@@ -866,24 +877,26 @@ class RadiomicsExtractor:
 
         processing_image = image
         processing_mask = mask
+        shape_mask = mask
         effective_spacing = list(image.GetSpacing())
-        resampled_resegmented_mask = None
+        resolved_resegment_range = None
         if resegment_range is not None and resegment_outlier_sigma is not None:
             raise ValueError("choose either resegment_range or resegment_outlier_sigma")
         if resegment_range is not None:
             lower, upper = (float(value) for value in resegment_range)
             if not np.isfinite([lower, upper]).all() or lower >= upper:
                 raise ValueError("resegment_range must be a finite ascending interval")
+            resolved_resegment_range = [lower, upper]
             image_array = sitk.GetArrayFromImage(image)
             mask_array = sitk.GetArrayFromImage(mask) == int(label)
-            intensity_mask = sitk.GetImageFromArray(
-                ((image_array >= lower) & (image_array <= upper) & mask_array).astype(
-                    np.uint8
-                )
+            processing_mask = sitk.GetImageFromArray(
+                (
+                    (image_array >= lower)
+                    & (image_array <= upper)
+                    & mask_array
+                ).astype(np.uint8)
             )
-            intensity_mask.CopyInformation(mask)
-        else:
-            intensity_mask = mask
+            processing_mask.CopyInformation(mask)
         if resampled_pixel_spacing is not None:
             spacing = tuple(float(value) for value in resampled_pixel_spacing)
             if len(spacing) != 3 or any(
@@ -942,33 +955,55 @@ class RadiomicsExtractor:
             mask_resampler.SetInterpolator(sitk.sitkLinear)
             mask_resampler.SetDefaultPixelValue(0)
             mask_resampler.SetOutputPixelType(sitk.sitkFloat32)
-            resampled_mask = mask_resampler.Execute(intensity_mask)
-            resampled_resegmented_mask = sitk.BinaryThreshold(
-                resampled_mask,
+            resampled_shape_mask = mask_resampler.Execute(mask)
+            shape_mask = sitk.BinaryThreshold(
+                resampled_shape_mask,
                 lowerThreshold=0.5,
                 upperThreshold=1.0,
                 insideValue=int(label),
                 outsideValue=0,
             )
-            processing_mask = resampled_resegmented_mask
+            resampled_intensity_mask = mask_resampler.Execute(processing_mask)
+            processing_mask = sitk.BinaryThreshold(
+                resampled_intensity_mask,
+                lowerThreshold=0.5,
+                upperThreshold=1.0,
+                insideValue=int(label),
+                outsideValue=0,
+            )
+            effective_spacing = list(spacing)
             if resegment_outlier_sigma is not None:
                 image_values = sitk.GetArrayFromImage(processing_image)
-                mask_values = sitk.GetArrayFromImage(processing_mask) == int(label)
+                mask_values = sitk.GetArrayFromImage(shape_mask) == int(label)
                 valid_values = image_values[mask_values]
                 mean = float(np.mean(valid_values))
                 std = float(np.std(valid_values))
                 lower = mean - float(resegment_outlier_sigma) * std
                 upper = mean + float(resegment_outlier_sigma) * std
+                resolved_resegment_range = [lower, upper]
                 processing_mask = sitk.BinaryThreshold(
                     processing_image,
                     lowerThreshold=lower,
                     upperThreshold=upper,
                     insideValue=int(label),
                     outsideValue=0,
-                ) * processing_mask
-        elif resegment_range is not None:
-            processing_mask = intensity_mask
-            effective_spacing = list(image.GetSpacing())
+                ) * shape_mask
+        elif resegment_outlier_sigma is not None:
+            image_values = sitk.GetArrayFromImage(processing_image)
+            mask_values = sitk.GetArrayFromImage(shape_mask) == int(label)
+            valid_values = image_values[mask_values]
+            mean = float(np.mean(valid_values))
+            std = float(np.std(valid_values))
+            lower = mean - float(resegment_outlier_sigma) * std
+            upper = mean + float(resegment_outlier_sigma) * std
+            resolved_resegment_range = [lower, upper]
+            processing_mask = sitk.BinaryThreshold(
+                processing_image,
+                lowerThreshold=lower,
+                upperThreshold=upper,
+                insideValue=int(label),
+                outsideValue=0,
+            ) * shape_mask
 
         extractor_settings: dict[str, Any] = {"label": int(label)}
         if bin_count is not None:
@@ -978,12 +1013,27 @@ class RadiomicsExtractor:
         extractor = featureextractor.RadiomicsFeatureExtractor(
             **extractor_settings
         )
-        if resegment_range is not None and resampled_pixel_spacing is None:
-            extractor.settings["resegmentRange"] = [lower, upper]
         extractor.disableAllFeatures()
         for feature_class in feature_classes:
             extractor.enableFeatureClassByName(feature_class)
         raw = extractor.execute(processing_image, processing_mask, label=int(label))
+        if resolved_resegment_range is not None and "shape" in feature_classes:
+            # Intensity re-segmentation changes the feature ROI, not its original geometry.
+            shape_extractor = featureextractor.RadiomicsFeatureExtractor(
+                **extractor_settings
+            )
+            shape_extractor.disableAllFeatures()
+            shape_extractor.enableFeatureClassByName("shape")
+            shape_results = shape_extractor.execute(
+                processing_image, shape_mask, label=int(label)
+            )
+            raw.update(
+                {
+                    key: value
+                    for key, value in shape_results.items()
+                    if key.startswith("original_shape_")
+                }
+            )
         features = {}
         for key, value in raw.items():
             if key.startswith("diagnostics_"):
@@ -1025,6 +1075,8 @@ class RadiomicsExtractor:
                     if resegment_outlier_sigma is None
                     else float(resegment_outlier_sigma)
                 ),
+                "resegment_range": resolved_resegment_range,
+                "resegment_shape": False,
                 "round_resampled_intensities": bool(
                     round_resampled_intensities
                 ),

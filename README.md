@@ -1,7 +1,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
 [![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
-[![tests](https://img.shields.io/badge/tests-328%20passed-brightgreen)](verification/tests)
+[![tests](https://img.shields.io/badge/tests-335%20passed-brightgreen)](verification/tests)
 [![real-data study](https://img.shields.io/badge/real--data%20study-172%2F172%20exact-blue)](docs/tcia_full_series_study_report.md)
 # HEEH-V1(TM) DICOM Viewer
 
@@ -575,10 +575,10 @@ in full and evaluated with the application's own code paths:
   reference on every slice (worst 14.39 HU).
 - **Export gate:** all 172 de-identified slices pass; 11/11 corrupted
   manifest probes rejected.
-- **IBSI morphology root cause:** the recorded 58/66 reference-table
-  result is quantitatively attributed to segmentation/grid conventions
-  (volumes -3.3%, surface +8.3%, ratios up to +12.0%), with PyRadiomics'
-  internal volume definitions agreeing to 0.09% on a real 3D ROI.
+- **IBSI morphology correction:** intensity re-segmentation no longer changes
+  the mask used for shape features. The corrected PyRadiomics reference
+  extraction passes all 66 comparable IBSI rows; 204 are unsupported because
+  no unambiguous PyRadiomics equivalent is available.
 
 Reproduce with `scripts/tcia_real_evaluation.py` and
 `scripts/tcia_full_series_study.py` (the series is fetched by NBIA UID
@@ -632,15 +632,17 @@ Evidence labels used in this project:
   the exact scope and results are reported.
 - **Not established**: no adequate evidence is currently available.
 
-The full suite currently collects 328 tests (328 passed, 0 failed,
-0 skipped locally; green on CI for Python 3.11/3.12). The 270/270 IBSI
-comparison is limited to the specific Configuration D CT
+The full suite currently collects 335 tests (335 passed, 0 failed, 0 skipped
+locally with the optional IBSI engines and licensed phantom data installed).
+The 270/270 IBSI comparison is limited to the specific Configuration D CT
 phantom workflow in `verification/tests/test_ibsi_validation.py` and its
 recorded verifier output. It uses the Z-Rad reference pipeline; the separate
 default viewer radiomics call analyzes a 2D unmasked slice and is reported as
 not comparable to Configuration D. The verifier separately reports a
-PyRadiomics reference extraction with 58/66 comparable rows passing, 8 failing,
-and 204 unsupported. This is not evidence of full IBSI compliance,
+PyRadiomics reference extraction with 66/66 comparable rows passing. An
+additional 204 rows were not assessed in that comparison because a defensible
+feature mapping was not established; they are not counted as passes or
+failures. This is not evidence of full IBSI compliance,
 patient-level validity, or generalization across scanners, sites, populations,
 modalities, and analysis settings. A separate PyRadiomics 3.0.1 comparison matched four first-order features on one
 deterministic synthetic ROI; it does not validate other feature families or
@@ -749,21 +751,15 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 
 If you use this software, cite the metadata in
 [`CITATION.cff`](CITATION.cff) or the
-[GitHub v1.0.2 release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
-The v1.0.2 Zenodo record is available at
-<https://zenodo.org/records/23020151>. Its assigned version DOI,
-`10.5281/zenodo.23020151`, resolves to this record as of 2026-09-28. Use the
+[Zenodo v1.0.2 record](https://zenodo.org/records/23020151).
+Its assigned version DOI is
+`10.5281/zenodo.23020151`. Use the
 version-family DOI, [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910),
 when citing the software across all versions. `CITATION.cff` records the
 version DOI; `.zenodo.json` identifies the family DOI in its `isVersionOf`
-relation.
-
-Release: <https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2>
-
-The Zenodo record archives the contents of the `v1.0.2` tag
-(`9042e58750425a5d6960ec27eada6adf891c957e`). Documentation and manifest
-updates made later on `publication-v1.0.2` are not included in that immutable
-release archive.
+relation. The revised archive retains the requested software version label
+`1.0.2` and includes fixes and evidence updates made after the original
+`v1.0.2` Git commit; it is not byte-identical to that historical Git snapshot.
 
 ## Known limitations
 

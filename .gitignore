@@ -68,6 +68,8 @@ verification/samples/
 !verification/publication_package/**
 !verification/samples/
 !verification/samples/**
+verification/publication_package/**/__pycache__/
+verification/publication_package/**/*.py[cod]
 
 # Local fine-tune outputs (weights + reports may be large; never commit)
 models/finetuned/

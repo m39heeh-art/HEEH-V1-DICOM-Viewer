@@ -6,8 +6,7 @@ medical device and is not validated for patient care.
 
 ## Release identity
 
-This release is identified as version `1.0.2` in its package metadata and by
-the [`v1.0.2` GitHub release](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/releases/tag/v1.0.2).
+This package is identified as version `1.0.2` in its package metadata.
 
 The repository's `v1.0.1` tag was reassigned to a commit whose package
 metadata identifies version `1.1.1`, at the author's request. The `v1.1.1`
@@ -29,24 +28,26 @@ name.
 ## Zenodo archive
 
 The v1.0.2 Zenodo record is available at
-<https://zenodo.org/records/23020151> and identifies the GitHub `v1.0.2`
-tag at commit `9042e58750425a5d6960ec27eada6adf891c957e`. Its assigned
-version DOI, [10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151),
-resolves to this record as of 2026-09-28. Cite the version-family DOI,
+<https://zenodo.org/records/23020151>. Its assigned version DOI,
+[10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151), identifies
+the record; cite the version-family DOI,
 [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910), when
 referring to all software versions. `CITATION.cff` records the version DOI,
 while `.zenodo.json` identifies the family DOI in its `isVersionOf`
-relation. Documentation and integrity-manifest changes made after the
-tagged archive are present on the publication branch but are not part of the
-Zenodo v1.0.2 file.
+relation. The revised upload archive retains the requested version label
+`1.0.2` and contains code, documentation, tests, and evidence updated after
+the original base commit `9042e58750425a5d6960ec27eada6adf891c957e`; it is not
+byte-identical to that historical Git snapshot. The version label and DOI
+have not been changed.
 
 ## Verification
 
-The release snapshot collected 324 tests. The recorded Windows run reported
-320 passed and 4 skipped; the skipped tests require optional licensed
-reference or benchmark data not included in the public package. The
-GitHub Actions run for this release passed on Python 3.11 and 3.12, including
-dependency, compilation, Ruff, test, and Docker smoke-test jobs.
+The original release snapshot collected 324 tests. The recorded Windows run
+reported 320 passed and 4 skipped; those skips required optional licensed
+reference or benchmark data not included in that snapshot. The GitHub Actions
+run for that base commit passed on Python 3.11 and 3.12, including dependency,
+compilation, Ruff, test, and Docker smoke-test jobs. The revised upload
+package was separately checked locally: 335 passed, 0 failed, 0 skipped.
 
 See `docs/VERIFICATION_EVIDENCE.md` for the scope and limitations of the
 automated tests and quantitative benchmarks. Passing tests do not establish

@@ -14,17 +14,12 @@
   "publication_date": "2026-09-28",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/tree/v1.0.2",
-      "resource_type": "software",
-      "relation": "isIdenticalTo"
-    },
-    {
       "identifier": "10.5281/zenodo.22768910",
       "resource_type": "software",
       "relation": "isVersionOf"
     }
   ],
-  "description": "<p>HEEH-V1(TM) DICOM Viewer is a research and education Streamlit application for DICOM and volumetric-image viewing, calibrated measurements, quantitative analysis, experimental AI workflows, privacy-aware exports, and TCIA data access.</p><p>This software is not a certified medical device and must not be used for diagnosis, treatment planning, triage, or patient-care decisions.</p>",
+  "description": "<div><p>HEEH-V1™ DICOM Viewer is open-source research and education software for viewing and exploring medical images. This locally run Streamlit application supports DICOM, selected volumetric formats (NIfTI, NRRD, MetaImage), and common raster images. Depending on input and workflow, users can navigate images, make calibrated measurements, inspect image-quality metrics, run selected radiomics and exploratory analyses, use experimental AI/segmentation integrations, and export results with provenance information.</p><p>On the specified IBSI CT phantom, the configured Z-Rad comparison passed 270/270 populated reference rows. A separate PyRadiomics comparison assessed 66 rows and all 66 passed. A further 204 rows were not assessed because a defensible feature mapping was not established for this comparison; they are neither passes nor failures. These results are limited to the stated phantom, configuration, and workflows and do not establish full IBSI compliance, clinical validity, or generalizability.</p><p>The software is for research and education, is not a certified medical device, and must not be used for diagnosis, treatment planning, triage, or patient-care decisions. Format support does not imply validation of every encoding, vendor, modality, or use case. Distributed under the MIT License.</p></div>",
   "creators": [
     {
       "name": "Mohamad Yousef Heeh",

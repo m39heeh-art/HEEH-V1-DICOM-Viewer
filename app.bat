@@ -24,6 +24,7 @@ echo.
 echo                              v%APP_VERSION%
 echo   ========================================================================
 echo.
+
 REM ---------------------------------------------------------------
 REM  Preflight checks
 REM ---------------------------------------------------------------
@@ -71,6 +72,7 @@ echo   [ OK ] Streamlit ready
 echo.
 echo   All preflight checks passed - starting %APP_NAME%...
 echo.
+
 REM ---------------------------------------------------------------
 REM  Launch
 REM ---------------------------------------------------------------
@@ -99,4 +101,5 @@ echo                (it also kills unrelated Python processes).
 echo.
 echo      Happy analyzing!
 echo.
+
 pause

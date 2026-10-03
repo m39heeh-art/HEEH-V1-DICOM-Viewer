@@ -1,8 +1,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
-[![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
 [![tests](https://img.shields.io/badge/tests-335%20passed-brightgreen)](verification/tests)
 [![real-data study](https://img.shields.io/badge/real--data%20study-172%2F172%20exact-blue)](docs/tcia_full_series_study_report.md)
+[![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
 # HEEH-V1(TM) DICOM Viewer
 
 HEEH-V1(TM) DICOM Viewer is a Streamlit web application for **medical-image

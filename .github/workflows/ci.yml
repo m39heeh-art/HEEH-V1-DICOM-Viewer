@@ -24,25 +24,65 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
+      - name: Verify release checksums
+        run: python scripts/generate_sha256_manifest.py --check
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.lock
-          pip install pytest ruff
+          python -m pip install -r requirements.lock
+          python -m pip install pytest ruff
       - name: Dependency consistency
         run: |
           python -m pip check
-          python -m compileall -q app.py core engines utils
+          python -m compileall -q app.py core engines verification/tests utils scripts
       - name: Ruff
-        run: ruff check .
+        run: python -m ruff check .
       - name: Pytest
         run: python -m pytest -v --junitxml=test-results.xml
+      - name: Summarize test results and optional skips
+        if: always()
+        run: |
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          report = Path("test-results.xml")
+          if not report.is_file():
+              message = "Pytest did not produce test-results.xml."
+          else:
+              root = ET.parse(report).getroot()
+              cases = list(root.iter("testcase"))
+              failures = [
+                  case for case in cases
+                  if case.find("failure") is not None or case.find("error") is not None
+              ]
+              skipped = [case for case in cases if case.find("skipped") is not None]
+              passed = len(cases) - len(failures) - len(skipped)
+              message = (
+                  f"## Pytest: {passed} passed, {len(failures)} failed, "
+                  f"{len(skipped)} skipped ({len(cases)} collected)"
+              )
+              if skipped:
+                  message += "\n\nSkipped tests (optional inputs or dependencies may be unavailable):"
+                  for case in skipped:
+                      reason = case.find("skipped").get("message", "No reason recorded")
+                      message += f"\n- `{case.get('name')}`: {reason}"
+
+          print(message)
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as summary:
+                  summary.write(message + "\n")
+          PY
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v7.0.1
         with:
           name: pytest-results-${{ matrix.python-version }}
           path: test-results.xml
+          if-no-files-found: error
+          retention-days: 14
 
   container-smoke:
     runs-on: ubuntu-24.04

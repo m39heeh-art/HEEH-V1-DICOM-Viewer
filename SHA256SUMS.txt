@@ -4,7 +4,7 @@
 e5361eed4f2f962ea41be771f6498cb09b9a0bc8a50b9a64faa9f64a3bcafd76 *./.github/ISSUE_TEMPLATE/bug_report.md
 0d42f3672e234261ed6cc33aaac9d170bf6c914ab033bdff8dfcf27a05c990ed *./.github/ISSUE_TEMPLATE/feature_request.md
 468b3ec8fea8f87ab4840ecbc2b0d816f5542749b4565c85f2880cf8f3bafd28 *./.github/PULL_REQUEST_TEMPLATE.md
-210cb101e8272e375dcd12025008078d48fe6323fb2a48db47ccda33099eec3f *./.github/workflows/ci.yml
+3e87c74d045638641dbf72b9ee24bc4fb1acc1ad682ec3888b9eafe2fb71ef2e *./.github/workflows/ci.yml
 807b2e282c1104126754d418d098652d398f28fafed07a1db374210e1af36b9e *./.gitignore
 b4f223413e33071a4c9a7b3e1b19c8d4f22f9d8fa4c02fd12cdc7817d529bceb *./.streamlit/config.toml
 c082b95a137c19963dc5186fd40ded3f504dd44249ce123e313124050811493c *./.zenodo.json
@@ -15,7 +15,7 @@ c082b95a137c19963dc5186fd40ded3f504dd44249ce123e313124050811493c *./.zenodo.json
 422db97707e9c71178aba184c5a0b56d59c9ddf9dbbec5b9fbe9fe0514ac5528 *./HEEH-V1 DICOM Viewer.ps1
 6018bf9a71a61fc8d9114402e9a8292bd337e33fad6e8a6a9889b348eb5142a3 *./HEEH-V1 DICOM Viewer.sh
 563ae8bc1ac1e576ed149aec3d00b1418704cf760e1e8b435f7d0db76724187f *./LICENSE
-3184a8414fcce652a5cfc0e52cbed0bdca54530f81fb6871bd1b40169dff0f34 *./README.md
+c092c4f32ae41d67302758a150dd32ae9706a967a6013f533d995f5e25f43df4 *./README.md
 e67cac57755d712c9bf73c40ce0e52c9cd61fb0d3a68d2e98f8d48f2b6c512ea *./RELEASE_NOTES_v1.0.2.md
 f28a145d7dc1b15e10f6e3edf71d4c1de062d7a73d8a53ca8a31e53e0f4b594c *./SECURITY.md
 b2cc3f82111885cf529359dd83fc46d187e44e38e6cf995f26247025a26f71a2 *./app.bat
@@ -55,7 +55,7 @@ a38947774b709afffe8baab54d0424e6e9fdbf55c73998e87d9c5982ba99c5fd *./core/tissue_
 cfbdd6c5b373e76044cb922010b4488c548e000b1751977bfe01cae4330c1579 *./core/ui_helpers.py
 afd1cb90a5bac9997d75319a96e3a5a832902318e4e59858879913e841373671 *./core/volume_visualizer.py
 d564f392e4e498dce2f21f3461815c039b93c6353ede72315ea626466eec13a0 *./docs/IMPROVEMENTS_TECHNICAL_SUMMARY.md
-7262608ce6b17ade2d58701c1346670a71a0d6782d4194a00a23d277884a2d2a *./docs/VERIFICATION_EVIDENCE.md
+ce6f6a56e8a7832174015754ba0b934db350e80eae51077d8f809ce0757bbb65 *./docs/VERIFICATION_EVIDENCE.md
 cc6210cf2b63cd59158dad5af5a033eb277625265b58ff361dc868a93167eff6 *./docs/deployment_verification.md
 e55e0d973ce7167df78ede6ba7c3f0e3c48fef07c962cb584b670d41946e7c80 *./docs/dicom_display_conformance.md
 678eb3a446f822fb1510adcb6e4d20bf885adbbbe01ba57c65b351ed34b18a94 *./docs/global_standards_baseline.md
@@ -79,7 +79,7 @@ f10254dd8e9dc7f9008ec2567a613cc6c5403985033ff1ea7dfe8794460e288a *./engines/mona
 a542fb9c1e52ae1092123f6a83f43762bf849bb24adca3902c2af394d730bccc *./launch.ps1
 bebd650a90258af3ca3ebfecc5df3134e3009c7a87d50b86a7f60186bb6fd0f7 *./launch.sh
 7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6 *./models/.gitkeep
-bd67747f9bb0d9ac9d9a5a0642e851a7e79d2cb989bda591537620942fd3c8be *./pyproject.toml
+7835033962444dc0d62a0901a7faed70a990e0b845edfa30fab5b556464bd32c *./pyproject.toml
 cc66a63e45419542295b6c503dd39b47abd27266344813dedc16c831b7cf6f09 *./requirements.lock
 92019c6fca67ff964445d57abe71da16d53e75b7a43edeffa3c9c4a5c8249ce9 *./requirements.txt
 d8bef38b743bb7b5858029f6cbd4f00d056c66bdf57a81e374a2660abcb22db8 *./scripts/dump_app_structure.py
@@ -132,4 +132,4 @@ d3ba494059b437ee35aa55feef19b3688958eb61c84fcbc809768f53351d7f02 *./verification
 cb101b9f1094ceb136e7e9d20b10d366038c42a859356dc8652eaf3ab4034b9c *./verification/tests/test_tcia_series_removal.py
 bfbc31e650ffe0d41556ec7b4c336921d4f213b3418212325a2dc5e3998e5aa8 *./verification/tests/test_ui_helpers.py
 71acb9208e6214bab64bfdab92c52f6bebd74888c67e6bf796f4f06157b505a1 *./verification/tests/test_viewer_fit_removal.py
-d393ae26e5bfba0e2ae0369b09918eeab10dcca2825e7b7c3db6db7d52fa5df6 *./verify.bat
+de2223d07d709476443b565215829d96cc6fbe10dd26a0897e87d260e50046f7 *./verify.bat

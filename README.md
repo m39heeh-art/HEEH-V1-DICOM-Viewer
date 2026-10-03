@@ -632,8 +632,12 @@ Evidence labels used in this project:
   the exact scope and results are reported.
 - **Not established**: no adequate evidence is currently available.
 
-The full suite currently collects 335 tests (335 passed, 0 failed, 0 skipped
-locally with the optional IBSI engines and licensed phantom data installed).
+The complete suite collects 335 tests. In the fully provisioned local
+verification, all 335 passed with 0 failures and 0 skips. The licensed IBSI
+reference inputs and public TCIA series were staged locally and are not
+included in the repository. CI does not fetch these optional inputs, so it
+reports dependent tests as skipped when they are unavailable. See
+[the verification evidence](docs/VERIFICATION_EVIDENCE.md) for details.
 The 270/270 IBSI comparison is limited to the specific Configuration D CT
 phantom workflow in `verification/tests/test_ibsi_validation.py` and its
 recorded verifier output. It uses the Z-Rad reference pipeline; the separate

@@ -49,7 +49,12 @@ if exist "%~dp0.venv\Scripts\ruff.exe" (
         exit /b 1
     )
 ) else (
-    echo [SKIP] Ruff executable was not found.
+    "%PYTHON_EXE%" -m ruff check .
+    if errorlevel 1 (
+        echo [FAIL] Ruff is unavailable or reported issues.
+        echo Install the development tools with: python -m pip install ruff
+        exit /b 1
+    )
 )
 
 echo.

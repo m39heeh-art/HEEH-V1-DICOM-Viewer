@@ -11,9 +11,10 @@ workflows, calibrated measurements, image-quality and radiomics-style
 calculations, experimental AI integrations, privacy-aware exports, and
 provenance reporting.
 
-Open-source research software, version `1.0.2`, released under the MIT
-License. **Keywords:** DICOM, medical imaging, research software, radiomics,
-medical-image viewer, scientific reproducibility.
+Open-source research software, stable version `1.0.2`, released under the MIT
+License and published on [Zenodo](https://zenodo.org/records/23020151), the
+official release source. **Keywords:** DICOM, medical imaging, research
+software, radiomics, medical-image viewer, scientific reproducibility.
 
 **Protected project identity:** the public product name is exactly
 **HEEH-V1(TM) DICOM Viewer** (display form: **HEEH-V1™ DICOM Viewer**).
@@ -32,8 +33,26 @@ identity when publishing or redistributing the application.
 > they are not medical findings. A qualified clinician must independently
 > interpret all images and results.
 
+## Quick start
+
+With Python 3.11–3.14, from the repository root:
+
+```bash
+python -m venv .venv
+# Windows: .\.venv\Scripts\Activate.ps1
+# macOS/Linux: source .venv/bin/activate
+python -m pip install -r requirements.lock
+streamlit run app.py
+```
+
+Open `http://localhost:8501`. See [Installation](#installation) for platform
+details and development dependencies.
+
+![HEEH-V1 application settings panel](verification/samples/screenshots/sidebar-settings.png)
+
 ## Contents
 
+- [Quick start](#quick-start)
 - [Capabilities](#capabilities)
 - [Input and navigation](#input-and-navigation)
 - [Measurements and calibration](#measurements-and-calibration)

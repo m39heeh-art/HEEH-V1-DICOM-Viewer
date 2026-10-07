@@ -5,7 +5,7 @@ This report contains only measured values on a downloaded real public series. It
 ## Series provenance
 - Collection: `CT-Phantom4Radiomics` (real archive downloaded via NBIA; CC BY 4.0; https://doi.org/10.7937/a1v1-rc66)
 - SeriesInstanceUID: `1.3.6.1.4.1.14519.5.2.1.329084730054548979029758794636987310879`
-- Downloaded ZIP SHA-256: `d37f5fca5de92fe65f43d993f6ddd7d5f76abe8c9156cccb83bd0927a40325e2` (44,282,129 bytes)
+- Downloaded ZIP SHA-256: `b28bf1a030b48b2fc68501ee28d9f98aff45ad8325a1c3781a45b20dd08d6471` (44,282,129 bytes)
 - DICOM slices: 172 (aggregate SHA-256 `33f6c4d9a382db93...`)
 
 ## Geometry and HU calibration

@@ -34,9 +34,29 @@ def _feature_coverage() -> dict[str, dict[str, str]]:
     return coverage
 
 
+def _resolve_phantom_root(data_root: Path) -> Path:
+    """Accept either the phantom folder or the parent dataset root."""
+    candidate = data_root.resolve()
+    if not candidate.exists():
+        return candidate
+    expected_image = candidate / "nifti" / "image" / "phantom.nii.gz"
+    expected_mask = candidate / "nifti" / "mask" / "mask.nii.gz"
+    if expected_image.exists() and expected_mask.exists():
+        return candidate
+    for child in sorted(candidate.iterdir()):
+        if not child.is_dir():
+            continue
+        probe_image = child / "nifti" / "image" / "phantom.nii.gz"
+        probe_mask = child / "nifti" / "mask" / "mask.nii.gz"
+        if probe_image.exists() and probe_mask.exists():
+            return child
+    return candidate
+
+
 def _load_reference_table(data_root: Path) -> dict:
+    phantom_root = _resolve_phantom_root(data_root)
     table = (
-        data_root.parent
+        phantom_root.parent
         / "ibsi_1_reference_values"
         / "ibsi_1_reference_values_config_D.csv"
     )
@@ -489,8 +509,9 @@ def _blocked_result(
     blocker: str,
     message: str,
 ) -> dict:
-    image_path = data_root / "nifti" / "image" / "phantom.nii.gz"
-    mask_path = data_root / "nifti" / "mask" / "mask.nii.gz"
+    phantom_root = _resolve_phantom_root(data_root)
+    image_path = phantom_root / "nifti" / "image" / "phantom.nii.gz"
+    mask_path = phantom_root / "nifti" / "mask" / "mask.nii.gz"
     commit = None
     try:
         completed = subprocess.run(
@@ -538,8 +559,9 @@ def _blocked_result(
 
 
 def run(data_root: Path, output: Path) -> dict:
-    image_path = data_root / "nifti" / "image" / "phantom.nii.gz"
-    mask_path = data_root / "nifti" / "mask" / "mask.nii.gz"
+    phantom_root = _resolve_phantom_root(data_root)
+    image_path = phantom_root / "nifti" / "image" / "phantom.nii.gz"
+    mask_path = phantom_root / "nifti" / "mask" / "mask.nii.gz"
     if not image_path.exists() or not mask_path.exists():
         return _blocked_result(
             data_root,

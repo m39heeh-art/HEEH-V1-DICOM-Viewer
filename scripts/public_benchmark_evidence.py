@@ -117,7 +117,22 @@ def _recorded_ibsi_evidence(root: Path) -> dict[str, Any]:
             "note": "No successful Configuration D verification result is recorded.",
         }
     result = json.loads(path.read_text(encoding="utf-8"))
-    summary = result["verification_summary"]
+    summary = result.get("verification_summary") or {}
+    if not summary:
+        return {
+            "status": result.get("status", "blocked"),
+            "artifact": path.relative_to(root).as_posix(),
+            "artifact_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "scope": result.get("scope", "IBSI verification result is present but incomplete."),
+            "reference_source": result.get("source", {}),
+            "zrad_comparison": None,
+            "application_alignment": None,
+            "application_configuration_d_workflow": None,
+            "pyradiomics_reference_comparison": None,
+            "statistics_comparison": None,
+            "full_ibsi_status": result.get("status", "blocked"),
+            "note": "Verification result is present but missing the expected summary fields.",
+        }
     return {
         "status": result["status"],
         "artifact": path.relative_to(root).as_posix(),

@@ -33,6 +33,7 @@ identity when publishing or redistributing the application.
 > they are not medical findings. A qualified clinician must independently
 > interpret all images and results.
 
+For research groups and students in the field of medical imaging, this project offers a comprehensive solution for teaching demonstrations, research analysis, and the validation of algorithmic models. It serves as a laboratory environment (via Docker) for biomedical engineering students and is well-suited for research assistants who require rapid quality control and batch processing of DICOM data. At present, this project is not intended for use in formal clinical radiological procedures; its scope is clearly defined. However, it has the potential to evolve toward clinical application, provided there is sufficient global interest, support, and collaboration from physicians and programmers to ensure the highest international standards for an open-source solution.
 ## Quick start
 
 With Python 3.11–3.14, from the repository root:

@@ -49,7 +49,8 @@ streamlit run app.py
 Open `http://localhost:8501`. See [Installation](#installation) for platform
 details and development dependencies.
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/sidebar-settings.png)
+![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot 2026-10-22 172205.png)
+
 
 ## Contents
 

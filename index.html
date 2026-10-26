@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>HEEH-V1 DICOM Viewer | Open-Source Medical Imaging Research Platform</title>
+
+  <meta name="description" content="HEEH-V1 is an open-source DICOM and NIfTI viewer for medical image research, calibrated measurements, quantitative imaging, radiomics-oriented analysis, experimental AI, and provenance-aware export.">
+  <meta name="author" content="Mohamad Yousef Heeh">
+  <meta name="keywords" content="HEEH-V1, DICOM viewer, NIfTI viewer, medical imaging, quantitative imaging, radiomics, open source, reproducible research">
+
+  <meta property="og:title" content="HEEH-V1 DICOM Viewer">
+  <meta property="og:description" content="Open-source DICOM and NIfTI workstation for medical image research, calibrated measurements, quantitative imaging, radiomics-oriented analysis, and provenance-aware export.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://m39heeh-art.github.io/HEEH-V1-DICOM-Viewer/">
+  <meta property="og:image" content="https://m39heeh-art.github.io/HEEH-V1-DICOM-Viewer/assets/heeh-v1-workflow-overview.png">
+
+  <link rel="icon" href="assets/heeh-v1-logo.jpg">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f8fafc;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--bg);
+      color: white;
+      padding: 48px 20px;
+      text-align: center;
+    }
+
+    header img {
+      max-width: 220px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      max-width: 800px;
+      margin: 0 auto;
+      color: #cbd5e1;
+    }
+
+    .buttons {
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-block;
+      margin: 6px;
+      padding: 12px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .secondary {
+      background: white;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 16px 0;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    footer {
+      background: var(--bg);
+      color: #cbd5e1;
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #93c5fd;
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "HEEH-V1 DICOM Viewer",
+    "applicationCategory": "Medical Imaging Software",
+    "operatingSystem": "Web, Docker",
+    "description": "HEEH-V1 is an open-source DICOM and NIfTI viewer for medical image research, calibrated measurements, quantitative imaging, radiomics-oriented analysis, experimental AI, and provenance-aware export.",
+    "author": {
+      "@type": "Person",
+      "name": "Mohamad Yousef Heeh"
+    },
+    "license": "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/blob/main/LICENSE",
+    "url": "https://m39heeh-art.github.io/HEEH-V1-DICOM-Viewer/"
+  }
+  </script>
+</head>
+
+<body>
+
+<header>
+  <img src="assets/heeh-v1-logo.jpg" alt="HEEH-V1 DICOM Viewer official logo">
+  <h1>HEEH-V1™ DICOM Viewer</h1>
+  <p>
+    An open-source Streamlit workstation for reproducible DICOM and NIfTI review,
+    calibrated measurements, quantitative imaging, radiomics-oriented analysis,
+    experimental AI, and provenance-aware export.
+  </p>
+
+  <div class="buttons">
+    <a class="button primary" href="https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer">GitHub Repository</a>
+    <a class="button secondary" href="https://zenodo.org/doi/10.5281/zenodo.17263468">Zenodo DOI</a>
+    <a class="button secondary" href="https://www.researchsquare.com/article/rs-11302096/v1">Research Paper</a>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>About HEEH-V1</h2>
+    <p>
+      HEEH-V1 is an open-source medical imaging research and education platform.
+      It integrates image review, calibrated measurements, quantitative imaging,
+      radiomics-oriented outputs, experimental AI tools, and provenance-aware export
+      within a single workflow.
+    </p>
+    <ul>
+      <li>DICOM and NIfTI image review</li>
+      <li>Volumetric visualization</li>
+      <li>Calibrated measurements</li>
+      <li>Quantitative imaging analysis</li>
+      <li>Radiomics-oriented outputs</li>
+      <li>Experimental AI tools</li>
+      <li>Provenance-aware export</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Workflow Overview</h2>
+    <p>
+      HEEH-V1 supports a reproducible workflow from medical image input to
+      quantitative analysis and structured export.
+    </p>
+
+    <img src="assets/heeh-v1-workflow-overview.png"
+         alt="HEEH-V1 workflow overview showing DICOM review, calibrated measurements, quantitative imaging, and radiomics-oriented analysis">
+
+    <img src="assets/heeh-v1-workflow-overview2.png"
+         alt="HEEH-V1 workflow overview displaying quantitative imaging and radiomics-oriented analysis tools">
+
+    <img src="assets/heeh-v1-workflow-overview3.png"
+         alt="HEEH-V1 workflow overview showing experimental AI analysis and medical imaging research tools">
+  </section>
+
+  <section>
+    <h2>Application Interface</h2>
+    <p>
+      The HEEH-V1 interface is designed for medical image review, calibrated
+      measurements, and reproducible quantitative analysis.
+    </p>
+
+    <img src="assets/heeh-v1-workflow1.png"
+         alt="HEEH-V1 application interface for DICOM image review, volumetric visualization, and calibrated measurements">
+
+    <img src="assets/heeh-v1-workflow2.png"
+         alt="HEEH-V1 application interface showing quantitative imaging analysis and radiomics-oriented outputs">
+
+    <img src="assets/heeh-v1-workflow3.png"
+         alt="HEEH-V1 application interface for DICOM report export and provenance-aware research workflow">
+  </section>
+
+  <section>
+    <h2>Provenance-Aware Export</h2>
+    <p>
+      HEEH-V1 supports structured export and documentation of image sources,
+      processing steps, and analysis outputs to support reproducible research.
+    </p>
+
+    <img src="assets/heeh-v1-dicom-report-export.png"
+         alt="HEEH-V1 DICOM report export interface for reproducible medical imaging research and provenance-aware output">
+  </section>
+
+</main>
+
+<footer>
+  <p>
+    HEEH-V1™ DICOM Viewer — Open-source medical imaging research and education platform.
+  </p>
+  <p>
+    <a href="https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer">GitHub</a> |
+    <a href="https://zenodo.org/doi/10.5281/zenodo.17263468">Zenodo</a> |
+    <a href="https://www.researchsquare.com/article/rs-11302096/v1">Research Square</a>
+  </p>
+</footer>
+
+</body>
+</html>

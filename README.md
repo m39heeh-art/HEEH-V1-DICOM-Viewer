@@ -3,10 +3,11 @@
 [![tests](https://img.shields.io/badge/tests-335%20passed-brightgreen)](verification/tests)
 [![real-data study](https://img.shields.io/badge/real--data%20study-172%2F172%20exact-blue)](docs/tcia_full_series_study_report.md)
 [![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
+# HEEH-V1™ DICOM Viewer
 
-# HEEH-V1(TM) DICOM Viewer
+![HEEH-V1 DICOM Viewer official logo](assets/heeh-v1-logo.jpg)
 
-HEEH-V1(TM) DICOM Viewer is a Streamlit web application for **medical-image
+HEEH-V1™ DICOM Viewer is a Streamlit web application for **medical-image
 research and education**. It supports DICOM and common volumetric-image
 workflows, calibrated measurements, image-quality and radiomics-style
 calculations, experimental AI integrations, privacy-aware exports, and
@@ -51,23 +52,22 @@ Open `http://localhost:8501`. See [Installation](#installation) for platform
 details and development dependencies.
 
 ## IMAGE of project
+TCIA
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview0.png)
 
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview.png)
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20172205.png)
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview2.png)
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20172242.png)
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview3.png)
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20172550.png)
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview4.png)
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20191711.png)
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow1.png)
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20191748.png)
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow2.png)
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20191820.png)
-
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20172311.png)
-
-![HEEH-V1 application settings panel](verification/samples/screenshots/Screenshot%202026-10-22%20202232.png)
+![HEEH-V1 application settings panel](assets/heeh-v1-workflow3.png)
 
 ## Contents
 

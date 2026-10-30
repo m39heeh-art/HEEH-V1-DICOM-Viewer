@@ -48,7 +48,6 @@ The application includes provenance-aware export functionality and guarded expor
 
 The repository includes automated tests, documentation, a pinned dependency lock file, Docker support, continuous-integration configuration, and a Zenodo archival record. The source code is released under the MIT License, and the project provides a citation file to support reproducible referencing.
 
-![HEEH-V1 research workflow.\label{fig:workflow}](images/workflow.png)
 
 # Research Impact Statement
 

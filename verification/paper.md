@@ -41,6 +41,15 @@ HEEH-V1 is not intended to replace these platforms. Instead, it provides a compl
 
 Radiomics research also requires careful attention to feature definitions, preprocessing, region-of-interest structure, and reproducibility. Variation in these factors can affect quantitative outputs and complicate comparison across tools. HEEH-V1 therefore documents its tested workflows and distinguishes implemented functionality from independently validated capability.
 
+# Research Impact Statment
+
+A reproducible research use case included in the repository investigates the effect of region-of-interest (ROI) size on HEEH-V1 first-order CT metrics. The workflow analyses a public CT phantom series from the CT-Phantom4Radiomics collection across eight ROI radii, from 8 mm to 36 mm, using identical slice selection, ROI centring, intensity discretisation, and feature definitions.
+
+For every tested ROI size, HEEH-V1’s matched first-order outputs agreed exactly with PyRadiomics 3.0.1 at the specified absolute-difference tolerance. The use case also shows that central-tendency metrics were relatively more stable across ROI sizes, whereas dispersion and distribution-shape metrics changed substantially. These findings demonstrate a concrete quantitative-imaging workflow enabled by the software and provide reusable analysis materials for independent reproduction.
+
+The complete use case, including dataset provenance, analysis configuration, executable script, machine-readable results, and figures, is available at:  
+[https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/tree/main/examples/01_small_roi_robustness
+](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/tree/main/verification/research_case)
 # Software Design
 The implementation separates image values used for analysis from display transformations. Where appropriate, DICOM rescale metadata are applied to analysis values, while display windowing and other visual transformations remain separate. This design is intended to reduce ambiguity between what a user sees on screen and the numerical values used in quantitative workflows.
 
@@ -49,13 +58,6 @@ The application includes provenance-aware export functionality and guarded expor
 The repository includes automated tests, documentation, a pinned dependency lock file, Docker support, continuous-integration configuration, and a Zenodo archival record. The source code is released under the MIT License, and the project provides a citation file to support reproducible referencing.
 
 
-# Research Impact Statement
-
-A technical-validation preprint associated with HEEH-V1 reports 335 passing automated tests in a fully provisioned local environment. In a comparison using one public 172-slice CT phantom series from The Cancer Imaging Archive, four matched first-order features—mean, standard deviation, minimum, and maximum—were compared slice by slice with PyRadiomics 3.0.1. All 688 feature-by-slice comparisons were within the specified absolute-difference tolerance.
-
-The same preprint reports agreement for populated Image Biomarker Standardisation Initiative Configuration D reference rows in a configured comparison workflow, successful export validation across the tested phantom series, and rejection of deterministic manifest-tampering probes. These results support reproducibility of the specified software and phantom workflows.
-
-These findings do not establish clinical validity, diagnostic performance, patient-care readiness, general privacy effectiveness, full IBSI compliance, broad superiority, or equivalence beyond the tested features, settings, and data. The phantom slices are repeated measurements from one series and should not be interpreted as independent patients or datasets.
 
 # Availability and Requirements
 

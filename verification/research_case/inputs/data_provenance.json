@@ -1,0 +1,21 @@
+{
+  "study": "Small-ROI robustness of on-board first-order CT metrics",
+  "dataset": {
+    "collection": "CT-Phantom4Radiomics",
+    "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.329084730054548979029758794636987310879",
+    "study_instance_uid": "1.3.6.1.4.1.14519.5.2.1.202237558327911947882539784272436897971",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "data_doi": "https://doi.org/10.7937/a1v1-rc66",
+    "download": "NBIA API v4 getImage (real archive download; 173 ZIP entries: LICENSE + 172 DICOM slices)",
+    "privacy_note": "Public research phantom collection derived from real patient data as described by the data submitter; the processed series is a task-based anthropomorphic phantom scan published for research use. No human-subject identifiable data are stored in this repository."
+  },
+  "cached_zip_path": "verification\\data\\tcia_real_evaluation\\series.zip",
+  "cached_zip_sha256": "579233ebf30ce41985ad6971f150bf6e56a94a3944af6ee123737896b7590f17",
+  "recorded_download_sha256": "579233ebf30ce41985ad6971f150bf6e56a94a3944af6ee123737896b7590f17",
+  "cached_zip_matches_recorded_download": true,
+  "dicom_file_count": 172,
+  "ordered_source_files_aggregate_sha256": "33f6c4d9a382db93c85f2652db64e871bc631fd21bf1997fa413355451b39a5b",
+  "paths_recorded": false,
+  "generated_at_utc": "2026-10-30T17:11:42.867844+00:00"
+}

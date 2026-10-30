@@ -1,0 +1,62 @@
+{
+  "study": "Small-ROI robustness of on-board first-order CT metrics",
+  "research_question": "How do HEEH-V1 on-board first-order CT statistics and radiomics features within a centered circular ROI on the mid axial slice change as the ROI radius shrinks from 36 mm to 8 mm, and does the application's exact first-order agreement with PyRadiomics v3.0.1 (tolerance 1e-6) hold at every tested ROI size?",
+  "analysis_slice": {
+    "selection_rule": "volume.shape[0] // 2 (mid axial slice)",
+    "slice_index": 86
+  },
+  "roi": {
+    "type": "centered circular cylinder on one 2D axial slice",
+    "center": "volume center pixel (row = n_rows/2 - 0.5, col = n_cols/2 - 0.5)",
+    "radii_mm": [
+      8.0,
+      12.0,
+      16.0,
+      20.0,
+      24.0,
+      28.0,
+      32.0,
+      36.0
+    ],
+    "physical_basis": "DICOM PixelSpacing (row, column spacing) via SimpleITK"
+  },
+  "preprocessing": {
+    "levels": 256,
+    "discretization": "fixed_bin_width",
+    "bin_width_hu": 25.0
+  },
+  "stability_criterion": {
+    "metric": "coefficient_of_variation_across_radii",
+    "definition": "population std of the across-radius values / abs(mean) of those values",
+    "threshold": 0.1,
+    "interpretation": "feature is called radius-stable when CV <= threshold"
+  },
+  "comparator": {
+    "name": "pyradiomics",
+    "settings": {
+      "binWidth": 25.0,
+      "label": 1,
+      "voxelArrayShift": 0.0
+    },
+    "tolerance": 1e-06
+  },
+  "engines": {
+    "ct_calculator": "engines.modality_calculators.ct_calculator.CTCalculator.calculate(slice, roi=mask)",
+    "first_order": "core.tissue_classifier.RadiomicsExtractor.full_report(ROI_voxels, levels=256, discretization='fixed_bin_width', bin_width=25.0)",
+    "shape": "core.tissue_classifier.RadiomicsExtractor.shape_features(mask, spacing=spacing_xyz)"
+  },
+  "software": {
+    "application": "HEEH-V1(TM) DICOM Viewer",
+    "application_version": "1.0.2",
+    "python_version": "3.11.9",
+    "numpy": "2.4.6",
+    "simpleitk": "2.5.6",
+    "pyradiomics": "3.0.1",
+    "pydicom": "3.0.2"
+  },
+  "boundary_notes": [
+    "The in-app radiomics ROI call analyzes ROI voxel values; texture families (GLCM/GLRLM/GLSZM/GLDM/NGTDM) require a 2D finite image and are not part of this ROI sweep (feature_coverage boundary).",
+    "PyRadiomics agreement is matched first-order only, same as the recorded project evaluations.",
+    "The ROI is a defined geometric region, not a clinical lesion; no diagnostic meaning is attached to any measured value."
+  ]
+}

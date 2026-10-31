@@ -566,6 +566,26 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Keep the fixed Streamlit sidebar from covering the viewer on desktop.
+st.markdown(
+    """
+    <style>
+    @media (min-width: 768px) {
+      [data-testid="stAppViewContainer"]:has(
+        [data-testid="stSidebar"][aria-expanded="true"]
+      ) [data-testid="stMainBlockContainer"] {
+        box-sizing: border-box;
+        width: calc(100% - var(--sidebar-width, 320px));
+        margin-left: var(--sidebar-width, 320px);
+        padding-left: clamp(24px, 5vw, 80px);
+        padding-right: clamp(24px, 5vw, 80px);
+      }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 
 

@@ -12,8 +12,15 @@ _REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 _MANIFEST_PATH = Path("SHA256SUMS.txt")
 
 
+def sha256_digest(content: bytes) -> str:
+    """Hash canonical text bytes so checkout line endings do not affect results."""
+    if b"\0" not in content:
+        content = content.replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
+
+
 def build_manifest(root: Path = _REPOSITORY_ROOT) -> str:
-    """Hash versioned and non-ignored additions using repository checkout bytes."""
+    """Hash versioned files and non-ignored additions with normalized text lines."""
     result = subprocess.run(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
         cwd=root,
@@ -30,7 +37,7 @@ def build_manifest(root: Path = _REPOSITORY_ROOT) -> str:
         file_path = root / relative_path
         if not file_path.is_file():
             raise FileNotFoundError(f"Cannot checksum missing repository file: {relative_path}")
-        digest = hashlib.sha256(file_path.read_bytes()).hexdigest()
+        digest = sha256_digest(file_path.read_bytes())
         entries.append(f"{digest} *./{relative_path}")
     return "\n".join(entries) + "\n"
 

@@ -6,11 +6,11 @@ medical device and is not validated for patient care.
 
 ## Release identity
 
-The package and application version is `1.0.3`. This source release has not
-yet been assigned a version-specific Zenodo record or DOI. Until one is
-assigned, cite the version-family DOI
-[10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910).
-The existing [Zenodo v1.0.2 record](https://zenodo.org/records/23020151)
+The package and application version is `1.0.3`. Its version-specific
+[Zenodo record](https://zenodo.org/records/23835896) has DOI
+[10.5281/zenodo.23835896](https://doi.org/10.5281/zenodo.23835896). Use the
+[version-family DOI](https://doi.org/10.5281/zenodo.22768910) when citing all
+versions. The [Zenodo v1.0.2 record](https://zenodo.org/records/23020151)
 remains the record for that earlier version.
 
 ## Changes

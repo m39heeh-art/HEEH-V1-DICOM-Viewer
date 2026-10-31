@@ -1,6 +1,5 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
-[![tests](https://img.shields.io/badge/tests-365%20passed%2C%2011%20skipped-yellow)](verification/tests)
 [![real-data study](https://img.shields.io/badge/real--data%20study-172%2F172%20exact-blue)](docs/tcia_full_series_study_report.md)
 [![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
 # HEEH-V1(TM) DICOM Viewer
@@ -12,8 +11,9 @@ calculations, experimental AI integrations, privacy-aware exports, and
 provenance reporting.
 
 Open-source research software, version `1.0.3`, released under the MIT
-License. The published [Zenodo record](https://zenodo.org/records/23020151)
-is for v1.0.2; the version-specific v1.0.3 record has not yet been assigned.
+License. Cite the [v1.0.3 Zenodo record](https://doi.org/10.5281/zenodo.23835896)
+for this release, or the [version-family DOI](https://doi.org/10.5281/zenodo.22768910)
+for all releases.
 **Keywords:** DICOM, medical imaging, research
 software, radiomics, medical-image viewer, scientific reproducibility.
 
@@ -49,11 +49,26 @@ streamlit run app.py
 Open `http://localhost:8501`. See [Installation](#installation) for platform
 details and development dependencies.
 
-![HEEH-V1 application settings panel](verification/samples/screenshots/sidebar-settings.png)
+## Project interface
+
+![HEEH-V1 DICOM Viewer interface](paper/images/interface.png)
+
+## Research use case
+
+HEEH-V1 was used in a reproducible CT-phantom analysis of ROI-size effects on
+first-order CT metrics. The repository includes the dataset provenance,
+analysis settings, executable script, results, and figures.
+
+- [Small-ROI sensitivity and PyRadiomics agreement study](verification/research_case/README.md)
+- [JOSS software paper](paper/paper.md)
+
+![ROI-size dependence of HEEH-V1 first-order CT metrics](verification/research_case/figures/fig2_hu_stats_vs_radius.png)
 
 ## Contents
 
 - [Quick start](#quick-start)
+- [Project interface](#project-interface)
+- [Research use case](#research-use-case)
 - [Capabilities](#capabilities)
 - [Input and navigation](#input-and-navigation)
 - [Measurements and calibration](#measurements-and-calibration)
@@ -804,11 +819,11 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 
 ## Citation
 
-If you use v1.0.3, cite [`CITATION.cff`](CITATION.cff) or the [Zenodo
-version-family record](https://doi.org/10.5281/zenodo.22768910). Zenodo has
-not assigned a version-specific record for v1.0.3 yet. The [existing v1.0.2
-record](https://zenodo.org/records/23020151) and its DOI
-`10.5281/zenodo.23020151` identify the earlier release only.
+For v1.0.3, cite [`CITATION.cff`](CITATION.cff) or its [version-specific
+Zenodo record](https://doi.org/10.5281/zenodo.23835896). Use the
+[version-family DOI](https://doi.org/10.5281/zenodo.22768910) when referring
+to all releases. The [v1.0.2 record](https://doi.org/10.5281/zenodo.23020151)
+identifies that earlier release only.
 
 ## Known limitations
 

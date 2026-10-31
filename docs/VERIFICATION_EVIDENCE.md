@@ -11,7 +11,8 @@ comparisons. It states what each result does not establish.
 - **Historical v1.0.2 Zenodo record:** <https://zenodo.org/records/23020151>
 - **Historical v1.0.2 DOI:** [10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151)
 - **Version-family DOI:** [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910) (use when referring to all software versions)
-- **v1.0.3 Zenodo record:** Not assigned; cite the version-family DOI until a version-specific record exists.
+- **v1.0.3 Zenodo record:** <https://zenodo.org/records/23835896>
+- **v1.0.3 DOI:** [10.5281/zenodo.23835896](https://doi.org/10.5281/zenodo.23835896)
 - **License:** MIT
 - **Citation metadata:** `CITATION.cff`
 - **File integrity:** `SHA256SUMS.txt` hashes files in the current repository snapshot, not the immutable Zenodo archive
@@ -27,8 +28,8 @@ snapshot.
 
 The historical Zenodo v1.0.2 record has version DOI
 `10.5281/zenodo.23020151`. Use the version-family DOI above when citing the
-software across all versions. `CITATION.cff` and `.zenodo.json` record the
-family DOI for v1.0.3. The earlier duplicate DOI
+software across all versions. `CITATION.cff` records the v1.0.3 DOI;
+`.zenodo.json` links the release to the family DOI. The earlier duplicate DOI
 `10.5281/zenodo.23015732` is not the identifier for this record.
 
 The SHA-256 manifest is maintained for this revised package snapshot. It is

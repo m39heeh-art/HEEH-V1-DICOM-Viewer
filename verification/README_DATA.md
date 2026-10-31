@@ -1,10 +1,10 @@
 # verification/data — optional bulk data (not shipped)
 
 This release **does not include** the third-party IBSI reference data or any
-bulk validation images. The automated test suite passes without them; the
-IBSI phantom tests skip automatically with a clear message when the data are
-absent. Fetch the data below only to re-run the IBSI Configuration-D
-cross-validation.
+bulk validation images. The IBSI data files are optional; related tests skip with an explicit reason
+when a required file is absent. Fetch the data below to re-run the IBSI
+Configuration A-E and digital-phantom comparisons. All reference tables are
+generated from the official IBSI-1 workbook (CC BY 4.0).
 
 ## Why the data are not shipped
 
@@ -38,7 +38,12 @@ cross-validation.
    |-- ibsi_1_digital_phantom/
    |-- ibsi_2_digital_phantom/
    `-- ibsi_1_reference_values/
-       `-- ibsi_1_reference_values_config_D.csv
+       |-- ibsi_1_reference_values_config_A.csv
+       |-- ibsi_1_reference_values_config_B.csv
+       |-- ibsi_1_reference_values_config_C.csv
+       |-- ibsi_1_reference_values_config_D.csv
+       |-- ibsi_1_reference_values_config_E.csv
+       `-- ibsi_1_digital_phantom_reference_values.csv
    ```
 
 3. Install the optional Z-Rad reference engine used by the comparison test:
@@ -56,6 +61,28 @@ cross-validation.
 The tests located at `verification/tests/test_ibsi_validation.py` and
 `verification/tests/test_harmonization_kurtosis.py` document the exact
 paths they read.
+
+The digital phantom verifier compares every populated workbook row and exits
+non-zero on a mismatch:
+
+```
+python scripts/ibsi_digital_phantom_verification.py
+```
+
+The current recorded run compares all 482 populated rows and reports one
+mismatch (`szm_lzhge_3D`); PyRadiomics independently reproduces the measured
+value, but both engines remain outside IBSI's own reference implementation.
+The tag-level inventory maps 172 definitions: all 167 with published
+reference values have implementation outputs. The remaining five have no
+reference values and the official IBSI feature manual explicitly says not to
+use them; they are intentionally not emitted. See the
+[official IBSI feature manual](https://ibsi.readthedocs.io/en/latest/03_Image_features.html).
+The mismatch is root-caused as an upstream-internal inconsistency of IBSI's
+reference material and is not treated as full conformance; the full analysis,
+evidence and rerun commands live in
+[docs/ibsi_digital_phantom_glszm_lzhge_resolution.md](../docs/ibsi_digital_phantom_glszm_lzhge_resolution.md).
+Rerun with `--check-upstream` to also record whether the currently published
+workbook is byte-identical to the pinned copy.
 
 ## Extended datasets (optional, large)
 

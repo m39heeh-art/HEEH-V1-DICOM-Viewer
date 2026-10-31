@@ -14,6 +14,8 @@ from core.standards import (
     redact_phi_mapping,
 )
 from pydicom.dataset import Dataset
+from pydicom.sequence import Sequence
+from pydicom.uid import CTImageStorage, generate_uid
 
 
 def test_standards_helpers_minimize_phi_in_audit_context():
@@ -67,6 +69,56 @@ def test_dicom_deidentification_preserves_pixel_data_and_replaces_identifiers():
     assert "PatientIdentityRemoved" not in clean
 
 
+def test_dicom_deidentification_cleans_nested_identifiers_and_preserves_sop_class():
+    dataset = Dataset()
+    dataset.PatientID = "patient-123"
+    dataset.StudyDescription = "Patient Example"
+    observer = Dataset()
+    observer.PersonName = "Example^Observer"
+    observer.VerifyingObserverName = "Example^Verifier"
+    observer.InstitutionName = "Example Hospital"
+    observer.ReferencedSOPClassUID = CTImageStorage
+    original_instance_uid = generate_uid()
+    observer.ReferencedSOPInstanceUID = original_instance_uid
+    dataset.VerifyingObserverSequence = Sequence([observer])
+
+    clean = deidentify_dataset(dataset)
+    clean_observer = clean.VerifyingObserverSequence[0]
+
+    assert clean.StudyDescription == ""
+    assert clean_observer.PersonName == ""
+    assert clean_observer.VerifyingObserverName == ""
+    assert clean_observer.InstitutionName == ""
+    assert clean_observer.ReferencedSOPClassUID == CTImageStorage
+    assert clean_observer.ReferencedSOPInstanceUID != original_instance_uid
+
+
+def test_deidentification_retains_only_selected_da_on_request():
+    dataset = Dataset()
+    dataset.PatientID = "patient-123"
+    dataset.StudyDate = "20240101"
+    dataset.PatientBirthDate = "19700101"
+    dataset.LastMenstrualDate = "20240101"
+    dataset.InstanceCreationDate = "20240101"
+    dataset.AcquisitionDateTime = "20240101123456+0000"
+    dataset.AcquisitionTime = "123456"
+
+    cleaned = deidentify_dataset(dataset)
+    retained = deidentify_dataset(dataset, keep_dates=True)
+
+    assert cleaned.StudyDate == ""
+    assert cleaned.AcquisitionDateTime == ""
+    assert cleaned.AcquisitionTime == ""
+    assert retained.StudyDate == "20240101"
+    assert retained.PatientBirthDate == ""
+    assert retained.LastMenstrualDate == ""
+    assert retained.InstanceCreationDate == ""
+    assert retained.AcquisitionDateTime == ""
+    assert retained.AcquisitionTime == ""
+    assert "Selected Dates Retained" in retained.DeidentificationMethod
+    assert "Other Dates Removed" in retained.DeidentificationMethod
+
+
 def test_dicom_deidentification_marks_burned_in_annotation_review():
     dataset = Dataset()
     dataset.PatientID = "patient-123"
@@ -86,6 +138,14 @@ def test_dicom_without_burned_in_annotation_does_not_require_pixel_review():
     dataset.BurnedInAnnotation = "NO"
 
     assert not requires_pixel_review(dataset)
+
+
+def test_missing_or_unknown_burned_in_annotation_requires_pixel_review():
+    dataset = Dataset()
+    assert requires_pixel_review(dataset)
+
+    dataset.BurnedInAnnotation = "UNKNOWN"
+    assert requires_pixel_review(dataset)
 
 
 def test_deidentification_preserves_burned_in_annotation_status():

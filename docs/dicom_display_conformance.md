@@ -21,13 +21,23 @@ quantitative analysis. Windowing and MONOCHROME1/MONOCHROME2 handling affect
 presentation only; they do not mutate analysis values.
 
 The DICOM LINEAR VOI window uses the PS3.3 C.11.2.1.2.1 thresholds and
-mapping, including the `width = 1` threshold case. This implementation does
-not claim support for alternative VOI LUT functions or presentation states.
+mapping, including the `width = 1` threshold case. Explicit VOI LUT Sequence
+items can also be selected for display; the implementation delegates LUT
+decoding and indexing to the installed pydicom version and scales the declared
+output depth to 8-bit display values. The DICOM Window Center/Width path also
+supports `LINEAR_EXACT` and `SIGMOID` via the installed pydicom implementation.
+Presentation States, GSDF calibration, and end-to-end display conformance are
+not implemented.
 
 File extensions are ingestion hints only. SOP Class and DICOM metadata are the
 authoritative source for image identity and geometry. Enhanced CT and
 compressed transfer syntaxes are recognized and reported; pixel decoding
 requires a compatible pydicom handler and is never assumed from a filename.
+Measurement calibration reads top-level `PixelSpacing`, shared functional
+group spacing, or uniform per-frame functional-group spacing. If per-frame
+spacing is incomplete or varies, physical calibration is withheld rather than
+reusing one frame's spacing for the entire object. Other Enhanced geometry
+and per-frame position/orientation handling remain outside this boundary.
 
 Patient Name `(0010,0010)` is not displayed by default. This is a deliberate
 privacy-preserving default, not a claim that the application anonymizes all

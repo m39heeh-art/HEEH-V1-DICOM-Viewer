@@ -343,6 +343,51 @@ LABEL_LOW_CONTRAST_CNR = {
     "ar": "مؤشر CNR للتباين المنخفض",
 }
 
+# ---- IBSI radiomics strings (English-only, per active UI policy) ----
+IBSI_MASK_UPLOAD_LABEL = "IBSI ROI mask (NIfTI or DICOM RTSTRUCT)"
+IBSI_ROI_NAME_LABEL = "RTSTRUCT ROI name"
+IBSI_CONFIG_LABEL = "IBSI 1 Configuration"
+IBSI_CONFIG_HELP = (
+    "A–E are the IBSI CT benchmark workflows. E uses cubic B-spline "
+    "image interpolation and 1000-bin IVH discretisation."
+)
+IBSI_RANGE_LOWER = "Range lower (HU)"
+IBSI_RANGE_UPPER = "Range upper (HU)"
+IBSI_RANGE_HELP = (
+    "Configuration C uses fixed-range resegmentation; Configuration E "
+    "uses [-1000, 400] HU plus 3-SD outlier filtering. Changing C's "
+    "official range creates a modified, non-reference variant."
+)
+IBSI_RUN_BUTTON = "Run IBSI Configuration {config}"
+IBSI_SPINNER_2D = (
+    "Extracting IBSI Configuration {config} "
+    "(2D in-plane and volumetric) features..."
+)
+IBSI_SPINNER_3D = "Extracting 3D IBSI Configuration {config} features..."
+IBSI_APPLIED = "IBSI Configuration {config} applied · {voxels} ROI voxels"
+IBSI_PROVENANCE_CAPTION = (
+    "This result includes input fingerprints, software and dependency "
+    "versions, environment metadata, and a result digest. Fingerprints "
+    "can enable content linkage and do not anonymize input data."
+)
+IBSI_UNSUPPORTED_WARNING = (
+    "Some feature families could not be computed for this ROI; the "
+    "corresponding features are absent from the table below because "
+    "they are mathematically undefined for this ROI shape."
+)
+IBSI_FEATURE_FILTER_LABEL = "Filter features"
+IBSI_FEATURES_HEADER = "IBSI feature values"
+IBSI_COVERAGE_HEADER = "IBSI feature-family coverage"
+IBSI_DOWNLOAD_JSON = "Download IBSI feature report (JSON)"
+IBSI_DOWNLOAD_CSV = "Download feature table (CSV)"
+IBSI_DISCLAIMER = (
+    "Research use only. Selected workflows have IBSI CT phantom reference "
+    "comparisons; Configuration E is not reference-validated in this build. "
+    "This is not evidence of clinical validity. Do not use for diagnosis "
+    "or clinical decisions."
+)
+IBSI_EXTRACTION_FAILED = "IBSI extraction failed: {detail}"
+
 # The active UI is English-only; this remains as a compatibility constant for
 # older imports that queried text direction.
 RTL_LANGS = set()

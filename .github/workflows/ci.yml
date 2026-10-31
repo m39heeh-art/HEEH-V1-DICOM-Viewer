@@ -76,12 +76,12 @@ jobs:
                   summary.write(message + "\n")
           PY
       - name: Upload test report
-        if: always()
+        if: always() && hashFiles('test-results.xml') != ''
         uses: actions/upload-artifact@v7.0.1
         with:
           name: pytest-results-${{ matrix.python-version }}
           path: test-results.xml
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
 
   container-smoke:

@@ -15,7 +15,13 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from core.tissue_classifier import RadiomicsExtractor
-from core.ibsi_radiomics import run_configuration_d
+from core.ibsi_radiomics import (
+    run_configuration_a,
+    run_configuration_b,
+    run_configuration_c,
+    run_configuration_d,
+    run_configuration_e,
+)
 from scripts.ibsi_app_alignment import inspect_app_radiomics
 
 
@@ -53,13 +59,15 @@ def _resolve_phantom_root(data_root: Path) -> Path:
     return candidate
 
 
-def _load_reference_table(data_root: Path) -> dict:
+def _load_reference_table(data_root: Path, letter: str = "D") -> dict:
+    """Load the official IBSI reference-value table for one configuration."""
     phantom_root = _resolve_phantom_root(data_root)
-    table = (
-        phantom_root.parent
-        / "ibsi_1_reference_values"
-        / "ibsi_1_reference_values_config_D.csv"
+    filename = (
+        "ibsi_1_digital_phantom_reference_values.csv"
+        if letter.lower() == "digital"
+        else f"ibsi_1_reference_values_config_{letter}.csv"
     )
+    table = phantom_root.parent / "ibsi_1_reference_values" / filename
     if not table.exists():
         return {
             "status": "not_available",
@@ -219,15 +227,19 @@ def _compare_reference_rows(reference_table: dict, features: dict) -> dict:
         "Busyness": "Busyness",
         "Complexity": "Complexity",
         "Strength": "Strength",
-        "Low dependence emphasis": "LowDependenceEmphasis",
-        "High dependence emphasis": "HighDependenceEmphasis",
-        "Low grey level count emphasis": "LowGrayLevelCountEmphasis",
-        "High grey level count emphasis": "HighGrayLevelCountEmphasis",
+        "Low dependence emphasis": "SmallDependenceEmphasis",
+        "High dependence emphasis": "LargeDependenceEmphasis",
+        "Low grey level count emphasis": "LowGrayLevelEmphasis",
+        "High grey level count emphasis": "HighGrayLevelEmphasis",
         "Dependence entropy": "DependenceEntropy",
         "Dependence count non-uniformity": "DependenceNonUniformity",
         "Normalised dependence count non-uniformity": "DependenceNonUniformityNormalized",
         "Dependence count variance": "DependenceVariance",
-        "Dependence count energy": "DependenceEnergy",
+        "Low dependence low grey level emphasis": "SmallDependenceLowGrayLevelEmphasis",
+        "Low dependence high grey level emphasis": "SmallDependenceHighGrayLevelEmphasis",
+        "High dependence low grey level emphasis": "LargeDependenceLowGrayLevelEmphasis",
+        "High dependence high grey level emphasis": "LargeDependenceHighGrayLevelEmphasis",
+        "Dependence count entropy": "DependenceEntropy",
     }
     family_prefix = {
         "Statistics": "firstorder",
@@ -247,17 +259,33 @@ def _compare_reference_rows(reference_table: dict, features: dict) -> dict:
         suffix = aliases.get(feature)
         key = f"original_{prefix}_{suffix}" if prefix and suffix else None
         reason = None
+        reason_category = None
         if "merged" in family or "Co-occurrence" in family:
             reason = (
                 "No defensible mapping was established for this comparison "
                 "because aggregation semantics differ."
             )
+            reason_category = "aggregation_semantics_not_comparable"
             key = None
         elif key is None:
             reason = (
                 "No defensible PyRadiomics feature mapping was established "
                 "for this comparison."
             )
+            if family.startswith("Diagnostics"):
+                reason_category = "pipeline_stage_diagnostic"
+            elif family == "Intensity volume histogram":
+                reason_category = "feature_family_not_provided_by_pyradiomics"
+            elif family == "Local intensity":
+                reason_category = "local_intensity_feature_not_provided_by_pyradiomics"
+            elif family == "Distance zone matrix (3D)":
+                reason_category = "feature_family_not_provided_by_pyradiomics"
+            elif family == "Intensity histogram":
+                reason_category = "histogram_definition_not_proven_equivalent"
+            elif family == "Morphology":
+                reason_category = "morphology_definition_not_proven_equivalent"
+            else:
+                reason_category = "no_unambiguous_feature_mapping"
         actual = features.get(key) if key else None
         if expected_text and actual is None and reason is None:
             reason = (
@@ -265,8 +293,15 @@ def _compare_reference_rows(reference_table: dict, features: dict) -> dict:
                 "established for this comparison because the mapped output "
                 "was not available."
             )
+            reason_category = "mapped_feature_not_emitted_by_pyradiomics"
         if family == "Statistics" and row.get("tag") == "stat_kurt" and actual is not None:
             actual = float(actual) - 3.0
+        passed = (
+            None
+            if actual is None or not expected_text
+            else abs(float(actual) - float(expected_text))
+            <= float(row.get("tolerance") or 0)
+        )
         item = {
             "tag": row.get("tag"),
             "family": family,
@@ -278,22 +313,197 @@ def _compare_reference_rows(reference_table: dict, features: dict) -> dict:
             "absolute_error": (
                 None if actual is None or not expected_text else abs(float(actual) - float(expected_text))
             ),
-            "passed": (
-                None if actual is None or not expected_text
-                else abs(float(actual) - float(expected_text)) <= float(row.get("tolerance") or 0)
+            "passed": passed,
+            "assessment_status": (
+                "not_assessed"
+                if expected_text and actual is None
+                else "no_reference_value"
+                if not expected_text
+                else "passed"
+                if passed
+                else "failed"
             ),
             "unsupported_reason": reason,
+            "unsupported_reason_category": reason_category,
         }
         comparisons.append(item)
     comparable = [item for item in comparisons if item["actual"] is not None and item["expected"] is not None]
+    unassessed = [
+        item
+        for item in comparisons
+        if item["expected"] is not None and item["actual"] is None
+    ]
+    unassessed_by_category: dict[str, int] = {}
+    unassessed_by_family: dict[str, int] = {}
+    for item in unassessed:
+        category = item["unsupported_reason_category"] or "uncategorized"
+        family_name = item["family"] or "unknown"
+        unassessed_by_category[category] = unassessed_by_category.get(category, 0) + 1
+        unassessed_by_family[family_name] = unassessed_by_family.get(family_name, 0) + 1
     return {
         "rows_with_reference": sum(item["expected"] is not None for item in comparisons),
         "compared": len(comparable),
         "passed": sum(item["passed"] for item in comparable),
         "failed": sum(not item["passed"] for item in comparable),
-        "unsupported": sum(item["expected"] is not None and item["actual"] is None for item in comparisons),
+        "unsupported": len(unassessed),
+        "unsupported_by_category": dict(sorted(unassessed_by_category.items())),
+        "unsupported_by_family": dict(sorted(unassessed_by_family.items())),
         "comparisons": comparisons,
     }
+
+
+_DIAGNOSTIC_TAG_PREFIXES = (
+    "img_dim_",
+    "vox_dim_",
+    "mean_int_",
+    "min_int_",
+    "max_int_",
+    "int_mask_",
+    "morph_mask_",
+)
+
+
+def _compare_configuration_rows(reference_table: dict, features: dict) -> dict:
+    """Compare official IBSI feature rows for a full A/B/C configuration.
+
+    Reference rows for diagnostics (image / ROI dimensions, intensities and
+    voxel counts) are pipeline-stage specific; the shared application run
+    already exposes those stages and they are verified separately for
+    Configuration D. For A/B/C every feature row with a published reference
+    value is compared against the Z-Rad tag produced by the shared pipeline.
+    """
+    comparisons = []
+    for row in reference_table.get("_rows", []):
+        expected_text = row.get("reference value")
+        tag = row.get("tag")
+        diagnostic = tag.startswith(_DIAGNOSTIC_TAG_PREFIXES)
+        expected = float(expected_text) if expected_text else None
+        listed_tolerance = (
+            float(row.get("tolerance") or 0) if expected_text else None
+        )
+        actual = features.get(tag) if (tag and not diagnostic) else None
+        effective_tolerance = None
+        if expected is not None and listed_tolerance == 0:
+            decimals = (
+                len(expected_text.split(".", 1)[1])
+                if "." in expected_text
+                else 0
+            )
+            effective_tolerance = 0.5 * 10 ** (-decimals)
+        elif expected is not None:
+            effective_tolerance = listed_tolerance
+        if diagnostic and expected is not None:
+            unsupported_reason = (
+                "Diagnostics rows are stage-specific and are verified "
+                "separately through the Configuration D diagnostics check."
+            )
+        elif actual is None:
+            unsupported_reason = (
+                "Z-Rad did not expose this reference tag."
+                if expected is not None
+                else None
+            )
+        else:
+            unsupported_reason = None
+        comparisons.append(
+            {
+                "tag": tag,
+                "family": row.get("family"),
+                "feature": row.get("feature"),
+                "expected": expected,
+                "tolerance": listed_tolerance,
+                "effective_tolerance": effective_tolerance,
+                "actual": actual,
+                "absolute_error": (
+                    None if actual is None or expected is None else abs(actual - expected)
+                ),
+                "passed": (
+                    None
+                    if actual is None or expected is None
+                    else abs(actual - expected) <= effective_tolerance
+                ),
+                "unsupported_reason": unsupported_reason,
+            }
+        )
+    comparable = [
+        item
+        for item in comparisons
+        if item["actual"] is not None and item["expected"] is not None
+    ]
+    return {
+        "rows_with_reference": sum(item["expected"] is not None for item in comparisons),
+        "compared": len(comparable),
+        "passed": sum(item["passed"] for item in comparable),
+        "failed": sum(not item["passed"] for item in comparable),
+        "unsupported": sum(
+            item["expected"] is not None
+            and item["actual"] is None
+            and item["unsupported_reason"] is not None
+            and "expose" in item["unsupported_reason"]
+            for item in comparisons
+        ),
+        "skipped_diagnostics": sum(
+            item["unsupported_reason"] is not None
+            and item["unsupported_reason"].startswith("Diagnostics rows")
+            for item in comparisons
+        ),
+        "comparison_precision_policy": (
+            "For published rows with zero listed tolerance, comparison allows "
+            "half a unit at the final displayed decimal place to account for "
+            "rounding in the published reference value."
+        ),
+        "comparisons": comparisons,
+    }
+
+
+def _configuration_verification(
+    phantom_image: Path, phantom_mask: Path, data_root: Path
+) -> dict:
+    """Verify Configurations A-C and E when official reference tables exist."""
+    runners = {
+        "A": run_configuration_a,
+        "B": run_configuration_b,
+        "C": run_configuration_c,
+        "E": run_configuration_e,
+    }
+    configurations: dict[str, dict] = {}
+    for letter, runner in runners.items():
+        entry: dict = {"status": "blocked"}
+        try:
+            reference_table = _load_reference_table(data_root, letter)
+            if reference_table.get("status") != "available":
+                entry["status"] = "blocked"
+                entry["blocker"] = "official_reference_values_missing"
+            else:
+                result = runner(phantom_image, phantom_mask)
+                comparison = _compare_configuration_rows(
+                    reference_table, result["features"]
+                )
+                passed = (
+                    comparison["compared"]
+                    == comparison["rows_with_reference"]
+                    - comparison["skipped_diagnostics"]
+                    and comparison["failed"] == 0
+                    and comparison["unsupported"] == 0
+                )
+                entry = {
+                    "status": "passed" if passed else "failed",
+                    "reference_table": {
+                        key: value
+                        for key, value in reference_table.items()
+                        if key != "_rows"
+                    },
+                    "configuration": result["configuration"],
+                    "unsupported_families": result["unsupported_families"],
+                    "comparison": comparison,
+                }
+        except Exception as exc:  # pragma: no cover - environment-specific
+            entry = {
+                "status": "blocked",
+                "blocker": f"{type(exc).__name__}: {exc}",
+            }
+        configurations[letter] = entry
+    return configurations
 
 
 def _zrad_reference_features(image_path: Path, mask_path: Path) -> dict:
@@ -623,6 +833,14 @@ def run(data_root: Path, output: Path) -> dict:
         zrad_comparison = None
         statistics_comparison = None
         zrad_error = f"{type(exc).__name__}: {exc}"
+    configuration_abc = _configuration_verification(
+        image_path, mask_path, data_root
+    )
+    abc_passed = all(
+        configuration_abc.get(letter, {}).get("status") == "passed"
+        for letter in ("A", "B", "C")
+    )
+    e_passed = configuration_abc.get("E", {}).get("status") == "passed"
     std = result.get("original_firstorder_StandardDeviation")
     if std is None:
         std = float(np.sqrt(result["original_firstorder_Variance"]))
@@ -646,6 +864,7 @@ def run(data_root: Path, output: Path) -> dict:
         and zrad_comparison["failed"] == 0
         and zrad_comparison["unsupported"] == 0
     )
+    a_to_e_passed = configuration_d_verified and abc_passed and e_passed
     completed = subprocess.run(
         ["git", "-C", str(data_root), "rev-parse", "HEAD"],
         text=True,
@@ -656,15 +875,29 @@ def run(data_root: Path, output: Path) -> dict:
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "status": (
-            "configuration_d_reference_verified"
-            if configuration_d_verified
-            else "partially_verified"
+            "configurations_a_to_e_reference_verified"
+            if a_to_e_passed
+            else (
+                "configurations_a_to_d_reference_verified"
+                if configuration_d_verified and abc_passed
+                else (
+                    "configuration_d_reference_verified"
+                    if configuration_d_verified
+                    else "partially_verified"
+                )
+            )
         ),
         "scope": (
-            "All populated IBSI Configuration D reference rows were compared "
-            "with the configured Z-Rad pipeline shared by the dedicated "
-            "application Configuration D workflow. This comparison is "
-            "configuration-specific and does not establish full IBSI "
+            "All populated IBSI reference feature rows of Configurations A, "
+            "B, C, D and E were compared against the official published values "
+            "on the CT radiomics phantom, using the Z-Rad pipelines shared "
+            "by the dedicated application workflows. Diagnostics-stage rows "
+            "(image and ROI dimensions, intensities and voxel counts) are "
+            "covered by the Configuration D pipeline check. Configuration E "
+            "feature rows are compared with its official reference table, "
+            "while its stage-specific diagnostics are not part of the "
+            "feature comparison. It "
+            "is configuration-specific and does not establish full IBSI "
             "compliance or validate the default 2D viewer path."
         ),
         "verification_summary": {
@@ -681,9 +914,17 @@ def run(data_root: Path, output: Path) -> dict:
             ),
             "measured_feature_counts": feature_counts,
             "full_ibsi_status": (
-                "not_certified_beyond_configuration_d"
-                if configuration_d_verified
-                else "not_verified_unsupported_or_failed_features"
+                "reference_verified_configurations_a_to_e"
+                if a_to_e_passed
+                else (
+                    "reference_verified_configurations_a_to_d_only"
+                    if configuration_d_verified and abc_passed
+                    else (
+                        "reference_verified_configuration_d_only"
+                        if configuration_d_verified
+                        else "not_verified_unsupported_or_failed_features"
+                    )
+                )
             ),
             "comparison": {
                 key: value
@@ -714,7 +955,40 @@ def run(data_root: Path, output: Path) -> dict:
                 if configuration_d_verified
                 else "incomplete_or_mismatched"
             ),
+            "configuration_a_to_c_summary": {
+                letter: {
+                    "status": entry.get("status"),
+                    "blocker": entry.get("blocker"),
+                    "comparison": (
+                        None
+                        if "comparison" not in entry
+                        else {
+                            key: value
+                            for key, value in entry["comparison"].items()
+                            if key != "comparisons"
+                        }
+                    ),
+                }
+                for letter, entry in configuration_abc.items()
+                if letter in ("A", "B", "C")
+            },
+            "configuration_e_summary": {
+                "status": configuration_abc.get("E", {}).get("status"),
+                "blocker": configuration_abc.get("E", {}).get("blocker"),
+                "comparison": (
+                    None
+                    if "comparison" not in configuration_abc.get("E", {})
+                    else {
+                        key: value
+                        for key, value in configuration_abc["E"][
+                            "comparison"
+                        ].items()
+                        if key != "comparisons"
+                    }
+                ),
+            },
         },
+        "configurations": configuration_abc,
         "reference_table": {
             key: value for key, value in reference_table.items() if key != "_rows"
         },

@@ -14,7 +14,6 @@ import re
 import zipfile
 from pathlib import PurePosixPath
 
-from pydicom.datadict import tag_for_keyword
 from core.standards import PHI_FIELD_NAMES
 
 
@@ -138,20 +137,34 @@ def validate_export_archive(
                         "MISSING_DEIDENTIFICATION_MARKER",
                         f"{name}: verify identity removal manually",
                     )
-                for keyword in PHI_FIELD_NAMES - {
-                    "PatientID", "PatientSex", "StudyDate", "SeriesDate",
+                if (
+                    str(getattr(dataset, "Modality", "")).upper() != "SR"
+                    and str(getattr(dataset, "BurnedInAnnotation", "")).upper()
+                    != "NO"
+                ):
+                    warning(
+                        "PIXEL_PRIVACY_REVIEW_REQUIRED",
+                        f"{name}: BurnedInAnnotation is not explicitly NO",
+                    )
+                exempt_date_fields = {
+                    "StudyDate", "SeriesDate",
                     "AcquisitionDate", "ContentDate", "StudyTime",
                     "SeriesTime", "AcquisitionTime", "ContentTime",
-                }:
-                    tag = tag_for_keyword(keyword)
-                    value = (
-                        str(dataset[tag].value or "").strip()
-                        if tag is not None and tag in dataset
-                        else ""
-                    )
-                    allowed = _ALLOWED_DEIDENTIFIED_VALUES.get(keyword, set())
-                    if value and value not in allowed:
-                        error("PHI_FIELD_PRESENT", f"{name}: {keyword}")
+                }
+                for element in dataset.iterall():
+                    keyword = element.keyword
+                    value = str(element.value or "").strip()
+                    if not value:
+                        continue
+                    if element.VR == "PN" and value not in {"ANONYMOUS"}:
+                        error("PHI_FIELD_PRESENT", f"{name}: {keyword or element.tag}")
+                    elif keyword == "PatientID":
+                        if not value.startswith("NEURO_") and value != "ANONYMOUS":
+                            error("NON_PSEUDONYMOUS_PATIENT_ID", name)
+                    elif keyword in PHI_FIELD_NAMES and keyword not in exempt_date_fields:
+                        allowed = _ALLOWED_DEIDENTIFIED_VALUES.get(keyword, set())
+                        if value not in allowed:
+                            error("PHI_FIELD_PRESENT", f"{name}: {keyword}")
                 patient_id = str(getattr(dataset, "PatientID", "") or "")
                 if patient_id and not (
                     patient_id == "ANONYMOUS" or patient_id.startswith("NEURO_")

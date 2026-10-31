@@ -1,17 +1,17 @@
-# Verification evidence for the revised v1.0.2 package
+# Verification evidence for v1.0.3
 
-This document summarizes verification evidence for the revised HEEH-V1
-DICOM Viewer package, retaining the requested version label `1.0.2`. It
-distinguishes automated software tests from reference comparisons and states
-what each result does not establish.
+This document summarizes the v1.0.3 source snapshot and distinguishes current
+automated software tests from historical release checks and reference
+comparisons. It states what each result does not establish.
 
 ## Release identity and reproducibility
 
-- **Version:** 1.0.2
-- **Original v1.0.2 base commit:** `9042e58750425a5d6960ec27eada6adf891c957e`
-- **Zenodo record:** <https://zenodo.org/records/23020151>
-- **Version DOI:** [10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151)
+- **Version:** 1.0.3
+- **Historical v1.0.2 base commit:** `9042e58750425a5d6960ec27eada6adf891c957e`
+- **Historical v1.0.2 Zenodo record:** <https://zenodo.org/records/23020151>
+- **Historical v1.0.2 DOI:** [10.5281/zenodo.23020151](https://doi.org/10.5281/zenodo.23020151)
 - **Version-family DOI:** [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910) (use when referring to all software versions)
+- **v1.0.3 Zenodo record:** Not assigned; cite the version-family DOI until a version-specific record exists.
 - **License:** MIT
 - **Citation metadata:** `CITATION.cff`
 - **File integrity:** `SHA256SUMS.txt` hashes files in the current repository snapshot, not the immutable Zenodo archive
@@ -21,16 +21,14 @@ limitations. The public package does not include licensed IBSI reference
 datasets. Follow `../verification/README_DATA.md` to obtain optional
 reference data from its source and under its terms.
 
-The revised archive keeps the existing version label and version DOI, but
-contains source, documentation, tests, and evidence updates made after the
-original base commit above. Do not describe this revised file as byte-identical
-to the historical Git snapshot.
+The v1.0.3 source contains changes after the historical v1.0.2 base commit
+above. It is not byte-identical to the historical v1.0.2 Git or Zenodo
+snapshot.
 
-Zenodo assigned version DOI `10.5281/zenodo.23020151`; it resolves to this
-record as of 2026-09-28. Use the version-family DOI above when citing the
-software across all versions. `CITATION.cff` records the version DOI;
-`.zenodo.json` records the family DOI as the `isVersionOf` relation. The
-earlier duplicate DOI
+The historical Zenodo v1.0.2 record has version DOI
+`10.5281/zenodo.23020151`. Use the version-family DOI above when citing the
+software across all versions. `CITATION.cff` and `.zenodo.json` record the
+family DOI for v1.0.3. The earlier duplicate DOI
 `10.5281/zenodo.23015732` is not the identifier for this record.
 
 The SHA-256 manifest is maintained for this revised package snapshot. It is
@@ -52,8 +50,8 @@ data and downloaded TCIA study inputs are not included in CI by default;
 tests depending on those optional inputs are reported as skipped rather than
 being presented as executed.
 
-The fully provisioned local verification on Python 3.11.9 collected 335
-tests: 335 passed, 0 failed, and 0 skipped (`python -m pytest -q -rs`). The
+The v1.0.2 fully provisioned local verification on Python 3.11.9 collected
+335 tests: 335 passed, 0 failed, and 0 skipped (`python -m pytest -q -rs`). The
 official IBSI phantom was fetched at the pinned revision recorded in
 `verification/README_DATA.md`; its reference-value CSV was verified against
 the published SHA-256 from the Z-Rad test-data source. The public TCIA series
@@ -70,22 +68,30 @@ snapshot collected 324 tests: 320 passed and 4 skipped. Those skips required
 optional licensed IBSI reference data or recorded benchmark data not included
 in that snapshot.
 
+For the v1.0.3 source snapshot, the latest local run on Python 3.11.9
+collected 376 tests: 365 passed, 0 failed, and 11 skipped. The skips require
+optional reference data or recorded evidence that is not part of the source
+repository. This run is separate from historical v1.0.2 CI and test counts.
+
 These tests exercise the documented fixtures and code paths. They do not
 establish clinical accuracy, safety, privacy, or regulatory compliance.
 
 ## Quantitative benchmark results
 
-The public evidence bundle in
-`../verification/publication_package/02_Evidence/` contains the source
-reports and machine-readable results. The reported measurements are limited
-to these protocols:
+The source repository contains the verification scripts and the reports
+listed below. Machine-readable benchmark results are generated locally under
+the Git-ignored `verification/results/` directory; they are not included in
+the source snapshot. The reported measurements are limited to these
+protocols:
 
 | Evaluation | Reported result | Interpretation |
 |---|---|---|
 | Synthetic CT water ROI | Mean `-0.04 HU`; standard deviation `10.02 HU` | Compared with prespecified phantom targets; synthetic data only |
 | Matched PyRadiomics 3.0.1 first-order comparison | Four values; maximum absolute error `0.0` at tolerance `1e-6` | One deterministic synthetic ROI; no other feature families or patient data |
 | IBSI Configuration D CT phantom comparison | 270 of 270 populated reference rows passed using the configured Z-Rad pipeline | One reference configuration; not full IBSI compliance |
-| Separate PyRadiomics reference-table comparison | 66 of 66 assessed rows passed; 204 not assessed | Separate from Z-Rad. The 204 rows were not assessed because a defensible feature mapping was not established for this comparison; they are neither passes nor failures. Shape uses the original ROI mask while intensity re-segmentation is applied only to intensity features. |
+| IBSI Configurations A/B/C/E pipelines | A 346/346, B 346/346, C 210/210, E 210/210 populated official reference feature rows passed against the IBSI CT phantom via the configured Z-Rad pipelines | Same extraction and provenance path as Configuration D; 60 per-stage diagnostic rows per configuration are not assessed; not full IBSI compliance |
+| IBSI 1 digital phantom | 481 of 482 populated reference rows passed; `szm_lzhge_3D` measured 1494.6 vs. 1490 in the feature table. All 167 reference-supported definitions have implementation outputs; the other five have no reference values and IBSI explicitly says not to use them. The feature manual publishes 171 permanent IDs for 172 definitions, omits `szm_sze`, and duplicates `1PR8` for `ih_min` and `ih_p10`. | PyRadiomics 3.0.1 and direct evaluation of IBSI's published GLSZM matrix both yield 1494.6. This indicates an internal inconsistency in IBSI's published reference materials, but the comparison remains a mismatch pending clarification. The official-ID inconsistencies are recorded without guessed repairs. See the [feature manual](https://ibsi.readthedocs.io/en/latest/03_Image_features.html) and [digital-phantom matrices](https://ibsi.readthedocs.io/en/latest/06_Digital_phantom_texture_matrices.html). |
+| Separate PyRadiomics reference-table comparison | 75 of 75 assessed rows passed; 195 categorized as not assessed | Separate from Z-Rad. Nine additional GLDM features have direct mappings. The 195 remaining rows are itemized by aggregation semantics (66), pipeline diagnostics (60), histogram definitions (23), unavailable feature families (22), morphology definitions (14), ambiguous mappings (7), missing PyRadiomics output (1), and unavailable local-intensity features (2). They are neither passes nor failures. Shape uses the original ROI mask while intensity re-segmentation is applied only to intensity features. |
 | Generated archive challenge fixtures | 20 valid and 20 invalid fixtures classified correctly | Constructed test fixtures; not real-world sensitivity or specificity |
 | Navigation-cache microbenchmark | Run-specific measurements are in `docs/public_benchmark_report.md` | Synthetic cache workload using `tracemalloc`; not end-to-end runtime or process memory |
 
@@ -110,8 +116,9 @@ evaluated with the application's own loading, radiomics, de-identification,
 and export-validation code paths. Artifacts:
 `verification/results/tcia_real_evaluation.json` (single-slice protocol) and
 `verification/results/tcia_full_series_study.json` (full series), with
-human-readable reports under `docs/` and mirrored evidence copies in
-`verification/publication_package/02_Evidence/`.
+human-readable reports under `docs/`. Downloaded inputs and generated
+machine-readable results are local, Git-ignored artifacts and are not
+included in the source snapshot.
 
 - First-order agreement with PyRadiomics v3.0.1: 172/172 slice ROIs exact
   (max absolute error 0.0 at 1e-6); unchanged across ROI radii 12/18/24/30/36 mm.
@@ -122,10 +129,9 @@ human-readable reports under `docs/` and mirrored evidence copies in
 - The initial eight PyRadiomics morphology mismatches were traced to using
   the intensity-resegmented mask for shape extraction. The adapter now keeps
   the original ROI mask for shape features and applies re-segmentation only
-  to intensity features. On the pinned IBSI CT phantom, all 66 assessed
-  reference rows pass. A further 204 rows were not assessed because a
-  defensible feature mapping was not established for this comparison; they
-  are neither passes nor failures.
+  to intensity features. On the pinned IBSI CT phantom, all 75 assessed
+  reference rows pass. The remaining 195 rows are categorized as not assessed
+  in the generated report; they are neither passes nor failures.
 
 These results describe this single public phantom series and geometric
 ROIs; they do not establish clinical accuracy or generalizability.

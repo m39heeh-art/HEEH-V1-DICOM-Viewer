@@ -6,13 +6,21 @@ import numpy as np
 import pytest
 
 from scripts.ibsi_reference_verification import (
+    _compare_configuration_rows,
     _compare_reference_rows,
     _compare_statistics,
     _compare_zrad_rows,
     run,
 )
 from scripts.ibsi_app_alignment import inspect_app_radiomics
-from core.ibsi_radiomics import run_configuration_d
+from core.ibsi_radiomics import (
+    IBSI1_FEATURE_FAMILY_COUNTS,
+    run_configuration_a,
+    run_configuration_b,
+    run_configuration_c,
+    run_configuration_d,
+    run_configuration_e,
+)
 from core.tissue_classifier import RadiomicsExtractor
 from scripts.ibsi_reference_verification import (
     _load_reference_table,
@@ -52,6 +60,23 @@ def test_statistics_comparison_includes_robust_and_scale_metrics():
     assert comparison["compared"] == len(rows)
     assert comparison["passed"] == len(rows)
     assert comparison["unsupported"] == 0
+
+
+def test_ibsi1_feature_inventory_covers_all_reference_manual_families():
+    assert sum(IBSI1_FEATURE_FAMILY_COUNTS.values()) == 172
+    assert set(IBSI1_FEATURE_FAMILY_COUNTS) == {
+        "morphology",
+        "local_intensity",
+        "intensity_statistics",
+        "intensity_histogram",
+        "ivh",
+        "glcm",
+        "glrlm",
+        "glszm",
+        "gldzm",
+        "ngtdm",
+        "ngldm",
+    }
 
 
 def test_statistics_kurtosis_conversion_only_applies_to_pyradiomics_fallback():
@@ -163,7 +188,7 @@ def test_intensity_resegmentation_preserves_original_shape_mask(
     tmp_path: Path,
     resampled_pixel_spacing: tuple[float, float, float] | None,
 ):
-    pytest.importorskip("radiomics")
+    pytest.importorskip("radiomics", exc_type=ImportError)
     import SimpleITK as sitk
 
     image_path = tmp_path / "image.nii.gz"
@@ -285,7 +310,7 @@ def test_application_configuration_d_pipeline_matches_official_phantom():
 
 
 def test_pyradiomics_morphology_matches_ibsi_reference_mask():
-    pytest.importorskip("radiomics")
+    pytest.importorskip("radiomics", exc_type=ImportError)
     import SimpleITK as sitk
 
     verification_root = (
@@ -325,14 +350,51 @@ def test_pyradiomics_morphology_matches_ibsi_reference_mask():
     )
     comparison = _compare_reference_rows(reference_table, result["features"])
 
-    assert comparison["compared"] == 66
-    assert comparison["passed"] == 66
+    assert comparison["compared"] == 75
+    assert comparison["passed"] == 75
     assert comparison["failed"] == 0
-    assert comparison["unsupported"] == 204
+    assert comparison["unsupported"] == 195
     assert all(
-        "No defensible" in row["unsupported_reason"]
+        row["assessment_status"] == "not_assessed"
+        and row["unsupported_reason_category"]
         for row in comparison["comparisons"]
         if row["expected"] is not None and row["actual"] is None
+    )
+    assert comparison["unsupported_by_category"]["aggregation_semantics_not_comparable"] > 0
+    assert comparison["unsupported_by_category"]["pipeline_stage_diagnostic"] == 60
+    assert sum(comparison["unsupported_by_category"].values()) == 195
+
+
+def test_pyradiomics_comparison_maps_supported_gldm_definitions():
+    rows = [
+        {
+            "tag": "ngl_lde_3D",
+            "family": "Neighbouring grey level dependence matrix (3D)",
+            "feature": "Low dependence emphasis",
+            "reference value": "0.5",
+            "tolerance": "0.01",
+        },
+        {
+            "tag": "ngl_dc_energy_3D",
+            "family": "Neighbouring grey level dependence matrix (3D)",
+            "feature": "Dependence count energy",
+            "reference value": "0.25",
+            "tolerance": "0.01",
+        },
+    ]
+
+    comparison = _compare_reference_rows(
+        {"_rows": rows},
+        {"original_gldm_SmallDependenceEmphasis": 0.5},
+    )
+
+    assert comparison["compared"] == 1
+    assert comparison["passed"] == 1
+    assert comparison["unsupported"] == 1
+    assert comparison["comparisons"][0]["assessment_status"] == "passed"
+    assert comparison["comparisons"][1]["assessment_status"] == "not_assessed"
+    assert comparison["comparisons"][1]["unsupported_reason_category"] == (
+        "no_unambiguous_feature_mapping"
     )
 
 
@@ -373,3 +435,474 @@ def test_ibsi_reference_verification_reports_missing_reference_blocker(tmp_path:
     assert payload["blocker"]["type"] == "missing_reference_dataset"
     assert payload["feature_coverage"]["glrlm"]["status"] == "supported"
     assert output.exists()
+
+
+def test_configuration_e_reference_verification_reports_missing_reference(tmp_path: Path):
+    from scripts.ibsi_reference_verification import _configuration_verification
+
+    result = _configuration_verification(
+        tmp_path / "phantom.nii.gz",
+        tmp_path / "mask.nii.gz",
+        tmp_path / "ibsi_data",
+    )
+
+    assert result["E"]["status"] == "blocked"
+    assert result["E"]["blocker"] == "official_reference_values_missing"
+
+
+def test_configuration_e_matches_official_phantom_reference():
+    if not _zrad_usable():
+        pytest.skip("Z-Rad or a required DLL is unavailable on this machine")
+    verification_root = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "ibsi_reference_data"
+    )
+    phantom_root = verification_root / "ibsi_1_ct_radiomics_phantom"
+    phantom = phantom_root / "nifti"
+    image_path = phantom / "image" / "phantom.nii.gz"
+    mask_path = phantom / "mask" / "mask.nii.gz"
+    reference_path = (
+        verification_root
+        / "ibsi_1_reference_values"
+        / "ibsi_1_reference_values_config_E.csv"
+    )
+    if not all(path.is_file() for path in (image_path, mask_path, reference_path)):
+        pytest.skip("Optional licensed IBSI phantom/reference data are not installed")
+
+    reference_table = _load_reference_table(phantom_root, "E")
+    result = run_configuration_e(image_path, mask_path)
+    comparison = _compare_configuration_rows(
+        reference_table, result["features"]
+    )
+
+    assert comparison["rows_with_reference"] == 270
+    assert comparison["compared"] == 210
+    assert comparison["passed"] == 210
+    assert comparison["failed"] == 0
+    assert comparison["unsupported"] == 0
+    assert comparison["skipped_diagnostics"] == 60
+
+
+def test_ibsi_digital_phantom_records_every_reference_and_open_mismatch(
+    tmp_path: Path,
+):
+    from scripts.ibsi_digital_phantom_verification import run as run_digital
+
+    try:
+        import radiomics  # noqa: F401
+    except (ImportError, OSError) as exc:
+        pytest.skip(f"PyRadiomics unavailable: {exc}")
+    data_root = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "ibsi_reference_data"
+    )
+    phantom_root = data_root / "ibsi_1_digital_phantom"
+    reference_path = (
+        data_root
+        / "ibsi_1_reference_values"
+        / "ibsi_1_digital_phantom_reference_values.csv"
+    )
+    if not all(
+        path.is_file()
+        for path in (
+            phantom_root / "nifti" / "image" / "phantom.nii.gz",
+            phantom_root / "nifti" / "mask" / "mask.nii.gz",
+            reference_path,
+        )
+    ):
+        pytest.skip("Optional licensed IBSI digital phantom/reference data are not installed")
+    if not _zrad_usable():
+        pytest.skip("Z-Rad or a required DLL is unavailable on this machine")
+
+    output = tmp_path / "digital_phantom_verification.json"
+    result = run_digital(data_root, output)
+    comparison = result["comparison"]
+
+    assert result["status"] == "reference_mismatch"
+    assert result["reference_table"]["rows"] == 487
+    assert result["reference_table"]["rows_with_reference"] == 482
+    assert len(result["source"]["reference_csv_sha256"]) == 64
+    assert comparison["rows_with_reference"] == 482
+    assert comparison["compared"] == 482
+    assert comparison["passed"] == 481
+    assert comparison["failed"] == 1
+    assert comparison["unsupported"] == 0
+    assert result["mismatches"][0]["tag"] == "szm_lzhge_3D"
+    assert result["mismatches"][0]["expected"] == 1490.0
+    assert result["mismatches"][0]["actual"] == pytest.approx(1494.6)
+    assert result["independent_check"]["status"] == (
+        "corroborates_zrad_mismatch"
+    )
+    assert result["independent_check"]["matches_zrad"] is True
+    assert result["independent_check"]["within_official_tolerance"] is False
+    matrix_check = result["official_matrix_check"]
+    assert matrix_check["status"] == (
+        "matrix_matches_implementation_but_conflicts_with_feature_reference"
+    )
+    assert matrix_check["zone_count"] == 5
+    assert matrix_check["voxel_count"] == 74
+    assert matrix_check["matrix_feature_value"] == pytest.approx(1494.6)
+    assert matrix_check["matches_implementation"] is True
+    assert matrix_check["matches_feature_reference"] is False
+    inventory = result["feature_inventory"]
+    assert inventory["definitions"] == 172
+    assert inventory["implemented_definitions"] == 167
+    assert inventory["reference_supported_definitions"] == 167
+    assert inventory["implemented_reference_supported_definitions"] == 167
+    assert inventory["unimplemented_recommended_definitions"] == 0
+    assert inventory["definitions_with_reference_values"] == 167
+    assert inventory["definitions_without_reference_values"] == 5
+    assert inventory["not_recommended_definitions"] == 5
+    assert inventory["permanent_ids_published"] == 171
+    assert inventory["permanent_id_source"].endswith("03_Image_features.html")
+    assert inventory["definitions_without_permanent_id"] == ["szm_sze"]
+    assert inventory["permanent_id_collisions"] == {
+        "1PR8": ["ih_min", "ih_p10"]
+    }
+    assert len(inventory["items"]) == 174
+    assert inventory["derived_outputs_not_in_172_definition_inventory"] == [
+        "ivh_diff_i10_i90",
+        "ivh_diff_v10_v90",
+    ]
+    assert {
+        item["feature_tag"]
+        for item in inventory["items"]
+        if item["inventory_definition"]
+        and item["recommendation_status"]
+        == "not_recommended_no_reference_value"
+    } == {
+        "morph_vol_dens_ombb",
+        "morph_area_dens_ombb",
+        "morph_vol_dens_mvee",
+        "morph_area_dens_mvee",
+        "ivh_auc",
+    }
+    permanent_ids = {
+        item["feature_tag"]: item["ibsi_permanent_id"]
+        for item in inventory["items"]
+        if item["inventory_definition"]
+    }
+    assert permanent_ids["szm_sze"] is None
+    assert permanent_ids["stat_mean"] == "Q4LE"
+    assert permanent_ids["cm_contrast"] == "ACUI"
+    assert permanent_ids["ih_min"] == permanent_ids["ih_p10"] == "1PR8"
+    assert permanent_ids["morph_vol_dens_ombb"] == "ZH1A"
+    assert permanent_ids["morph_area_dens_ombb"] == "IQYR"
+    assert permanent_ids["morph_vol_dens_mvee"] == "SWZ1"
+    assert permanent_ids["morph_area_dens_mvee"] == "BRI8"
+    assert permanent_ids["ivh_auc"] == "9CMM"
+    permanent_id_statuses = {
+        item["feature_tag"]: item["permanent_id_status"]
+        for item in inventory["items"]
+        if item["inventory_definition"]
+    }
+    assert permanent_id_statuses["szm_sze"] == "not_listed_in_official_manual"
+    assert permanent_id_statuses["ih_min"] == "published_identifier_collision"
+    assert permanent_id_statuses["ih_p10"] == "published_identifier_collision"
+    assert json.loads(output.read_text(encoding="utf-8"))["status"] == (
+        "reference_mismatch"
+    )
+
+# ---------------------------------------------------------------------------
+# IBSI 1 Configuration A — unit / smoke tests (no phantom data required)
+# ---------------------------------------------------------------------------
+
+def _zrad_usable() -> bool:
+    """Return True only when Z-Rad and its DLL dependencies can be loaded."""
+    try:
+        import zrad  # noqa: F401
+        return True
+    except (ImportError, OSError):
+        return False
+
+
+def test_configuration_a_status_and_schema_fields(tmp_path: Path):
+    """Configuration A returns the expected status and schema fields."""
+    if not _zrad_usable():
+        pytest.skip("Z-Rad or a required DLL is unavailable on this machine")
+    import SimpleITK as sitk
+
+    image_path = tmp_path / "image.nii.gz"
+    mask_path = tmp_path / "mask.nii.gz"
+    image = sitk.GetImageFromArray(np.arange(64, dtype=np.float32).reshape(4, 4, 4))
+    image.SetSpacing((1.0, 1.0, 1.0))
+    mask = sitk.GetImageFromArray(np.ones((4, 4, 4), dtype=np.uint8))
+    mask.CopyInformation(image)
+    sitk.WriteImage(image, str(image_path))
+    sitk.WriteImage(mask, str(mask_path))
+
+    result = run_configuration_a(str(image_path), str(mask_path))
+
+    assert result["status"] == "configuration_a_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "A"
+    assert result["configuration"]["resampling_mm"] is None
+    reseg = result["configuration"]["resegmentation"]
+    assert reseg["method"] == "fixed_range"
+    assert reseg["range_lower_hu"] == -500.0
+    assert reseg["range_upper_hu"] == 400.0
+    assert result["analysis"]["roi_voxels"] == 64
+    provenance = result["provenance"]
+    assert provenance["schema"] == "heeh-v1.analysis-provenance"
+    assert provenance["inputs"]["paths_recorded"] is False
+
+
+def test_configuration_a_dicom_rtstruct_requires_roi_name(tmp_path: Path):
+    """Configuration A raises an error for a DICOM mask without an ROI name."""
+    # This test exercises pure Python validation — no Z-Rad or DLL needed.
+    image_path = tmp_path / "image.nii.gz"
+    image = np.arange(12 * 12 * 12, dtype=np.float32).reshape(12, 12, 12)
+    nib.save(nib.Nifti1Image(image, np.eye(4)), str(image_path))
+
+    with pytest.raises(ValueError, match="ROI name"):
+        run_configuration_a(image_path, tmp_path / "mask.dcm")
+
+
+# ---------------------------------------------------------------------------
+# IBSI 1 Configuration B — unit / smoke tests (no phantom data required)
+# ---------------------------------------------------------------------------
+
+def test_configuration_b_status_and_schema_fields(tmp_path: Path):
+    """Configuration B returns the expected status and resampling fields."""
+    if not _zrad_usable():
+        pytest.skip("Z-Rad or a required DLL is unavailable on this machine")
+    import SimpleITK as sitk
+
+    image_path = tmp_path / "image.nii.gz"
+    mask_path = tmp_path / "mask.nii.gz"
+    image = sitk.GetImageFromArray(
+        np.arange(8 * 8 * 8, dtype=np.float32).reshape(8, 8, 8)
+    )
+    image.SetSpacing((1.0, 1.0, 1.0))
+    mask = sitk.GetImageFromArray(np.ones((8, 8, 8), dtype=np.uint8))
+    mask.CopyInformation(image)
+    sitk.WriteImage(image, str(image_path))
+    sitk.WriteImage(mask, str(mask_path))
+
+    result = run_configuration_b(str(image_path), str(mask_path))
+
+    assert result["status"] == "configuration_b_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "B"
+    # Official Configuration B resamples in-plane only; the axial slice
+    # spacing (1.0 mm in this synthetic image) is preserved.
+    assert result["configuration"]["resampling_mm"] == [2.0, 2.0, 1.0]
+    reseg = result["configuration"]["resegmentation"]
+    assert reseg["method"] == "fixed_range"
+    assert reseg["range_lower_hu"] == -500.0
+    assert reseg["range_upper_hu"] == 400.0
+    assert result["configuration"]["image_interpolation"] == "linear"
+    assert result["analysis"]["resampled_roi_voxels"] > 0
+    provenance = result["provenance"]
+    assert provenance["schema"] == "heeh-v1.analysis-provenance"
+    assert provenance["inputs"]["paths_recorded"] is False
+
+
+def test_configuration_b_dicom_rtstruct_requires_roi_name(tmp_path: Path):
+    """Configuration B raises an error for a DICOM mask without an ROI name."""
+    # This test exercises pure Python validation — no Z-Rad or DLL needed.
+    image_path = tmp_path / "image.nii.gz"
+    image = np.arange(12 * 12 * 12, dtype=np.float32).reshape(12, 12, 12)
+    nib.save(nib.Nifti1Image(image, np.eye(4)), str(image_path))
+
+    with pytest.raises(ValueError, match="ROI name"):
+        run_configuration_b(image_path, tmp_path / "mask.dcm")
+
+
+# ---------------------------------------------------------------------------
+# IBSI 1 Configuration C — unit / smoke tests (no phantom data required)
+# ---------------------------------------------------------------------------
+
+def test_configuration_c_status_and_resegmentation_fields(tmp_path: Path):
+    """Configuration C returns fixed-range resegmentation metadata."""
+    if not _zrad_usable():
+        pytest.skip("Z-Rad or a required DLL is unavailable on this machine")
+    import SimpleITK as sitk
+
+    image_path = tmp_path / "image.nii.gz"
+    mask_path = tmp_path / "mask.nii.gz"
+    # Intensities range 0..63; a range of [0, 63] keeps all voxels.
+    image = sitk.GetImageFromArray(
+        np.arange(8 * 8 * 8, dtype=np.float32).reshape(8, 8, 8)
+    )
+    image.SetSpacing((1.0, 1.0, 1.0))
+    mask = sitk.GetImageFromArray(np.ones((8, 8, 8), dtype=np.uint8))
+    mask.CopyInformation(image)
+    sitk.WriteImage(image, str(image_path))
+    sitk.WriteImage(mask, str(mask_path))
+
+    result = run_configuration_c(
+        str(image_path), str(mask_path), range_lower=0.0, range_upper=100.0
+    )
+
+    assert result["status"] == "configuration_c_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "C"
+    assert result["configuration"]["resampling_mm"] == [2.0, 2.0, 2.0]
+    reseg = result["configuration"]["resegmentation"]
+    assert reseg["method"] == "fixed_range"
+    assert reseg["range_lower_hu"] == 0.0
+    assert reseg["range_upper_hu"] == 100.0
+    assert result["configuration"]["reference_configuration"] is False
+    assert result["analysis"]["resampled_roi_voxels"] > 0
+    provenance = result["provenance"]
+    assert provenance["schema"] == "heeh-v1.analysis-provenance"
+    assert provenance["inputs"]["paths_recorded"] is False
+
+
+def test_configuration_c_rejects_invalid_range():
+    """Configuration C raises ValueError for invalid intensity ranges."""
+    with pytest.raises(ValueError, match="range_lower"):
+        run_configuration_c(
+            "unused.nii.gz", "unused.nii.gz", range_lower=500.0, range_upper=100.0
+        )
+
+    with pytest.raises(ValueError, match="finite"):
+        run_configuration_c(
+            "unused.nii.gz", "unused.nii.gz", range_lower=float("nan"), range_upper=100.0
+        )
+
+
+def test_configuration_c_dicom_rtstruct_requires_roi_name(tmp_path: Path):
+    """Configuration C raises an error for a DICOM mask without an ROI name."""
+    # This test exercises pure Python validation — no Z-Rad or DLL needed.
+    image_path = tmp_path / "image.nii.gz"
+    image = np.arange(12 * 12 * 12, dtype=np.float32).reshape(12, 12, 12)
+    nib.save(nib.Nifti1Image(image, np.eye(4)), str(image_path))
+
+    with pytest.raises(ValueError, match="ROI name"):
+        run_configuration_c(image_path, tmp_path / "mask.dcm")
+
+
+def test_configuration_e_status_and_official_processing_parameters(
+    tmp_path: Path,
+):
+    if not _zrad_usable():
+        pytest.skip("Z-Rad or a required DLL is unavailable on this machine")
+    import SimpleITK as sitk
+
+    image_path = tmp_path / "image.nii.gz"
+    mask_path = tmp_path / "mask.nii.gz"
+    image = sitk.GetImageFromArray(
+        np.arange(8 * 8 * 8, dtype=np.float32).reshape(8, 8, 8)
+    )
+    image.SetSpacing((1.0, 1.0, 1.0))
+    mask = sitk.GetImageFromArray(np.ones((8, 8, 8), dtype=np.uint8))
+    mask.CopyInformation(image)
+    sitk.WriteImage(image, str(image_path))
+    sitk.WriteImage(mask, str(mask_path))
+
+    result = run_configuration_e(image_path, mask_path)
+
+    assert result["status"] == "configuration_e_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "E"
+    assert result["configuration"]["resampling_mm"] == [2.0, 2.0, 2.0]
+    assert "tricubic spline" in result["configuration"]["image_interpolation"]
+    assert result["configuration"]["resegmentation"] == {
+        "method": "fixed_range_and_outlier",
+        "range_lower_hu": -1000.0,
+        "range_upper_hu": 400.0,
+        "outlier_sigma": 3.0,
+    }
+    assert result["configuration"]["texture_and_histogram_discretization"][
+        "number_of_bins"
+    ] == 32
+    assert result["configuration"]["ivh_discretization"] == {
+        "method": "fixed bin number",
+        "number_of_bins": 1000,
+    }
+    assert result["analysis"]["resampled_roi_voxels"] > 0
+    assert set(result["feature_family_coverage"]) == set(
+        IBSI1_FEATURE_FAMILY_COUNTS
+    )
+    assert sum(
+        family["ibsi_feature_definitions"]
+        for family in result["feature_family_coverage"].values()
+    ) == 172
+    assert all(
+        family["status"] in {"computed", "unsupported", "missing"}
+        and family["computed_output_values"] >= 0
+        for family in result["feature_family_coverage"].values()
+    )
+    assert result["provenance"]["inputs"]["paths_recorded"] is False
+
+
+def test_configuration_e_dicom_rtstruct_requires_roi_name(tmp_path: Path):
+    image_path = tmp_path / "image.nii.gz"
+    image = np.arange(12 * 12 * 12, dtype=np.float32).reshape(12, 12, 12)
+    nib.save(nib.Nifti1Image(image, np.eye(4)), str(image_path))
+
+    with pytest.raises(ValueError, match="ROI name"):
+        run_configuration_e(image_path, tmp_path / "mask.dcm")
+
+
+# ---------------------------------------------------------------------------
+# IBSI 1 — Phantom cross-validation tests for A, B, C (skips if data absent)
+# ---------------------------------------------------------------------------
+
+def _get_phantom_paths():
+    verification_root = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "ibsi_reference_data"
+    )
+    phantom_root = verification_root / "ibsi_1_ct_radiomics_phantom"
+    image_path = phantom_root / "nifti" / "image" / "phantom.nii.gz"
+    mask_path = phantom_root / "nifti" / "mask" / "mask.nii.gz"
+    return image_path, mask_path
+
+
+def test_configuration_a_pipeline_runs_on_official_phantom():
+    """Configuration A pipeline executes without error on the IBSI CT phantom."""
+    image_path, mask_path = _get_phantom_paths()
+    if not all(p.is_file() for p in (image_path, mask_path)):
+        pytest.skip("Optional licensed IBSI phantom data are not installed")
+    pytest.importorskip("zrad", reason="Optional Z-Rad engine is not installed")
+
+    result = run_configuration_a(image_path, mask_path)
+
+    assert result["status"] == "configuration_a_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "A"
+    assert result["analysis"]["roi_voxels"] > 0
+    assert result["features"]
+    assert result["provenance"]["inputs"]["paths_recorded"] is False
+
+
+def test_configuration_b_pipeline_runs_on_official_phantom():
+    """Configuration B pipeline executes without error on the IBSI CT phantom."""
+    image_path, mask_path = _get_phantom_paths()
+    if not all(p.is_file() for p in (image_path, mask_path)):
+        pytest.skip("Optional licensed IBSI phantom data are not installed")
+    pytest.importorskip("zrad", reason="Optional Z-Rad engine is not installed")
+
+    result = run_configuration_b(image_path, mask_path)
+
+    assert result["status"] == "configuration_b_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "B"
+    reseg = result["configuration"]["resegmentation"]
+    assert reseg["method"] == "fixed_range"
+    assert reseg["range_lower_hu"] == -500.0
+    assert reseg["range_upper_hu"] == 400.0
+    assert result["analysis"]["resampled_roi_voxels"] > 0
+    assert result["features"]
+    assert result["provenance"]["inputs"]["paths_recorded"] is False
+
+
+def test_configuration_c_pipeline_runs_on_official_phantom():
+    """Configuration C pipeline executes without error on the IBSI CT phantom."""
+    image_path, mask_path = _get_phantom_paths()
+    if not all(p.is_file() for p in (image_path, mask_path)):
+        pytest.skip("Optional licensed IBSI phantom data are not installed")
+    pytest.importorskip("zrad", reason="Optional Z-Rad engine is not installed")
+
+    # IBSI 1 phantom HU range: typically -500..400 HU keeps the solid phantom.
+    result = run_configuration_c(
+        image_path, mask_path, range_lower=-500.0, range_upper=400.0
+    )
+
+    assert result["status"] == "configuration_c_pipeline_applied"
+    assert result["configuration"]["ibsi_configuration"] == "C"
+    reseg = result["configuration"]["resegmentation"]
+    assert reseg["method"] == "fixed_range"
+    assert result["analysis"]["resampled_roi_voxels"] > 0
+    assert result["features"]
+    assert result["provenance"]["inputs"]["paths_recorded"] is False

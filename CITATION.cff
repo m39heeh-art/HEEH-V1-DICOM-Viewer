@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 title: "HEEH-V1(TM) DICOM Viewer"
-message: "Use the version DOI for this v1.0.2 release. Cite the version-family DOI 10.5281/zenodo.22768910 when referring to all versions."
+message: "Version 1.0.3. A version-specific DOI has not been assigned yet; cite the version-family DOI 10.5281/zenodo.22768910."
 type: software
-doi: "10.5281/zenodo.23020151"
+doi: "10.5281/zenodo.22768910"
 authors:
   - family-names: "Heeh"
     given-names: "Mohamad Yousef"
@@ -10,5 +10,5 @@ authors:
     affiliation: "Alexandria University Faculty of Medicine"
 repository-code: "https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer"
 license: MIT
-version: "1.0.2"
-date-released: "2026-09-28"
+version: "1.0.3"
+date-released: "2026-10-31"

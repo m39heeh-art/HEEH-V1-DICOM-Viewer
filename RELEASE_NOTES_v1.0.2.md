@@ -21,8 +21,8 @@ name.
 - Selected DICOM ingestion, export, and Structured Report tests; TCIA download
   flow fixes; cohort ComBat harmonization; and viewer regression fixes.
 - Research evidence and limits in `docs/VERIFICATION_EVIDENCE.md`,
-  `docs/standards_traceability.md`, and
-  `verification/publication_package/02_Evidence/`.
+  `docs/standards_traceability.md`, and the reproducible benchmark generator
+  in `scripts/public_benchmark_evidence.py`.
 - Citation metadata in `CITATION.cff`.
 
 ## Zenodo archive

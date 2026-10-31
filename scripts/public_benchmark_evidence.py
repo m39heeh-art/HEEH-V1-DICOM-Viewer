@@ -130,6 +130,10 @@ def _recorded_ibsi_evidence(root: Path) -> dict[str, Any]:
             "application_configuration_d_workflow": None,
             "pyradiomics_reference_comparison": None,
             "statistics_comparison": None,
+            "configuration_e_reference_status": {
+                "status": "not_available",
+                "blocker": "Configuration E status is absent from the recorded artifact.",
+            },
             "full_ibsi_status": result.get("status", "blocked"),
             "note": "Verification result is present but missing the expected summary fields.",
         }
@@ -146,7 +150,58 @@ def _recorded_ibsi_evidence(root: Path) -> dict[str, Any]:
         ],
         "pyradiomics_reference_comparison": summary["comparison"],
         "statistics_comparison": summary["statistics_comparison"],
+        "configuration_e_reference_status": summary.get(
+            "configuration_e_summary",
+            {
+                "status": "not_recorded",
+                "blocker": "Configuration E status is absent from the recorded artifact.",
+            },
+        ),
         "full_ibsi_status": summary["full_ibsi_status"],
+    }
+
+
+def _recorded_ibsi_digital_phantom_evidence(root: Path) -> dict[str, Any]:
+    path = (
+        root
+        / "verification"
+        / "results"
+        / "ibsi_digital_phantom_verification.json"
+    )
+    if not path.is_file():
+        return {
+            "status": "not_recorded",
+            "note": "No IBSI digital-phantom verification result is recorded.",
+        }
+    result = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        "status": result["status"],
+        "artifact": path.relative_to(root).as_posix(),
+        "artifact_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "scope": result["scope"],
+        "comparison": result["comparison"],
+        "mismatches": result["mismatches"],
+        "feature_inventory": {
+            key: value
+            for key, value in result["feature_inventory"].items()
+            if key not in ("families", "items")
+        },
+        "unimplemented_feature_tags": [
+            item["feature_tag"]
+            for item in result["feature_inventory"]["items"]
+            if item["inventory_definition"]
+            and item["recommendation_status"] == "reference_supported"
+            and not item["implemented"]
+        ],
+        "not_recommended_feature_tags": [
+            item["feature_tag"]
+            for item in result["feature_inventory"]["items"]
+            if item["inventory_definition"]
+            and item["recommendation_status"]
+            == "not_recommended_no_reference_value"
+        ],
+        "independent_check": result["independent_check"],
+        "official_matrix_check": result["official_matrix_check"],
     }
 
 
@@ -350,14 +405,14 @@ def build_results() -> dict[str, Any]:
     runtime = _runtime_memory_benchmark()
     comparator = _recorded_comparison_evidence(root)
     ibsi = _recorded_ibsi_evidence(root)
+    ibsi_digital = _recorded_ibsi_digital_phantom_evidence(root)
     return {
         "benchmark_name": "HEEH-V1 public benchmark evidence package",
         "project_identity": "HEEH-V1(TM) DICOM Viewer",
         "release_claims_preserved": True,
         "release_version_notes": (
-            "The requested 1.0.2 version label is retained. This revised "
-            "package includes post-tag fixes and evidence updates and is not "
-            "byte-identical to the original tagged snapshot."
+            "Version 1.0.3 includes source and evidence updates after v1.0.2; "
+            "it is not byte-identical to the historical v1.0.2 snapshot."
         ),
         "benchmark_environment": {
             "project_version": project["project"]["version"],
@@ -377,6 +432,7 @@ def build_results() -> dict[str, Any]:
         "public_dataset_provenance": _dataset_provenance(),
         "external_radiomics_comparison": comparator,
         "ibsi_configuration_d_verification": ibsi,
+        "ibsi_digital_phantom_verification": ibsi_digital,
         "radiomics_benchmark": radiomics,
         "export_validation_benchmark": export,
         "runtime_memory_benchmark": runtime,
@@ -413,6 +469,8 @@ def _report_markdown(results: dict[str, Any]) -> str:
     ds = results["public_dataset_provenance"]
     comparator = results["external_radiomics_comparison"]
     ibsi = results["ibsi_configuration_d_verification"]
+    pyradiomics_reference = ibsi.get("pyradiomics_reference_comparison") or {}
+    ibsi_digital = results["ibsi_digital_phantom_verification"]
     environment = results["benchmark_environment"]
     lines: list[str] = [
         "# HEEH-V1 public benchmark report",
@@ -458,11 +516,23 @@ def _report_markdown(results: dict[str, Any]) -> str:
         f"- Status: `{ibsi['status']}`",
         f"- Reference dataset: `{ibsi.get('reference_source', {}).get('dataset', 'not recorded')}` at `{ibsi.get('reference_source', {}).get('commit', 'commit unavailable')}`; license `{ibsi.get('reference_source', {}).get('license', 'not recorded')}`",
         f"- Configuration D Z-Rad comparison: `{ibsi.get('zrad_comparison', {}).get('compared', 'not available')}` compared; `{ibsi.get('zrad_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('zrad_comparison', {}).get('failed', 'not available')}` failed; `{ibsi.get('zrad_comparison', {}).get('unsupported', 'not available')}` unsupported.",
-        f"- PyRadiomics reference comparison (separate from Z-Rad): `{ibsi.get('pyradiomics_reference_comparison', {}).get('compared', 'not available')}` assessed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('failed', 'not available')}` failed; `{ibsi.get('pyradiomics_reference_comparison', {}).get('unsupported', 'not available')}` not assessed because no defensible feature mapping was established for this comparison.",
+        f"- PyRadiomics reference comparison (separate from Z-Rad): `{pyradiomics_reference.get('compared', 'not available')}` assessed; `{pyradiomics_reference.get('passed', 'not available')}` passed; `{pyradiomics_reference.get('failed', 'not available')}` failed; `{pyradiomics_reference.get('unsupported', 'not available')}` not assessed. Not-assessed categories: `{pyradiomics_reference.get('unsupported_by_category', {})}`. Not-assessed rows are neither passes nor failures.",
         f"- Z-Rad statistics rows: `{ibsi.get('statistics_comparison', {}).get('compared', 'not available')}` compared; `{ibsi.get('statistics_comparison', {}).get('passed', 'not available')}` passed; `{ibsi.get('statistics_comparison', {}).get('failed', 'not available')}` failed.",
+        f"- Configuration E official-reference status: `{ibsi.get('configuration_e_reference_status', {}).get('status', 'not recorded')}`; blocker `{ibsi.get('configuration_e_reference_status', {}).get('blocker') or 'none'}`.",
         f"- Default viewer slice radiomics: `{ibsi.get('application_alignment', 'not available')}`. It uses a 2D unmasked slice, so no Configuration D pass/fail comparison is made for this path.",
         f"- Boundary: {ibsi.get('scope', ibsi.get('note', 'No verification recorded.'))}",
         f"- Result artifact: `{ibsi.get('artifact', 'not recorded')}` (SHA-256 `{ibsi.get('artifact_sha256', 'not available')}`)",
+        "",
+        "## IBSI digital phantom",
+        f"- Status: `{ibsi_digital['status']}`",
+        f"- Reference rows: `{ibsi_digital.get('comparison', {}).get('compared', 'not available')}` compared; `{ibsi_digital.get('comparison', {}).get('passed', 'not available')}` passed; `{ibsi_digital.get('comparison', {}).get('failed', 'not available')}` failed; `{ibsi_digital.get('comparison', {}).get('unsupported', 'not available')}` unsupported.",
+        f"- Mismatches: `{ibsi_digital.get('mismatches', [])}`",
+        f"- IBSI feature-tag inventory: `{ibsi_digital.get('feature_inventory', {}).get('implemented_reference_supported_definitions', 'not available')}` of `{ibsi_digital.get('feature_inventory', {}).get('reference_supported_definitions', 'not available')}` reference-supported definitions have implementation outputs; missing recommended outputs: `{ibsi_digital.get('unimplemented_feature_tags', [])}`. IBSI explicitly says not to use definitions without reference values: `{ibsi_digital.get('not_recommended_feature_tags', [])}`.",
+        f"- Permanent identifiers: `{ibsi_digital.get('feature_inventory', {}).get('permanent_ids_published', 'not available')}` published for 172 definitions; IDs absent from the current manual: `{ibsi_digital.get('feature_inventory', {}).get('definitions_without_permanent_id', [])}`; duplicate IDs: `{ibsi_digital.get('feature_inventory', {}).get('permanent_id_collisions', {})}`.",
+        f"- Independent check: `{ibsi_digital.get('independent_check', 'not available')}`",
+        f"- Official GLSZM matrix check: `{ibsi_digital.get('official_matrix_check', 'not available')}`. The published matrix and feature formula yield 1494.6, matching both implementations but not the feature-reference table's 1490.",
+        f"- Scope: {ibsi_digital.get('scope', ibsi_digital.get('note', 'No comparison recorded.'))}",
+        f"- Result artifact: `{ibsi_digital.get('artifact', 'not recorded')}` (SHA-256 `{ibsi_digital.get('artifact_sha256', 'not available')}`)",
         "",
         "## Export/privacy validation benchmark",
         "- Fixture set: 20 valid and 20 invalid generated challenge archives.",

@@ -4,38 +4,46 @@ This is a convenience safeguard, not a certification of anonymization. The
 caller remains responsible for validating the resulting files and handling
 burned-in pixel annotations according to the study protocol.
 
-Scope of the de-identification: only the attribute subset listed in
-:data:`core.standards.PHI_FIELD_NAMES` is blanked or pseudonymized by this
-helper. It does NOT apply the full DICOM PS3.15 Annex E Basic Application
-Level Confidentiality Profile: identity-bearing elements inside sequences
-(e.g. VerifyingObserverSequence, PerformingObserverSequence) are not blanked
-— only their UIDs are remapped — and additional top-level attributes beyond
-``PHI_FIELD_NAMES`` (e.g. StudyDescription, AdmittingDiagnosesDescription)
-are out of scope. Accordingly, ``deidentify_dataset`` deletes any inherited
+Scope of the de-identification: only the selected attribute set listed in
+:data:`core.standards.PHI_FIELD_NAMES` is blanked or pseudonymized, including
+matching elements nested in sequences. This does NOT apply the full DICOM
+PS3.15 Annex E Basic Application Level Confidentiality Profile: unlisted
+attributes, free-text values, and burned-in pixel text may still identify a
+person. Accordingly, ``deidentify_dataset`` deletes any inherited
 ``PatientIdentityRemoved`` marker instead of asserting ``YES``: the removal
-must be attested by whoever reviews the complete output object, not
-fabricated by a partial helper. When ``BurnedInAnnotation`` is present its
-value is left unchanged because pixel data is not reviewed here; burned-in
-identity may still be present either way.
+must be attested by whoever reviews the complete output object. When
+``BurnedInAnnotation`` is present its value is left unchanged because pixel
+data is not reviewed here.
 """
 
 from __future__ import annotations
 
 from copy import deepcopy
+import secrets
 from typing import Any
 
 import pydicom
-from pydicom.datadict import tag_for_keyword
 from pydicom.uid import generate_uid
 
 from core.standards import PHI_FIELD_NAMES, pseudonymous_identifier
+
+_RETAINABLE_DATE_KEYWORDS = frozenset(
+    {
+        "StudyDate",
+        "SeriesDate",
+        "AcquisitionDate",
+        "ContentDate",
+        "PerformedProcedureStepStartDate",
+        "PerformedProcedureStepEndDate",
+    }
+)
 
 
 def requires_pixel_review(dataset: pydicom.dataset.Dataset) -> bool:
     """Return whether pixel-level privacy review is mandatory before release."""
     if not isinstance(dataset, pydicom.dataset.Dataset):
         raise TypeError("dataset must be a pydicom Dataset")
-    return str(getattr(dataset, "BurnedInAnnotation", "") or "").upper() == "YES"
+    return str(getattr(dataset, "BurnedInAnnotation", "") or "").upper() != "NO"
 
 
 def deidentify_dataset(
@@ -50,11 +58,12 @@ def deidentify_dataset(
     patient ID is replaced with a stable, deterministic hash of the original
     identifier. This is not anonymization and may be vulnerable to guessing
     attacks. Date elements are removed by default because temporal shifting
-    requires a study-specific protocol. When ``keep_dates=True`` the *Date*
-    elements are retained (time elements are still blanked) and
-    ``DeidentificationMethod`` records ``Dates Retained`` (plus
-    ``Times Removed``) so exported metadata never claims date removal that
-    did not happen. This helper does not attest that all identifying
+    requires a study-specific protocol. When ``keep_dates=True`` only the
+    selected study, series, acquisition, content, and procedure-step dates are
+    retained; patient-specific and unlisted date elements remain removed.
+    Time elements are always blanked. ``DeidentificationMethod`` reports this
+    partial retention so exported metadata never claims complete date removal.
+    This helper does not attest that all identifying
     information has been removed, so it removes any inherited
     ``PatientIdentityRemoved`` marker. Burned-in annotation status is left
     unchanged because pixel data is not reviewed here.
@@ -68,36 +77,39 @@ def deidentify_dataset(
     pseudo_id = (
         f"{replacement_prefix}_{pseudonymous_identifier(original_id)}"
         if original_id
-        else f"{replacement_prefix}_{pseudonymous_identifier('missing-patient-id')}"
+        else f"{replacement_prefix}_{secrets.token_hex(8)}"
     )
 
-    for keyword in PHI_FIELD_NAMES:
-        tag = tag_for_keyword(keyword)
-        if tag is None or tag not in result:
-            continue
-        if keyword in result:
-            if keyword == "PatientID":
-                result.PatientID = pseudo_id
-            elif keyword in {"PatientSex"}:
-                result.PatientSex = ""
-            elif keyword.endswith("Date") and keep_dates:
-                continue
+    def _clean_identifiers(_container, element) -> None:
+        keyword = element.keyword
+        if element.VR in {"DA", "DT", "TM"}:
+            if (
+                element.VR == "DA"
+                and keep_dates
+                and keyword in _RETAINABLE_DATE_KEYWORDS
+            ):
+                return
+            element.value = ""
+            return
+        if keyword in PHI_FIELD_NAMES or element.VR == "PN":
+            if element.VR == "SQ":
+                element.value = []
+            elif keyword == "PatientID":
+                element.value = pseudo_id
             else:
-                result[keyword].value = ""
+                element.value = ""
 
     # Use replacement UIDs so an exported object cannot be linked to the
-    # original study through globally unique DICOM identifiers.
+    # original study through globally unique DICOM instance identifiers.
     uid_map = {}
-    preserved_uid_keywords = {
-        "SOPClassUID",
-        "TransferSyntaxUID",
-        "ImplementationClassUID",
-        "MediaStorageSOPClassUID",
-    }
 
     def _remap_uid(_dataset, element) -> None:
         keyword = element.keyword
-        if element.VR != "UI" or keyword in preserved_uid_keywords:
+        if (
+            element.VR != "UI"
+            or keyword.endswith("SOPClassUID")
+            or keyword in {"TransferSyntaxUID", "ImplementationClassUID"}
+        ):
             return
         value = element.value
         if isinstance(value, (list, tuple)):
@@ -107,6 +119,7 @@ def deidentify_dataset(
         elif value:
             element.value = uid_map.setdefault(str(value), generate_uid())
 
+    result.walk(_clean_identifiers)
     result.walk(_remap_uid)
     if getattr(result, "file_meta", None) is not None:
         result.file_meta.walk(_remap_uid)
@@ -115,14 +128,14 @@ def deidentify_dataset(
     result.PatientID = pseudo_id
     if "PatientIdentityRemoved" in result:
         del result.PatientIdentityRemoved
-    # Only *Date* elements honor keep_dates; *Time* elements are always
-    # blanked. DeidentificationMethod (LO, VM 1-n) is written as a multi-valued
-    # element so no item exceeds the 64-character LO limit.
+    # Only selected *Date* elements honor keep_dates; *Time* elements are
+    # always blanked. DeidentificationMethod (LO, VM 1-n) is multi-valued.
     date_handled = (
-        ["Dates Retained", "Times Removed"]
+        ["Selected Dates Retained", "Other Dates Removed"]
         if keep_dates
-        else ["Dates Removed", "Times Removed"]
+        else ["Dates Removed"]
     )
+    date_handled.extend(["DateTime Removed", "Times Removed"])
     result.DeidentificationMethod = [
         "Selected Identifiers Removed",
         "UID Remap",

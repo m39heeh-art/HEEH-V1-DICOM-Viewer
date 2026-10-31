@@ -221,7 +221,7 @@ def test_deidentification_reports_dates_removed_by_default():
     assert clean.StudyDate == ""
     assert clean.StudyTime == ""
     assert "Dates Removed" in clean.DeidentificationMethod
-    assert "Dates Retained" not in clean.DeidentificationMethod
+    assert "Selected Dates Retained" not in clean.DeidentificationMethod
 
 
 def test_deidentification_reports_dates_retained_when_kept():
@@ -235,10 +235,11 @@ def test_deidentification_reports_dates_retained_when_kept():
 
     clean = deidentify_dataset(dataset, keep_dates=True)
 
-    # Only *Date* elements are retained; *Time* elements are always blanked.
+    # Only selected *Date* elements are retained; times are always blanked.
     assert clean.StudyDate == "20240101"
     assert clean.StudyTime == ""
-    assert "Dates Retained" in clean.DeidentificationMethod
+    assert "Selected Dates Retained" in clean.DeidentificationMethod
+    assert "Other Dates Removed" in clean.DeidentificationMethod
     assert "Times Removed" in clean.DeidentificationMethod
     assert "Dates Removed" not in clean.DeidentificationMethod
 

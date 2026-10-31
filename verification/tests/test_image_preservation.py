@@ -242,6 +242,53 @@ def test_dicom_presentation_metadata_reads_standard_tags(tmp_path):
     assert metadata["pixel_representation"] == 1
 
 
+def test_enhanced_shared_functional_group_pixel_spacing_is_used(tmp_path):
+    import pydicom
+    from pydicom.dataset import Dataset
+    from pydicom.sequence import Sequence
+    from app import ClinicalApp
+
+    path = str(tmp_path / "shared_spacing.dcm")
+    _write_synthetic_dicom(path, "CT", arr=np.zeros((4, 4), dtype=np.int16))
+    dataset = pydicom.dcmread(path)
+    measures = Dataset()
+    measures.PixelSpacing = [0.6, 0.8]
+    shared = Dataset()
+    shared.PixelMeasuresSequence = Sequence([measures])
+    dataset.SharedFunctionalGroupsSequence = Sequence([shared])
+    dataset.save_as(path)
+
+    metadata = ClinicalApp._read_dicom_presentation_metadata(path)
+
+    assert metadata["pixel_spacing_mm"] == [0.6, 0.8]
+    assert metadata["pixel_spacing_source"] == "shared_functional_group"
+
+
+def test_enhanced_varying_per_frame_spacing_is_withheld(tmp_path):
+    import pydicom
+    from pydicom.dataset import Dataset
+    from pydicom.sequence import Sequence
+    from app import ClinicalApp
+
+    path = str(tmp_path / "varying_spacing.dcm")
+    _write_synthetic_dicom(path, "CT", arr=np.zeros((4, 4), dtype=np.int16))
+    dataset = pydicom.dcmread(path)
+    frames = []
+    for spacing in ([0.6, 0.8], [0.7, 0.8]):
+        measures = Dataset()
+        measures.PixelSpacing = spacing
+        frame = Dataset()
+        frame.PixelMeasuresSequence = Sequence([measures])
+        frames.append(frame)
+    dataset.PerFrameFunctionalGroupsSequence = Sequence(frames)
+    dataset.save_as(path)
+
+    metadata = ClinicalApp._read_dicom_presentation_metadata(path)
+
+    assert metadata["pixel_spacing_mm"] is None
+    assert metadata["pixel_spacing_source"] == "varying_or_incomplete_per_frame"
+
+
 # ---------------------------------------------------------------------------
 # NIfTI: scl_slope / scl_inter applied on top of raw dataobj
 # ---------------------------------------------------------------------------
@@ -293,6 +340,82 @@ def test_windowing_does_not_mutate_input():
     assert out.dtype == np.uint8
     assert out.min() >= 0 and out.max() <= 255
     assert np.array_equal(hu, hu_copy)
+
+
+def test_dicom_voi_lut_applies_selected_lut_to_display_only(tmp_path):
+    import pydicom
+    from pydicom.dataset import Dataset
+    from pydicom.sequence import Sequence
+    from app import ClinicalApp
+
+    source_pixels = np.arange(5, dtype=np.int16).reshape(1, 5)
+    path = str(tmp_path / "voi_lut.dcm")
+    _write_synthetic_dicom(path, "CT", arr=source_pixels)
+    dataset = pydicom.dcmread(path)
+    lut = Dataset()
+    lut.LUTDescriptor = [4, 0, 8]
+    lut.LUTExplanation = "Test grayscale"
+    lut.add_new(0x00283006, "US", [0, 85, 170, 255])
+    dataset.VOILUTSequence = Sequence([lut])
+    dataset.save_as(path)
+    original = source_pixels.copy()
+
+    display = ClinicalApp._apply_dicom_voi_lut(
+        path, source_pixels, index=0
+    )
+    metadata = ClinicalApp._read_dicom_presentation_metadata(path)
+
+    assert display.tolist() == [[0, 85, 170, 255, 255]]
+    assert metadata["voi_lut_explanations"] == ["Test grayscale"]
+    assert np.array_equal(source_pixels, original)
+
+
+def test_dicom_voi_lut_keeps_padding_black(tmp_path):
+    import pydicom
+    from pydicom.dataset import Dataset
+    from pydicom.sequence import Sequence
+    from app import ClinicalApp
+
+    path = str(tmp_path / "voi_lut_padding.dcm")
+    _write_synthetic_dicom(path, "CT", arr=np.zeros((1, 2), dtype=np.int16))
+    dataset = pydicom.dcmread(path)
+    lut = Dataset()
+    lut.LUTDescriptor = [4, 0, 8]
+    lut.add_new(0x00283006, "US", [255, 128, 64, 0])
+    dataset.VOILUTSequence = Sequence([lut])
+    dataset.save_as(path)
+
+    display = ClinicalApp._apply_dicom_voi_lut(
+        path, np.array([[np.nan, 2.0]], dtype=np.float32)
+    )
+
+    assert display.tolist() == [[0, 64]]
+
+
+@pytest.mark.parametrize("function", ["LINEAR", "LINEAR_EXACT", "SIGMOID"])
+def test_dicom_window_functions_apply_without_changing_analysis_pixels(
+    tmp_path, function
+):
+    import pydicom
+    from app import ClinicalApp
+
+    stored = np.array([[-2, -1, 0, 1, 2]], dtype=np.int16)
+    path = str(tmp_path / f"window_{function.lower()}.dcm")
+    _write_synthetic_dicom(path, "CT", arr=stored)
+    dataset = pydicom.dcmread(path)
+    dataset.WindowCenter = 0
+    dataset.WindowWidth = 4
+    dataset.VOILUTFunction = function
+    dataset.save_as(path)
+    source = stored.astype(np.float32)
+    original = source.copy()
+
+    display = ClinicalApp._apply_dicom_windowing(path, source)
+
+    assert display.dtype == np.uint8
+    assert np.all(np.diff(display.ravel()) >= 0)
+    assert display[0, 0] < display[0, -1]
+    assert np.array_equal(source, original)
 
 
 def test_color_display_and_monochrome_inversion_do_not_mutate_source():

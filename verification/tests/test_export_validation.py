@@ -89,6 +89,41 @@ def test_export_validation_rejects_private_or_non_pseudonymous_dicom():
     assert "NON_PSEUDONYMOUS_PATIENT_ID" in codes
 
 
+def test_export_validation_detects_nested_person_names():
+    from pydicom.dataset import Dataset, FileDataset, FileMetaDataset
+    from pydicom.sequence import Sequence
+    from pydicom.uid import ExplicitVRLittleEndian, generate_uid
+
+    meta = FileMetaDataset()
+    meta.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"
+    meta.MediaStorageSOPInstanceUID = generate_uid()
+    meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    ds = FileDataset("nested.dcm", {}, file_meta=meta, preamble=b"\0" * 128)
+    ds.PatientName = "ANONYMOUS"
+    ds.PatientID = "NEURO_0123456789abcdef"
+    observer = Dataset()
+    observer.PersonName = "Hidden^Person"
+    ds.VerifyingObserverSequence = Sequence([observer])
+    stream = io.BytesIO()
+    ds.save_as(stream)
+    payload = stream.getvalue()
+    manifest = json.dumps({"files": [{
+        "file": "nested.dcm",
+        "sha256": __import__("hashlib").sha256(payload).hexdigest(),
+    }]}).encode()
+
+    result = validate_export_archive(_zip({
+        "nested.dcm": payload,
+        "export_manifest.json": manifest,
+    }))
+
+    assert any(
+        error["code"] == "PHI_FIELD_PRESENT"
+        and "PersonName" in error["message"]
+        for error in result["errors"]
+    )
+
+
 def test_export_validation_accepts_explicit_anonymized_patient_name():
     from pydicom.dataset import FileDataset, FileMetaDataset
     from pydicom.uid import ExplicitVRLittleEndian, generate_uid
@@ -142,7 +177,10 @@ def test_export_validation_warns_when_deidentification_marker_is_absent():
     assert result["ok"], result["errors"]
     assert {
         warning["code"] for warning in result["warnings"]
-    } == {"MISSING_DEIDENTIFICATION_MARKER"}
+    } == {
+        "MISSING_DEIDENTIFICATION_MARKER",
+        "PIXEL_PRIVACY_REVIEW_REQUIRED",
+    }
 
 
 def test_generated_dicom_sr_does_not_claim_confidentiality_profile():

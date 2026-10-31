@@ -1,21 +1,20 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22768910.svg)](https://doi.org/10.5281/zenodo.22768910)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0004--2729--443X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0009-0004-2729-443X)
-[![tests](https://img.shields.io/badge/tests-335%20passed-brightgreen)](verification/tests)
+[![tests](https://img.shields.io/badge/tests-365%20passed%2C%2011%20skipped-yellow)](verification/tests)
 [![real-data study](https://img.shields.io/badge/real--data%20study-172%2F172%20exact-blue)](docs/tcia_full_series_study_report.md)
 [![CI](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/m39heeh-art/HEEH-V1-DICOM-Viewer/actions/workflows/ci.yml)
-# HEEH-V1™ DICOM Viewer
+# HEEH-V1(TM) DICOM Viewer
 
-![HEEH-V1 DICOM Viewer official logo](assets/heeh-v1-logo.jpg)
-
-HEEH-V1™ DICOM Viewer is a Streamlit web application for **medical-image
+HEEH-V1(TM) DICOM Viewer is a Streamlit web application for **medical-image
 research and education**. It supports DICOM and common volumetric-image
 workflows, calibrated measurements, image-quality and radiomics-style
 calculations, experimental AI integrations, privacy-aware exports, and
 provenance reporting.
 
-Open-source research software, stable version `1.0.2`, released under the MIT
-License and published on [Zenodo](https://zenodo.org/records/23020151), the
-official release source. **Keywords:** DICOM, medical imaging, research
+Open-source research software, version `1.0.3`, released under the MIT
+License. The published [Zenodo record](https://zenodo.org/records/23020151)
+is for v1.0.2; the version-specific v1.0.3 record has not yet been assigned.
+**Keywords:** DICOM, medical imaging, research
 software, radiomics, medical-image viewer, scientific reproducibility.
 
 **Protected project identity:** the public product name is exactly
@@ -35,14 +34,6 @@ identity when publishing or redistributing the application.
 > they are not medical findings. A qualified clinician must independently
 > interpret all images and results.
 
-For research groups and students in the field of medical imaging, this project offers a comprehensive solution for teaching demonstrations, research analysis, and the validation of algorithmic models. It serves as a laboratory environment (via Docker) for biomedical engineering students and is well-suited for research assistants who require rapid quality control and batch processing of DICOM data. At present, this project is not intended for use in formal clinical radiological procedures; its scope is clearly defined. However, it has the potential to evolve toward clinical application, provided there is sufficient global interest, support, and collaboration from physicians and programmers to ensure the highest international standards for an open-source solution.
-## Research use case
-
-HEEH-V1 has been used in a reproducible CT phantom analysis investigating the effect of ROI size on first-order CT metrics.
-
-- [Small-ROI sensitivity and PyRadiomics agreement of HEEH-V1 first-order CT metrics](verification/research_case/README.md)
-
-![ROI-size dependence of HEEH-V1 first-order CT metrics](verification/research_case/figures/fig2_hu_stats_vs_radius.png)
 ## Quick start
 
 With Python 3.11–3.14, from the repository root:
@@ -58,23 +49,7 @@ streamlit run app.py
 Open `http://localhost:8501`. See [Installation](#installation) for platform
 details and development dependencies.
 
-## IMAGE of project
-TCIA
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview0.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview2.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview3.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow-overview4.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow1.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow2.png)
-
-![HEEH-V1 application settings panel](assets/heeh-v1-workflow3.png)
+![HEEH-V1 application settings panel](verification/samples/screenshots/sidebar-settings.png)
 
 ## Contents
 
@@ -282,6 +257,30 @@ The current implementation is **IBSI-aligned in selected definitions**, not a
 claim of full IBSI compliance. Reproducible radiomics requires documented
 acquisition, reconstruction, interpolation, discretization, segmentation,
 preprocessing, and feature-version choices.
+
+As an opt-in 3D path, the application implements the IBSI 1 reference
+processing workflows A–E on a CT series with an imported NIfTI or DICOM
+RTSTRUCT ROI mask. Configuration D is the workflow described under
+"IBSI radiomics configuration" below, with the reported phantom comparison.
+Configurations A (no preprocessing), B (2 mm in-plane resampling), and
+C (resampling + fixed-range resegmentation) are compared against the
+official IBSI CT phantom reference tables by the verification script: the
+generated report records A 346/346, B 346/346, and C 210/210 populated
+feature rows passing (60 diagnostic rows per A/B/C/E are not assessed),
+using the same Z-Rad reference engine as the application — this is not
+independent engine validation. Configuration E (cubic B-spline image
+interpolation with 1000-bin IVH discretisation) also compares against the
+official workbook values, with 210/210 feature rows passing. When a
+degenerate ROI makes a feature family mathematically
+undefined, the report records that family under
+`unsupported_families` with the engine's reason instead of silently
+omitting it. The result view lists all 11 IBSI feature families and their
+status. Its computed-output counts are not a one-to-one map of the 172
+permanent IBSI feature identifiers; full identifier-level coverage and
+independent validation remain incomplete. The digital-phantom comparison
+currently passes 481/482 populated reference rows; the one GLSZM mismatch is
+root-caused as an upstream-internal IBSI inconsistency and is still reported
+rather than adjusted to force a pass. See the [IBSI CT evidence and limitations](docs/ibsi_ct_subset.md).
 
 ### Longitudinal analysis
 
@@ -607,7 +606,7 @@ Example:
 Fine-tuning remains research-only and requires independent dataset governance,
 split review, model validation, and reproducibility documentation.
 
-## Real-data benchmark study (v1.0.2)
+## Real-data validation evidence (v1.0.3)
 
 Beyond synthetic fixtures, the recorded public TCIA CT phantom series
 (CT-Phantom4Radiomics, CC BY 4.0, DOI 10.7937/a1v1-rc66) was downloaded
@@ -621,9 +620,9 @@ in full and evaluated with the application's own code paths:
 - **Export gate:** all 172 de-identified slices pass; 11/11 corrupted
   manifest probes rejected.
 - **IBSI morphology correction:** intensity re-segmentation no longer changes
-  the mask used for shape features. The corrected PyRadiomics reference
-  extraction passes all 66 comparable IBSI rows; 204 are unsupported because
-  no unambiguous PyRadiomics equivalent is available.
+  the mask used for shape features. The separate PyRadiomics comparison passes
+  all 75 assessed IBSI reference rows. The remaining 195 rows are categorized
+  as not assessed, not counted as passes or failures.
 
 Reproduce with `scripts/tcia_real_evaluation.py` and
 `scripts/tcia_full_series_study.py` (the series is fetched by NBIA UID
@@ -677,21 +676,21 @@ Evidence labels used in this project:
   the exact scope and results are reported.
 - **Not established**: no adequate evidence is currently available.
 
-The complete suite collects 335 tests. In the fully provisioned local
-verification, all 335 passed with 0 failures and 0 skips. The licensed IBSI
-reference inputs and public TCIA series were staged locally and are not
-included in the repository. CI does not fetch these optional inputs, so it
-reports dependent tests as skipped when they are unavailable. See
+The current suite collects 376 tests. The latest local verification passed
+365 tests, skipped 11 optional-evidence tests, and had no failures. Licensed
+IBSI reference inputs and public TCIA series are not included in the
+repository; tests that require unavailable optional evidence are skipped.
+See
 [the verification evidence](docs/VERIFICATION_EVIDENCE.md) for details.
 The 270/270 IBSI comparison is limited to the specific Configuration D CT
 phantom workflow in `verification/tests/test_ibsi_validation.py` and its
 recorded verifier output. It uses the Z-Rad reference pipeline; the separate
 default viewer radiomics call analyzes a 2D unmasked slice and is reported as
 not comparable to Configuration D. The verifier separately reports a
-PyRadiomics reference extraction with 66/66 comparable rows passing. An
-additional 204 rows were not assessed in that comparison because a defensible
-feature mapping was not established; they are not counted as passes or
-failures. This is not evidence of full IBSI compliance,
+PyRadiomics reference extraction with 75/75 comparable rows passing. The
+remaining 195 reference rows are categorized as not assessed in the generated
+report; they are not counted as passes or failures. This is not evidence of
+full IBSI compliance,
 patient-level validity, or generalization across scanners, sites, populations,
 modalities, and analysis settings. A separate PyRadiomics 3.0.1 comparison matched four first-order features on one
 deterministic synthetic ROI; it does not validate other feature families or
@@ -741,38 +740,45 @@ medical-device certification.
 |   |-- dicom_ordering.py          # Physical DICOM slice ordering
 |   |-- dicom_privacy.py           # De-identification and UID remapping
 |   |-- export_validation.py       # Offline ZIP/export validator
+|   |-- ibsi_radiomics.py          # Configuration A-E radiomics workflows
+|   |-- ibsi_reporting.py          # IBSI reporting checklist
 |   |-- loaders.py                 # Cached volume/model loaders
 |   |-- modality_detector.py       # DICOM modality and SOP detection
 |   |-- modality_registry.py       # Capability registry
-|   |-- navigation_benchmark.py   # Synthetic navigation benchmark
+|   |-- navigation_benchmark.py    # Synthetic navigation benchmark
 |   |-- standards.py               # Terminology/privacy boundaries
 |   |-- tissue_classifier.py       # Tissue, edge, radiomics, XAI helpers
-|   |-- volume_visualizer.py       # MIP/MPR/Plotly 3D
-|   `-- security.py                # Optional encryption helpers
+|   `-- volume_visualizer.py       # MIP/MPR/Plotly 3D
 |-- engines/                       # Processing and inference engines
+|   |-- modality_calculators/      # Modality-specific measurements
 |   |-- clinical_metrics.py        # Segmentation and comparison metrics
-|   |-- ct_calculator.py           # CT quantitative calculations
 |   |-- finetune_trainer.py        # Research fine-tuning
 |   |-- monai_preprocessor.py      # MONAI preprocessing
 |   |-- onnx_inference.py          # ONNX provider selection
 |   |-- sitk_registration.py       # SimpleITK resampling/registration
-|   |-- tcia_dataset.py             # TCIA/cache dataset helpers
-|   `-- anatomical_segmentation.py # Optional segmentation backends
+|   `-- tcia_dataset.py            # TCIA/cache dataset helpers
 |-- ui/                            # Compatibility UI exports
 |-- utils/                         # Shared utility and AI helpers
 |-- scripts/                       # Validation, benchmark, and maintenance CLIs
-|-- tests/                         # Automated regression tests
 |-- docs/                          # Standards and project documentation
-|-- verification/tests/            # Regression and research-validation tests
-|-- models/                        # Optional model assets and outputs
+|-- assets/                        # Project identity and UI assets
+|-- verification/
+|   |-- research_case/             # Reproducible public-phantom case study
+|   |-- samples/                   # Curated documentation screenshots
+|   `-- tests/                     # Regression and research-validation tests
+|-- .github/                       # CI, templates, and repository automation
 |-- requirements.txt               # Range-based dependencies
 |-- requirements.lock              # Locked dependencies
 |-- pyproject.toml                 # Package, pytest, and Ruff configuration
+|-- SHA256SUMS.txt                 # Source-snapshot integrity manifest
 `-- .gitignore                     # Medical data, secrets, and runtime artifacts
 ```
 
 `app.py` is the single active Streamlit runtime. `ui/clinical_app.py` is a
 compatibility import and does not contain a second UI implementation.
+Automated tests live in `verification/tests/`. Local test, lint, and runtime
+caches are written under ignored `cache_logs/`; they are not release source
+files or validation evidence.
 
 ## Optional validation data and demonstration samples
 
@@ -798,17 +804,11 @@ pixels for burned-in identifiers and confirm all redistribution rights.
 
 ## Citation
 
-If you use this software, cite the metadata in
-[`CITATION.cff`](CITATION.cff) or the
-[Zenodo v1.0.2 record](https://zenodo.org/records/23020151).
-Its assigned version DOI is
-`10.5281/zenodo.23020151`. Use the
-version-family DOI, [10.5281/zenodo.22768910](https://doi.org/10.5281/zenodo.22768910),
-when citing the software across all versions. `CITATION.cff` records the
-version DOI; `.zenodo.json` identifies the family DOI in its `isVersionOf`
-relation. The revised archive retains the requested software version label
-`1.0.2` and includes fixes and evidence updates made after the original
-`v1.0.2` Git commit; it is not byte-identical to that historical Git snapshot.
+If you use v1.0.3, cite [`CITATION.cff`](CITATION.cff) or the [Zenodo
+version-family record](https://doi.org/10.5281/zenodo.22768910). Zenodo has
+not assigned a version-specific record for v1.0.3 yet. The [existing v1.0.2
+record](https://zenodo.org/records/23020151) and its DOI
+`10.5281/zenodo.23020151` identify the earlier release only.
 
 ## Known limitations
 

@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import platform
+import subprocess
 import sys
 from pathlib import Path
 
@@ -129,6 +130,16 @@ def run(output: Path) -> dict[str, object]:
     absolute_errors = {
         key: abs(heeh[key] - pyradiomics[key]) for key in heeh
     }
+    try:
+        source_revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        source_revision = "unavailable; Git revision metadata could not be read"
     result: dict[str, object] = {
         "status": "measured",
         "dataset": "deterministic synthetic water ROI; no patient data",
@@ -144,7 +155,7 @@ def run(output: Path) -> dict[str, object]:
             "benchmark_script_sha256": hashlib.sha256(
                 Path(__file__).read_bytes()
             ).hexdigest(),
-            "source_revision": "unavailable; this workspace has no Git metadata",
+            "source_revision": source_revision,
         },
         "roi_shape": list(roi.shape),
         "roi_sha256": hashlib.sha256(roi.tobytes()).hexdigest(),
@@ -172,7 +183,7 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("results") / "pyradiomics_comparison.json",
+        default=Path("verification") / "results" / "pyradiomics_comparison.json",
     )
     args = parser.parse_args()
     try:

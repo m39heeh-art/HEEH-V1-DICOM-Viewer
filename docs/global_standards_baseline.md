@@ -9,17 +9,22 @@ medical-device approval.
 
 - Direct patient identifiers are not rendered by default.
 - The DICOM de-identification helper blanks or pseudonymizes only the
-  attribute subset in `core.standards.PHI_FIELD_NAMES`; it does not apply the
-  full DICOM PS3.15 Annex E Basic Application Level Confidentiality Profile.
-  Identity-bearing elements inside sequences are not blanked (only their UIDs
-  are remapped), and top-level attributes beyond `PHI_FIELD_NAMES` (e.g.
-  StudyDescription, AdmittingDiagnosesDescription) are out of scope. The
-  helper therefore deletes any inherited `PatientIdentityRemoved` marker
-  instead of asserting `YES`; a `YES` assertion must come from a review of
-  the complete output object. Generated synthetic DICOM SR reports are a
-  separate path: they contain no source patient data and record their own
-  accurate `DeidentificationMethod` (`Selected Identifiers Removed;
-  UID Remapping`).
+  selected attribute set in `core.standards.PHI_FIELD_NAMES`, including
+  matching elements nested in sequences; it does not apply the full DICOM
+  PS3.15 Annex E Basic Application Level Confidentiality Profile. Free-text
+  fields, unlisted attributes, and burned-in pixel text may still identify a
+  person. The helper therefore deletes any inherited `PatientIdentityRemoved`
+  marker instead of asserting `YES`; a `YES` assertion must come from a
+  review of the complete output object. Generated synthetic DICOM SR reports
+  are a separate path: they contain no source patient data and record their
+  own `DeidentificationMethod` (`Selected Identifiers Removed; UID Remapping`).
+- Pixel-level privacy review is required unless `BurnedInAnnotation` is
+  explicitly `NO`; export validation warns when that status is missing or
+  unknown. This metadata flag does not itself detect or remove burned-in text.
+- Optional date retention is limited to study, series, acquisition, content,
+  and procedure-step date attributes; patient-specific and all other date
+  elements remain removed, and all time/date-time values are removed.
+  Retained dates can still identify a person in combination with other data.
 - Audit events use pseudonymous image references and redact PHI-like fields.
 - The stable patient reference currently uses an unkeyed deterministic hash.
   It is susceptible to guessing for low-entropy identifiers and is not
@@ -82,12 +87,14 @@ Current evidence and its limits:
 | --- | --- | --- |
 | Core regression and static checks | Tested | The repository test suite, Ruff, and dependency consistency checks run locally and in the configured CI matrix; these do not establish scientific validity. |
 | Image loading and display | Tested, format-specific | Synthetic DICOM CT/MR, compressed DICOM, NIfTI, NRRD, and MetaImage fixtures cover selected paths; they do not cover all encodings, vendors, SOP classes, orientations, or modalities. See the README support table. |
-| IBSI radiomics | Independently validated, narrow scope | 270/270 comparisons are reported for the tested IBSI Configuration D CT phantom workflow. This is not full IBSI compliance or patient/population validation. |
-| Public dataset benchmark | Partially validated, phantom only | The IBSI CT phantom image/mask are recorded with source commit and SHA-256; all 270 populated Configuration D rows passed through the configured Z-Rad reference pipeline. CT-Phantom4Radiomics remains metadata-only; no patient-level/generalization study is reported. |
+| IBSI 1 CT configurations A-E | Reference values passed, narrow scope | The application workflows share the Z-Rad engine with the verifier. The official CT phantom comparison reports A 346/346, B 346/346, C 210/210, D 270/270, and E 210/210 populated feature rows passed; 60 stage-specific diagnostic rows for each of A/B/C/E are not included. These results are not an independent engine comparison, full IBSI validation, or patient/population validation. |
+| IBSI 1 digital phantom | Incomplete; one inconsistent reference and identifier gaps | 481/482 populated rows pass; `szm_lzhge_3D` is 1494.6 vs. 1490 in the feature table. IBSI's own published GLSZM matrix and formula yield 1494.6, matching Z-Rad and PyRadiomics; authoritative clarification is still needed. All 167 reference-supported definitions have outputs; five no-reference definitions are explicitly not recommended. The feature manual lists 171 permanent IDs for 172 definitions, omits `szm_sze`, and duplicates `1PR8` for `ih_min` and `ih_p10`. |
+| Public dataset benchmark | Partially validated, phantom only | The IBSI CT phantom image/mask are recorded with source commit and SHA-256; all 270 populated Configuration D rows passed through the configured Z-Rad reference pipeline. The TCIA CT-Phantom4Radiomics study covers one public phantom series; no patient-level or generalization study is reported. |
 | External radiomics comparison | Independently compared, narrow scope | PyRadiomics 3.0.1 matched four first-order features within 1e-6 on one deterministic synthetic 2D ROI. After a coarseness formula correction, all five NGTDM features matched PyRadiomics 3.0.1 within 1e-6 on one deterministic synthetic 2D ROI (8-neighborhood, force2D, matched fixed-bin-width settings); the comparison runs as a regression test gated on the optional `ibsi` dependency group. This does not validate other features, 3D aggregation, image encodings, patient data, or application-wide outputs. |
-| Default viewer slice radiomics | Not Configuration D compliant | The viewer's default call analyzes a 2D unmasked slice; it is intentionally reported as not comparable, with no Configuration D pass/fail comparison. Separately, the PyRadiomics reference adapter assesses 66 IBSI reference-table rows and all 66 pass. Another 204 rows were not assessed because a defensible mapping was not established for this comparison; they are neither passes nor failures. The Z-Rad result must not be transferred to the default viewer path. Neither comparison establishes full IBSI compliance. |
+| Default viewer slice radiomics | Not Configuration D compliant | The viewer's default call analyzes a 2D unmasked slice; it is intentionally reported as not comparable, with no Configuration D pass/fail comparison. Separately, the PyRadiomics reference adapter assesses 75 IBSI reference-table rows and all 75 pass. The other 195 rows are categorized in the generated report as not assessed; they are neither passes nor failures. The Z-Rad result must not be transferred to the default viewer path. Neither comparison establishes full IBSI compliance. |
 | Export/privacy challenge checks | Tested on generated fixtures | The reported 20/20 valid and 20/20 invalid fixture results describe a small, constructed challenge set, not real-world privacy or de-identification performance. |
-| Analysis run provenance | Partially implemented | IBSI Configuration D JSON includes image/mask fingerprints, application and dependency versions, environment, lockfile hash, UTC time, and a result digest. Other workflows do not yet emit this complete run record; local builds without revision metadata report source revision as unavailable. |
+| Physical measurement and frequency units | Tested, metadata-dependent | Physical ruler values apply row/column PixelSpacing; CT NPS reports cycles/mm only when valid spacing exists. Shared and uniform Enhanced multi-frame PixelMeasures spacing is resolved; varying or incomplete per-frame spacing is withheld. This does not establish independent phantom accuracy or cover every image geometry. |
+| Analysis run provenance | Partially implemented | IBSI A-E JSON includes image/mask fingerprints, application and dependency versions, environment, lockfile hash, UTC time, and a result digest. A separate checklist reports status for IBSI reporting items 1–76 and records available configuration and allowlisted DICOM values; unavailable study-level acquisition, reconstruction, segmentation, and validation details remain explicitly incomplete. Local builds without revision metadata report source revision as unavailable. |
 | Runtime and memory | Tested, synthetic microbenchmark only | Existing timing is for a synthetic navigation-cache workload. Python `tracemalloc` excludes native allocations, process RSS, decoding, inference, and end-to-end analysis. |
 | Broad portability and accessibility | Partially tested | Current CI covers Ubuntu with Python 3.11 and 3.12. Accessibility helper tests are not a complete WCAG audit or assistive-technology evaluation. |
 | Resistance of pseudonymous identifiers to guessing | Not established | Current identifiers are deterministic, unkeyed hashes; low-entropy identifiers may be guessed. Do not treat them as anonymized or resistant to re-identification. |

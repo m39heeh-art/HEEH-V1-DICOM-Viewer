@@ -224,16 +224,23 @@ class ModalityCalculator(ABC):
         """
         Return (row_spacing, col_spacing) in mm, or None if not specified.
 
-        Handles both the single-tuple ``PixelSpacing`` and the 6-element
-        ``ImageOrientationPatient``-independent per-slice encodings.
+        A present DICOM PixelSpacing must contain exactly two positive finite
+        values in row, column order. Missing spacing is reported as ``None``;
+        malformed spacing is rejected.
         """
         spacing = getattr(dataset, "PixelSpacing", None)
-        if spacing is None or len(spacing) < 2:
+        if spacing is None:
             return None
+        if isinstance(spacing, (str, bytes)):
+            raise ValueError("DICOM PixelSpacing must contain exactly two values.")
         try:
+            if len(spacing) != 2:
+                raise ValueError("DICOM PixelSpacing must contain exactly two values.")
             row_spacing, column_spacing = float(spacing[0]), float(spacing[1])
-        except (TypeError, ValueError):
-            return None
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "DICOM PixelSpacing must contain exactly two numeric values."
+            ) from exc
         if (
             not np.isfinite((row_spacing, column_spacing)).all()
             or row_spacing <= 0

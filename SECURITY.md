@@ -7,8 +7,8 @@ certified medical device** and must not be used for patient care.
 
 | Version | Supported |
 | --- | --- |
-| 1.0.2 | Yes |
-| < 1.0.2 | No |
+| 1.0.3 | Yes |
+| < 1.0.3 | No |
 
 ## Reporting a vulnerability or privacy concern
 

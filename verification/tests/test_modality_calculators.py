@@ -5,7 +5,11 @@ import pytest
 from pydicom.dataset import Dataset
 from pydicom.uid import ExplicitVRLittleEndian
 
-from engines.modality_calculators import GenericIntensityCalculator, get_calculator
+from engines.modality_calculators import (
+    CTCalculator,
+    GenericIntensityCalculator,
+    get_calculator,
+)
 
 
 def test_non_ct_factory_returns_descriptive_calculator():
@@ -16,6 +20,66 @@ def test_non_ct_factory_returns_descriptive_calculator():
     assert result["intensity_units"] == "stored_signal"
     assert result["statistics"]["n_voxels"] == 256
     assert "not a calibrated clinical biomarker" in result["status"]
+
+
+def test_ct_nps_is_unavailable_without_physical_pixel_spacing():
+    dataset = Dataset()
+    dataset.Modality = "CT"
+    dataset.Rows = 16
+    dataset.Columns = 16
+    dataset.BitsAllocated = 16
+    dataset.BitsStored = 16
+    dataset.HighBit = 15
+    dataset.PixelRepresentation = 1
+    dataset.SamplesPerPixel = 1
+    dataset.PhotometricInterpretation = "MONOCHROME2"
+    dataset.RescaleSlope = 1
+    dataset.RescaleIntercept = 0
+    dataset.PixelData = np.zeros((16, 16), dtype=np.int16).tobytes()
+    dataset.file_meta = Dataset()
+    dataset.file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+
+    nps = CTCalculator().calculate(dataset)["nps"]
+
+    assert nps["status"] == "unavailable"
+    assert "frequency_units" not in nps
+    assert nps["nps_2d"] is None
+    assert "PixelSpacing" in nps["reason"]
+
+
+@pytest.mark.parametrize("spacing", [[0.5], [0.5, 0.0], [0.5, float("nan")]])
+def test_dicom_pixel_spacing_rejects_malformed_or_nonpositive_values(spacing):
+    dataset = Dataset()
+    dataset.PixelSpacing = spacing
+
+    with pytest.raises(ValueError, match="PixelSpacing"):
+        CTCalculator.get_pixel_spacing(dataset)
+
+
+def test_ct_nps_is_unavailable_for_region_smaller_than_minimum():
+    dataset = Dataset()
+    dataset.Modality = "CT"
+    dataset.PixelSpacing = [0.5, 0.75]
+    dataset.Rows = 16
+    dataset.Columns = 16
+    dataset.BitsAllocated = 16
+    dataset.BitsStored = 16
+    dataset.HighBit = 15
+    dataset.PixelRepresentation = 1
+    dataset.SamplesPerPixel = 1
+    dataset.PhotometricInterpretation = "MONOCHROME2"
+    dataset.RescaleSlope = 1
+    dataset.RescaleIntercept = 0
+    dataset.PixelData = np.zeros((16, 16), dtype=np.int16).tobytes()
+    dataset.file_meta = Dataset()
+    dataset.file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+
+    roi = np.zeros((16, 16), dtype=bool)
+    roi[:10, :11] = True
+    nps = CTCalculator().calculate(dataset, roi=roi)["nps"]
+
+    assert nps["status"] == "unavailable"
+    assert "at least 8 by 8" in nps["reason"]
 
 
 def test_rt_dose_requires_grid_scaling():

@@ -20,8 +20,8 @@ Statistical extension of the single-slice protocol to all 172 slices of the down
 
 ## IBSI morphology reference comparison
 - Real 3D sphere ROI: voxel-count 57952.7 mm3 vs PyRadiomics MeshVolume 57899.8 mm3 (internal definitional gap 0.0914%).
-- Separate PyRadiomics reference comparison: 66 rows assessed; 66 passed; 0 failed; 204 not assessed because a defensible feature mapping was not established for this comparison. They are neither passes nor failures.
-- Finding: All 66 comparable PyRadiomics reference rows pass. The earlier eight morphology failures were reproduced when intensity re-segmentation was incorrectly used as the shape mask; shape features now use the original ROI mask while intensity features use the re-segmented mask. This paired verification identifies and corrects the source of those failures. The smooth-ROI mesh-versus-voxel difference below is a separate, feature-definition-specific observation.
+- Separate PyRadiomics reference comparison: 75 rows assessed; 75 passed; 0 failed; 195 are categorized as not assessed in `verification/results/ibsi_configuration_d_verification.json`. They are neither passes nor failures.
+- Finding: All 75 comparable PyRadiomics reference rows pass, including nine newly mapped GLDM features. The remaining rows are not counted as passes or failures because they use different aggregation semantics, are pipeline-stage diagnostics, or lack a defensible equivalent in PyRadiomics. The earlier eight morphology failures were reproduced when intensity re-segmentation was incorrectly used as the shape mask; shape features now use the original ROI mask while intensity features use the re-segmented mask. This paired verification identifies and corrects the source of those failures. The smooth-ROI mesh-versus-voxel difference below is a separate, feature-definition-specific observation.
 
 ## Limitations
 - All results describe the single real recorded phantom series only.

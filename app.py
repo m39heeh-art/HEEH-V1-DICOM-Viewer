@@ -64,7 +64,13 @@ from engines.modality_calculators import (
     get_calculator as _get_modality_calculator,
 )
 from engines.sitk_registration import SimpleITKRegistration
-from core.ibsi_radiomics import run_configuration_d
+from core.ibsi_radiomics import (
+    run_configuration_a,
+    run_configuration_b,
+    run_configuration_c,
+    run_configuration_d,
+    run_configuration_e,
+)
 from core.tissue_classifier import (
     TissueClassifier, EdgeDetector, RadiomicsExtractor, XAIExplainer,
 )
@@ -82,6 +88,26 @@ from engines.analysis_orchestrator import (
     MedicalDataProcessor,
 )
 from utils.medical_ai_vision import MedicalAIVisionEngine
+
+
+_IBSI_FAMILY_LABELS = {
+    "cm": "GLCM",
+    "rlm": "GLRLM",
+    "szm": "GLSZM",
+    "ngl": "NGLDM",
+    "dzm": "GLDZM",
+    "ngt": "NGTDM",
+    "morph": "Morphology",
+    "ih": "Intensity histogram",
+    "stat": "Statistics",
+    "ivh": "IVH",
+    "loc": "Local intensity",
+}
+
+
+def _ibsi_feature_family(feature_name: str) -> str:
+    """Map a Z-Rad feature key to its IBSI feature-family label."""
+    return _IBSI_FAMILY_LABELS.get(feature_name.split("_", 1)[0], "Other")
 
 
 _SESSION_TEMP_ROOTS: set[Path] = set()
@@ -1801,7 +1827,7 @@ class ClinicalApp:
         roi_center_px: tuple | None = None,
         roi_radius_px: int | None = None,
     ) -> bytes:
-        """Build a DICOM Comprehensive SR for clinical measurement reporting.
+        """Build a DICOM Comprehensive SR for research measurement reporting.
 
         Follows DICOM PS3.16 TID 1500 (Measurement Report) → TID 1001/1002
         (device Observer Context) and TID 1501 (Measurement and Qualitative
@@ -1821,21 +1847,52 @@ class ClinicalApp:
             generate_uid,
         )
 
-        valid = [
-            m
-            for m in (measurements or [])
-            if ClinicalApp._measurement_coords_valid(
-                m.get("kind"), m.get("data")
-            )
-            and (
-                m.get("mm") is not None
-                if str(m.get("kind") or "").lower() != "angle"
-                else ClinicalApp._normalized_measurement(m).get("degrees")
-                is not None
-            )
-        ]
+        def _finite_value(value) -> bool:
+            if value is None or isinstance(value, bool):
+                return False
+            try:
+                return bool(np.isfinite(float(value)))
+            except (TypeError, ValueError):
+                return False
+
+        valid = []
+        for measurement in measurements or []:
+            if not isinstance(measurement, dict):
+                continue
+            kind = str(measurement.get("kind") or "").lower()
+            if not ClinicalApp._measurement_coords_valid(
+                kind, measurement.get("data")
+            ):
+                continue
+            if kind == "angle":
+                if _finite_value(
+                    ClinicalApp._normalized_measurement(measurement).get("degrees")
+                ):
+                    valid.append(measurement)
+                continue
+            unit = str(measurement.get("unit") or "mm").lower()
+            value = measurement.get("px") if unit == "px" else measurement.get("mm")
+            if kind == "distance" and unit in {"mm", "cm", "px"} and _finite_value(value):
+                valid.append(measurement)
         if not valid:
             return b""
+
+        def _valid_uid(value) -> bool:
+            text = str(value)
+            components = text.split(".")
+            return (
+                len(text) <= 64
+                and all(
+                    component.isdigit()
+                    and (component == "0" or not component.startswith("0"))
+                    for component in components
+                )
+            )
+
+        if not _valid_uid(source_sop_class_uid):
+            raise ValueError("A valid source SOP Class UID is required for DICOM SR.")
+        if not _valid_uid(source_sop_instance_uid):
+            raise ValueError("A valid source SOP Instance UID is required for DICOM SR.")
 
         def _code(val: str, scheme: str, meaning: str) -> Dataset:
             c = Dataset()
@@ -1884,7 +1941,9 @@ class ClinicalApp:
                 return _code("cm", "UCUM", "centimeter")
             if u == "px":
                 return _code("px", "UCUM", "pixel")
-            return _code("mm", "UCUM", "millimeter")
+            if u == "mm":
+                return _code("mm", "UCUM", "millimeter")
+            raise ValueError(f"Unsupported measurement unit for DICOM SR: {unit}")
 
         def _image_item(purpose_ds: Dataset) -> Dataset:
             """IMAGE content item with the Image Reference Macro (C.18.4).
@@ -2052,11 +2111,11 @@ class ClinicalApp:
             else:
                 unit = str(m.get("unit") or "mm").lower()
                 if unit == "cm":
-                    value = float(m.get("mm", 0)) / 10.0
+                    value = float(m["mm"]) / 10.0
                 elif unit == "px":
-                    value = float(m.get("px", 0))
+                    value = float(m["px"])
                 else:
-                    value = float(m.get("mm", 0))
+                    value = float(m["mm"])
                 distance_ds = _code("121206", "DCM", "Distance")
                 group_children.append(
                     _num_item(
@@ -2076,11 +2135,11 @@ class ClinicalApp:
             cx, cy = float(roi_center_px[0]), float(roi_center_px[1])
             cr = float(roi_radius_px)
             radius_ds = _code("121204", "DCM", "Radius")
-            if pixel_spacing_mm:
-                spacing = (
-                    float(pixel_spacing_mm[0]) + float(pixel_spacing_mm[1])
-                ) / 2.0
-                radius_value = cr * spacing
+            spacing = ClinicalApp._validated_pixel_spacing(pixel_spacing_mm)
+            if spacing is not None and np.isclose(
+                spacing[0], spacing[1], rtol=1e-6, atol=0.0
+            ):
+                radius_value = cr * spacing[0]
                 radius_unit = _code("mm", "UCUM", "millimeter")
             else:
                 radius_value = cr
@@ -3084,11 +3143,67 @@ class ClinicalApp:
         rows = getattr(dataset, "Rows", None)
         columns = getattr(dataset, "Columns", None)
         pixel_spacing = getattr(dataset, "PixelSpacing", None)
-        try:
-            pixel_spacing = [float(item) for item in pixel_spacing] \
-                if pixel_spacing is not None else None
-        except (TypeError, ValueError):
-            pixel_spacing = None
+        pixel_spacing_source = "top_level" if pixel_spacing is not None else "missing"
+
+        def _spacing_pair(value) -> list[float] | None:
+            if value is None or isinstance(value, (str, bytes)):
+                return None
+            try:
+                if len(value) != 2:
+                    return None
+            except TypeError:
+                return None
+            try:
+                pair = [float(value[0]), float(value[1])]
+            except (TypeError, ValueError):
+                return None
+            if not np.isfinite(pair).all() or any(item <= 0 for item in pair):
+                return None
+            return pair
+
+        if pixel_spacing is None:
+            shared = getattr(dataset, "SharedFunctionalGroupsSequence", None) or []
+            if shared:
+                pixel_measures = getattr(
+                    shared[0], "PixelMeasuresSequence", None
+                ) or []
+                if pixel_measures:
+                    pixel_spacing = getattr(pixel_measures[0], "PixelSpacing", None)
+                    if pixel_spacing is not None:
+                        pixel_spacing_source = "shared_functional_group"
+            if pixel_spacing is None:
+                per_frame = getattr(
+                    dataset, "PerFrameFunctionalGroupsSequence", None
+                ) or []
+                per_frame_spacings = []
+                for frame in per_frame:
+                    pixel_measures = getattr(
+                        frame, "PixelMeasuresSequence", None
+                    ) or []
+                    if not pixel_measures:
+                        per_frame_spacings = []
+                        break
+                    pair = _spacing_pair(
+                        getattr(pixel_measures[0], "PixelSpacing", None)
+                    )
+                    if pair is None:
+                        per_frame_spacings = []
+                        break
+                    per_frame_spacings.append(pair)
+                if per_frame_spacings and all(
+                    np.allclose(
+                        per_frame_spacings[0], pair, rtol=1e-6, atol=0.0
+                    )
+                    for pair in per_frame_spacings[1:]
+                ):
+                    pixel_spacing = per_frame_spacings[0]
+                    pixel_spacing_source = "uniform_per_frame_functional_group"
+                elif per_frame:
+                    pixel_spacing = None
+                    pixel_spacing_source = "varying_or_incomplete_per_frame"
+        pixel_spacing = _spacing_pair(pixel_spacing)
+        if pixel_spacing is None and pixel_spacing_source == "top_level":
+            pixel_spacing_source = "invalid"
         transfer_syntax = getattr(
             getattr(dataset, "file_meta", None),
             "TransferSyntaxUID",
@@ -3103,10 +3218,23 @@ class ClinicalApp:
             ).upper(),
             "window_center": _number("WindowCenter"),
             "window_width": _number("WindowWidth"),
+            "voi_lut_function": str(
+                getattr(dataset, "VOILUTFunction", "LINEAR") or "LINEAR"
+            ).upper(),
+            "voi_lut_explanations": [
+                str(getattr(item, "LUTExplanation", "") or f"VOI LUT {index + 1}")
+                for index, item in enumerate(
+                    getattr(dataset, "VOILUTSequence", []) or []
+                )
+            ],
             "rows": int(rows) if rows is not None else None,
             "columns": int(columns) if columns is not None else None,
             "pixel_spacing_mm": pixel_spacing,
+            "pixel_spacing_source": pixel_spacing_source,
             "sop_class_uid": str(getattr(dataset, "SOPClassUID", "") or ""),
+            "sop_instance_uid": str(
+                getattr(dataset, "SOPInstanceUID", "") or ""
+            ),
             "sop_class_name": (
                 str(getattr(dataset, "SOPClassUID", "").name)
                 if getattr(dataset, "SOPClassUID", None) is not None
@@ -3138,6 +3266,93 @@ class ClinicalApp:
         if metadata["columns"] is not None and metadata["columns"] <= 0:
             metadata["columns"] = None
         return metadata
+
+    @staticmethod
+    def _apply_dicom_voi_lut(target, source: np.ndarray, index: int = 0) -> np.ndarray:
+        """Apply one DICOM VOI LUT after modality conversion, without mutating source."""
+        from pydicom.pixels import apply_voi
+
+        if hasattr(target, "seek"):
+            target.seek(0)
+            dataset = pydicom.dcmread(target, stop_before_pixels=True)
+            target.seek(0)
+        else:
+            dataset = pydicom.dcmread(str(target), stop_before_pixels=True)
+        sequence = getattr(dataset, "VOILUTSequence", None)
+        if not sequence or not 0 <= index < len(sequence):
+            raise ValueError("The selected DICOM VOI LUT is unavailable.")
+        lut_depth = int(sequence[index].LUTDescriptor[2])
+        if lut_depth not in {8, *range(10, 17)}:
+            raise ValueError(f"Unsupported DICOM VOI LUT output depth: {lut_depth}.")
+        values = np.asarray(source)
+        valid = np.isfinite(values)
+        first_mapped_value = int(sequence[index].LUTDescriptor[1])
+        safe_values = np.where(valid, values, first_mapped_value)
+        if not np.issubdtype(safe_values.dtype, np.integer):
+            safe_values = np.rint(safe_values)
+        lut_values = apply_voi(
+            safe_values.astype(np.int64), dataset, index=index
+        )
+        output_max = float((1 << lut_depth) - 1)
+        display = np.clip(lut_values.astype(np.float64), 0.0, output_max)
+        result = np.rint(display * (255.0 / output_max)).astype(np.uint8)
+        result[~valid] = 0
+        return result
+
+    @staticmethod
+    def _apply_dicom_windowing(target, source: np.ndarray) -> np.ndarray:
+        """Apply the DICOM VOI window function and map its output to display octets."""
+        from pydicom.pixels import apply_windowing
+
+        if hasattr(target, "seek"):
+            target.seek(0)
+            dataset = pydicom.dcmread(target, stop_before_pixels=True)
+            target.seek(0)
+        else:
+            dataset = pydicom.dcmread(str(target), stop_before_pixels=True)
+        if getattr(dataset, "WindowCenter", None) is None or getattr(
+            dataset, "WindowWidth", None
+        ) is None:
+            raise ValueError("DICOM Window Center and Window Width are required.")
+        bits_stored = int(getattr(dataset, "BitsStored", 0) or 0)
+        if not 1 <= bits_stored <= 16:
+            raise ValueError("DICOM Bits Stored must be between 1 and 16.")
+        modality_luts = getattr(dataset, "ModalityLUTSequence", None)
+        if modality_luts:
+            lut_depth = int(modality_luts[0].LUTDescriptor[2])
+            if not 1 <= lut_depth <= 16:
+                raise ValueError("DICOM Modality LUT output depth is invalid.")
+            output_min = 0
+            output_max = (1 << lut_depth) - 1
+        else:
+            if int(getattr(dataset, "PixelRepresentation", 0) or 0):
+                output_min = -(1 << (bits_stored - 1))
+                output_max = (1 << (bits_stored - 1)) - 1
+            else:
+                output_min = 0
+                output_max = (1 << bits_stored) - 1
+            if (
+                getattr(dataset, "RescaleSlope", None) is not None
+                and getattr(dataset, "RescaleIntercept", None) is not None
+            ):
+                slope = float(dataset.RescaleSlope)
+                intercept = float(dataset.RescaleIntercept)
+                output_min = output_min * slope + intercept
+                output_max = output_max * slope + intercept
+        if not np.isfinite([output_min, output_max]).all() or output_max <= output_min:
+            raise ValueError("DICOM window output range is invalid.")
+        values = np.asarray(source, dtype=np.float64)
+        valid = np.isfinite(values)
+        safe_values = np.where(valid, values, output_min)
+        windowed = apply_windowing(safe_values, dataset)
+        display = np.clip(
+            (windowed - output_min) * (255.0 / (output_max - output_min)),
+            0.0,
+            255.0,
+        )
+        result = np.rint(display).astype(np.uint8)
+        result[~valid] = 0
+        return result
 
     @staticmethod
     def _read_measurement_composite_metadata(target) -> dict:
@@ -3200,26 +3415,39 @@ class ClinicalApp:
     ) -> tuple[float, float | None]:
         """Distance between two source pixels.
 
-        Returns (pixel distance, millimeters). Millimeters are only reported
-        when isotropic PixelSpacing is available; the computation is anchored
-        to source-pixel indices and is therefore independent of the CSS zoom
-        used to render the canvas.
+        Returns (pixel distance, millimeters). Physical distance uses DICOM
+        row/column spacing independently, including anisotropic spacing, and
+        is anchored to source-pixel indices rather than CSS display zoom.
         """
         px = float(np.hypot(x2 - x1, y2 - y1))
         mm = None
-        if (
-            pixel_spacing_mm
-            and len(pixel_spacing_mm) >= 2
-            and all(v > 0 for v in pixel_spacing_mm[:2])
-        ):
+        spacing = ClinicalApp._validated_pixel_spacing(pixel_spacing_mm)
+        if spacing is not None:
             mm = float(
                 np.hypot(
                     # DICOM PixelSpacing is row (y), column (x).
-                    (x2 - x1) * pixel_spacing_mm[1],
-                    (y2 - y1) * pixel_spacing_mm[0],
+                    (x2 - x1) * spacing[1],
+                    (y2 - y1) * spacing[0],
                 )
             )
         return px, mm
+
+    @staticmethod
+    def _validated_pixel_spacing(pixel_spacing_mm) -> list[float] | None:
+        """Validate DICOM row/column spacing before physical calculations."""
+        if pixel_spacing_mm is None:
+            return None
+        try:
+            spacing = [float(value) for value in pixel_spacing_mm]
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Pixel spacing must contain two finite positive values.") from exc
+        if (
+            len(spacing) != 2
+            or not np.isfinite(spacing).all()
+            or any(value <= 0 for value in spacing)
+        ):
+            raise ValueError("Pixel spacing must contain two finite positive values.")
+        return spacing
 
     @staticmethod
     def _measure_angle(
@@ -3236,16 +3464,9 @@ class ClinicalApp:
         PixelSpacing is applied per axis so the angle is evaluated in physical
         (mm) space when spacing metadata is present, otherwise in pixel space.
         """
-        sx = (
-            pixel_spacing_mm[1]
-            if pixel_spacing_mm and len(pixel_spacing_mm) >= 2
-            else 1.0
-        )
-        sy = (
-            pixel_spacing_mm[0]
-            if pixel_spacing_mm and len(pixel_spacing_mm) >= 2
-            else 1.0
-        )
+        spacing = ClinicalApp._validated_pixel_spacing(pixel_spacing_mm)
+        sx = spacing[1] if spacing is not None else 1.0
+        sy = spacing[0] if spacing is not None else 1.0
         # The canvas collects vertex, arm point, arm point.
         v1x = (x2 - x1) * sx
         v1y = (y2 - y1) * sy
@@ -3331,12 +3552,18 @@ class ClinicalApp:
         if st.session_state.get("viewer_measure_manual", False):
             raw = st.session_state.get("viewer_measure_factor")
             try:
-                factor = float(raw) if raw not in (None, 0, "") else 0.0
-            except (TypeError, ValueError):
-                factor = 0.0
-            if factor > 0:
+                factor = float(raw) if raw not in (None, "") else None
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "Manual pixel spacing must be a finite positive number."
+                ) from exc
+            if factor is not None:
+                if not np.isfinite(factor) or factor <= 0:
+                    raise ValueError(
+                        "Manual pixel spacing must be a finite positive number."
+                    )
                 return [factor, factor], "manual"
-        return list(dicom_spacing_mm) if dicom_spacing_mm else None, "dicom"
+        return ClinicalApp._validated_pixel_spacing(dicom_spacing_mm), "dicom"
 
     @staticmethod
     def _measurement_display(item: dict) -> str:
@@ -5545,6 +5772,51 @@ class ClinicalApp:
                 index=0,
                 key="window_preset_selector",
             )
+            voi_lut_labels = active_presentation.get(
+                "voi_lut_explanations", []
+            )
+            voi_lut_options = [
+                f"{index + 1}: {label}"
+                for index, label in enumerate(voi_lut_labels)
+            ]
+            has_dicom_window = (
+                active_presentation.get("window_center") is not None
+                and active_presentation.get("window_width") is not None
+            )
+            dicom_window_label = (
+                "Use DICOM window "
+                f"({active_presentation.get('voi_lut_function', 'LINEAR')})"
+            )
+            display_transform = None
+            if voi_lut_labels or has_dicom_window:
+                voi_context = (
+                    f"{active_presentation.get('sop_instance_uid', '')}:"
+                    f"{len(voi_lut_labels)}:{has_dicom_window}"
+                )
+                if st.session_state.get("_voi_lut_context") != voi_context:
+                    st.session_state.pop("dicom_voi_lut_selector", None)
+                    st.session_state["_voi_lut_context"] = voi_context
+                voi_options = ["Use window controls"]
+                if has_dicom_window:
+                    voi_options.append(dicom_window_label)
+                voi_options.extend(voi_lut_options)
+                selected_voi_label = st.selectbox(
+                    "DICOM VOI presentation",
+                    voi_options,
+                    key="dicom_voi_lut_selector",
+                    help=(
+                        "Applies the selected DICOM VOI transform to presentation "
+                        "pixels only; measurements continue to use source values."
+                    ),
+                )
+                if selected_voi_label == dicom_window_label and has_dicom_window:
+                    display_transform = ("window",)
+                elif selected_voi_label in voi_lut_options:
+                    display_transform = (
+                        "voi_lut",
+                        voi_lut_options.index(selected_voi_label),
+                    )
+            st.session_state["dicom_display_transform"] = display_transform
             default_center, default_width = (
                 ct_presets.get(window_preset, (40, 400))
             )
@@ -5632,110 +5904,267 @@ class ClinicalApp:
                     value=False,
                     help="Enable when needed; radiomics is computed on demand.",
                 )
-                if enable_radiomics and detected_modality == "CT":
-                    st.caption(
-                        "For IBSI Configuration D, provide a 3D ROI mask "
-                        "aligned to the active CT volume."
+                st.caption(
+                    "Provide a 3D ROI mask aligned to the active CT volume, "
+                    "then choose an IBSI 1 processing workflow (A–E)."
+                )
+                ibsi_mask_upload = st.file_uploader(
+                    _i18n.IBSI_MASK_UPLOAD_LABEL,
+                    type=["nii", "gz", "dcm", "dicom"],
+                    key="ibsi_roi_mask_uploader",
+                )
+                mask_path = None
+                mask_digest = None
+                if ibsi_mask_upload is not None:
+                    try:
+                        mask_path, mask_digest = (
+                            self._persist_ibsi_mask_upload(
+                                ibsi_mask_upload
+                            )
+                        )
+                    except (OSError, ValueError) as exc:
+                        st.error(f"Unable to use this ROI mask: {exc}")
+                roi_name = ""
+                if mask_path and Path(mask_path).suffix.lower() in {
+                    ".dcm",
+                    ".dicom",
+                }:
+                    roi_name = st.text_input(
+                        _i18n.IBSI_ROI_NAME_LABEL,
+                        key="ibsi_rtstruct_roi_name",
                     )
-                    ibsi_mask_upload = st.file_uploader(
-                        "IBSI ROI mask (NIfTI or DICOM RTSTRUCT)",
-                        type=["nii", "gz", "dcm", "dicom"],
-                        key="ibsi_roi_mask_uploader",
+                ibsi_config = st.selectbox(
+                    _i18n.IBSI_CONFIG_LABEL,
+                    options=["A", "B", "C", "D", "E"],
+                    index=3,
+                    key="ibsi_config_selector",
+                    help=_i18n.IBSI_CONFIG_HELP,
+                )
+                range_lower_val = -1000.0
+                range_upper_val = 400.0
+                if ibsi_config == "C":
+                    col_lo, col_hi = st.columns(2)
+                    range_lower_val = col_lo.number_input(
+                        _i18n.IBSI_RANGE_LOWER,
+                        value=-1000.0,
+                        step=50.0,
+                        key="ibsi_c_range_lower",
                     )
-                    mask_path = None
-                    mask_digest = None
-                    if ibsi_mask_upload is not None:
-                        try:
-                            mask_path, mask_digest = (
-                                self._persist_ibsi_mask_upload(
-                                    ibsi_mask_upload
+                    range_upper_val = col_hi.number_input(
+                        _i18n.IBSI_RANGE_UPPER,
+                        value=400.0,
+                        step=50.0,
+                        key="ibsi_c_range_upper",
+                    )
+                    st.caption(_i18n.IBSI_RANGE_HELP)
+                if mask_path and st.button(
+                    _i18n.IBSI_RUN_BUTTON.format(config=ibsi_config),
+                    key="run_ibsi_configuration",
+                    disabled=(
+                        Path(mask_path).suffix.lower() in {".dcm", ".dicom"}
+                        and not roi_name.strip()
+                    ),
+                ):
+                    try:
+                        if ibsi_config in {"A", "B"}:
+                            _spinner_text = (
+                                _i18n.IBSI_SPINNER_2D.format(
+                                    config=ibsi_config
                                 )
                             )
-                        except (OSError, ValueError) as exc:
-                            st.error(f"Unable to use this ROI mask: {exc}")
-                    roi_name = ""
-                    if mask_path and Path(mask_path).suffix.lower() in {
-                        ".dcm",
-                        ".dicom",
-                    }:
-                        roi_name = st.text_input(
-                            "RTSTRUCT ROI name",
-                            key="ibsi_rtstruct_roi_name",
-                        )
-                    if mask_path and st.button(
-                        "Run IBSI Configuration D",
-                        key="run_ibsi_configuration_d",
-                        disabled=(
-                            Path(mask_path).suffix.lower() in {".dcm", ".dicom"}
-                            and not roi_name.strip()
-                        ),
-                    ):
-                        try:
-                            with st.spinner(
-                                "Extracting 3D IBSI Configuration D features..."
-                            ):
-                                ibsi_result = run_configuration_d(
+                        else:
+                            _spinner_text = (
+                                _i18n.IBSI_SPINNER_3D.format(
+                                    config=ibsi_config
+                                )
+                            )
+                        with st.spinner(_spinner_text):
+                            _ibsi_runners = {
+                                "A": lambda: run_configuration_a(
                                     active_input,
                                     mask_path,
                                     roi_name=roi_name or None,
-                                )
-                            st.session_state["_ibsi_configuration_d_result"] = {
-                                "input": str(active_input),
-                                "mask_sha256": mask_digest,
-                                "result": ibsi_result,
+                                ),
+                                "B": lambda: run_configuration_b(
+                                    active_input,
+                                    mask_path,
+                                    roi_name=roi_name or None,
+                                ),
+                                "C": lambda: run_configuration_c(
+                                    active_input,
+                                    mask_path,
+                                    roi_name=roi_name or None,
+                                    range_lower=range_lower_val,
+                                    range_upper=range_upper_val,
+                                ),
+                                "D": lambda: run_configuration_d(
+                                    active_input,
+                                    mask_path,
+                                    roi_name=roi_name or None,
+                                ),
+                                "E": lambda: run_configuration_e(
+                                    active_input,
+                                    mask_path,
+                                    roi_name=roi_name or None,
+                                ),
                             }
-                        except (OSError, RuntimeError, ValueError) as exc:
-                            logger.exception(
-                                "IBSI Configuration D extraction failed"
-                            )
-                            st.error(f"IBSI extraction failed: {exc}")
-                    saved_ibsi_result = st.session_state.get(
-                        "_ibsi_configuration_d_result"
+                            ibsi_result = _ibsi_runners[ibsi_config]()
+                        st.session_state["_ibsi_configuration_result"] = {
+                            "input": str(active_input),
+                            "mask_sha256": mask_digest,
+                            "config": ibsi_config,
+                            "result": ibsi_result,
+                        }
+                    except (OSError, RuntimeError, ValueError) as exc:
+                        logger.exception(
+                            f"IBSI Configuration {ibsi_config} extraction failed"
+                        )
+                        st.error(
+                            _i18n.IBSI_EXTRACTION_FAILED.format(detail=exc)
+                        )
+                saved_ibsi_result = st.session_state.get(
+                    "_ibsi_configuration_result"
+                )
+                if (
+                    isinstance(saved_ibsi_result, dict)
+                    and saved_ibsi_result.get("input")
+                    == str(active_input)
+                    and (
+                        mask_digest is not None
+                        and saved_ibsi_result.get("mask_sha256")
+                        == mask_digest
                     )
-                    if (
-                        isinstance(saved_ibsi_result, dict)
-                        and saved_ibsi_result.get("input")
-                        == str(active_input)
-                        and (
-                            mask_digest is not None
-                            and saved_ibsi_result.get("mask_sha256")
-                            == mask_digest
+                    and saved_ibsi_result.get("config") == ibsi_config
+                ):
+                    ibsi_report = saved_ibsi_result["result"]
+                    _cfg = ibsi_config
+                    _analysis = ibsi_report.get("analysis", {})
+                    _voxels = (
+                        _analysis.get("resampled_roi_voxels")
+                        or _analysis.get("roi_voxels", 0)
+                    )
+                    st.success(
+                        _i18n.IBSI_APPLIED.format(
+                            config=_cfg, voxels=f"{_voxels:,}"
                         )
-                    ):
-                        ibsi_report = saved_ibsi_result["result"]
-                        st.success(
-                            f"IBSI Configuration D applied · "
-                            f"{ibsi_report['analysis']['resampled_roi_voxels']:,} "
-                            "re-segmented voxels"
+                    )
+                    _unsupported_families = (
+                        ibsi_report.get("unsupported_families") or {}
+                    )
+                    if _unsupported_families:
+                        st.warning(_i18n.IBSI_UNSUPPORTED_WARNING)
+                        st.markdown(
+                            "\n".join(
+                                f"- **{family}**: {reason}"
+                                for family, reason in _unsupported_families.items()
+                            )
                         )
-                        st.caption(
-                            "This result includes input fingerprints, software "
-                            "and dependency versions, environment metadata, and "
-                            "a result digest. Fingerprints can enable content "
-                            "linkage and do not anonymize input data."
+                    st.caption(_i18n.IBSI_PROVENANCE_CAPTION)
+                    st.json(ibsi_report["provenance"], expanded=False)
+                    st.json(ibsi_report["configuration"], expanded=False)
+                    _ibsi_reporting = ibsi_report.get("ibsi_reporting")
+                    if _ibsi_reporting:
+                        _reporting_items = _ibsi_reporting.get("items") or {}
+                        with st.expander("IBSI reporting checklist (items 1–76)"):
+                            st.caption(
+                                "This analysis record separates reported, missing, "
+                                "not-applicable, and unclaimed items. It does not "
+                                "represent a claim of complete IBSI compliance."
+                            )
+                            st.json(
+                                _ibsi_reporting.get("status_counts", {}),
+                                expanded=False,
+                            )
+                            st.dataframe(
+                                [
+                                    {
+                                        "Item": item_id,
+                                        "Requirement": details["label"],
+                                        "Status": details["status"],
+                                        "Reason": details.get("reason", ""),
+                                    }
+                                    for item_id, details in _reporting_items.items()
+                                ],
+                                hide_index=True,
+                            )
+                    _coverage = ibsi_report.get("feature_family_coverage") or {}
+                    st.caption(_i18n.IBSI_COVERAGE_HEADER)
+                    st.dataframe(
+                        [
+                            {
+                                "Family": family,
+                                "IBSI definitions": details[
+                                    "ibsi_feature_definitions"
+                                ],
+                                "Computed outputs (not feature IDs)": details[
+                                    "computed_output_values"
+                                ],
+                                "Status": details["status"],
+                                "Reason": details["reason"],
+                            }
+                            for family, details in _coverage.items()
+                        ],
+                        hide_index=True,
+                    )
+                    _feature_filter = (
+                        st.text_input(
+                            _i18n.IBSI_FEATURE_FILTER_LABEL,
+                            key="ibsi_feature_filter",
                         )
-                        st.json(ibsi_report["provenance"])
-                        st.json(ibsi_report["configuration"])
-                        st.dataframe(
-                            [
-                                {"Feature": name, "Value": value}
-                                for name, value in ibsi_report[
-                                    "features"
-                                ].items()
-                            ],
-                            hide_index=True,
-                        )
-                        st.download_button(
-                            "Download IBSI feature report",
-                            data=json.dumps(
-                                ibsi_report,
-                                indent=2,
-                                sort_keys=True,
-                            ),
-                            file_name="ibsi_configuration_d_radiomics.json",
-                            mime="application/json",
-                            key="download_ibsi_configuration_d",
-                        )
+                        .strip()
+                        .lower()
+                    )
+                    _feature_rows = [
+                        {
+                            "Family": _ibsi_feature_family(name),
+                            "Feature": name,
+                            "Value": value,
+                        }
+                        for name, value in ibsi_report[
+                            "features"
+                        ].items()
+                    ]
+                    _feature_rows.sort(
+                        key=lambda row: (row["Family"], row["Feature"])
+                    )
+                    if _feature_filter:
+                        _feature_rows = [
+                            row
+                            for row in _feature_rows
+                            if _feature_filter in row["Feature"].lower()
+                        ]
+                    st.caption(_i18n.IBSI_FEATURES_HEADER)
+                    st.dataframe(
+                        _feature_rows,
+                        hide_index=True,
+                    )
+                    _csv_buffer = io.StringIO()
+                    _csv_writer = csv.DictWriter(
+                        _csv_buffer,
+                        fieldnames=["Family", "Feature", "Value"],
+                    )
+                    _csv_writer.writeheader()
+                    _csv_writer.writerows(_feature_rows)
+                    _download_col_json, _download_col_csv = st.columns(2)
+                    _download_col_json.download_button(
+                        _i18n.IBSI_DOWNLOAD_JSON,
+                        data=json.dumps(
+                            ibsi_report,
+                            indent=2,
+                            sort_keys=True,
+                        ),
+                        file_name=f"ibsi_configuration_{_cfg.lower()}_radiomics.json",
+                        mime="application/json",
+                        key="download_ibsi_configuration",
+                    )
+                    _download_col_csv.download_button(
+                        _i18n.IBSI_DOWNLOAD_CSV,
+                        data=_csv_buffer.getvalue(),
+                        file_name=f"ibsi_configuration_{_cfg.lower()}_features.csv",
+                        mime="text/csv",
+                        key="download_ibsi_configuration_csv",
+                    )
+                    st.caption(_i18n.IBSI_DISCLAIMER)
             else:
                 enable_radiomics = False
             if feature_caps["ai_inference"]:
@@ -6123,12 +6552,14 @@ class ClinicalApp:
             window_preset = self._default_window_preset(analysis_modality)
         w_center = st.session_state.get('w_center', 40)
         w_width = st.session_state.get('w_width', 400)
+        display_transform = st.session_state.get("dicom_display_transform")
         mono1 = self._uses_monochrome1_display(analysis_modality, mod_key)
         display_key = (
             image_signature,
             str(window_preset),
             float(w_center),
             float(w_width),
+            display_transform,
             bool(is_measurement_composite),
             bool(is_color),
             bool(mono1),
@@ -6147,6 +6578,30 @@ class ClinicalApp:
                 disp_img = np.asarray(hu_data, dtype=np.uint8)
             elif is_color:
                 disp_img = self._prepare_color_display(hu_data)
+            elif display_transform and display_transform[0] == "voi_lut":
+                try:
+                    disp_img = self._apply_dicom_voi_lut(
+                        target, hu_data, display_transform[1]
+                    )
+                except (AttributeError, IndexError, OSError, TypeError, ValueError) as exc:
+                    logger.warning(
+                        "DICOM VOI LUT could not be applied for %s: %s",
+                        file_id,
+                        exc,
+                    )
+                    st.error(f"DICOM VOI LUT could not be applied: {exc}")
+                    return
+            elif display_transform and display_transform[0] == "window":
+                try:
+                    disp_img = self._apply_dicom_windowing(target, hu_data)
+                except (AttributeError, IndexError, OSError, TypeError, ValueError) as exc:
+                    logger.warning(
+                        "DICOM VOI window could not be applied for %s: %s",
+                        file_id,
+                        exc,
+                    )
+                    st.error(f"DICOM VOI window could not be applied: {exc}")
+                    return
             elif non_ct:
                 finite_values = np.asarray(hu_data)[finite_voxels]
                 pmin, pmax = float(np.percentile(finite_values, 1)), float(

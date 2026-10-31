@@ -1,6 +1,6 @@
 [project]
 name = "heeh-v1-dicom-viewer"
-version = "1.0.2"
+version = "1.0.3"
 description = "HEEH-V1(TM) DICOM Viewer: a research and education web application for medical image analysis, tissue classification, and scientific metrics."
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
@@ -52,7 +52,7 @@ segmentation = [
     "TotalSegmentator>=2.0",
 ]
 ibsi = [
-    "pyradiomics==3.1.0",
+    "pyradiomics==3.0.1",
     "z-rad==26.9.0",
 ]
 dev = [

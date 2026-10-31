@@ -13,8 +13,16 @@ env/
 # Testing
 .pytest_cache/
 .pytest-tmp/
+.hypothesis/
 .coverage
 htmlcov/
+
+# Tool caches and local environments
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.cache/
 
 # IDE
 .idea/

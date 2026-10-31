@@ -110,13 +110,36 @@ class CTCalculator(ModalityCalculator):
 
         hu = self._validate_hu(pixels)
 
-        spacing = self.get_pixel_spacing(dataset) if not isinstance(dataset, np.ndarray) else None
-        row_spacing, column_spacing = spacing if spacing else (1.0, 1.0)
-        nps = self._nps(
-            hu,
-            pixel_size_x=column_spacing,
-            pixel_size_y=row_spacing,
+        spacing = (
+            self.get_pixel_spacing(dataset)
+            if not isinstance(dataset, np.ndarray)
+            else None
         )
+        if spacing is None:
+            nps = {
+                "nps_2d": None,
+                "radial_frequency": None,
+                "radial_nps": None,
+                "nps_0": None,
+                "nps_near_zero_frequency": None,
+                "status": "unavailable",
+                "reason": "DICOM PixelSpacing is required to report NPS in cycles/mm.",
+            }
+        else:
+            row_spacing, column_spacing = spacing
+            nps = self._nps(
+                hu,
+                pixel_size_x=column_spacing,
+                pixel_size_y=row_spacing,
+            )
+            if nps["nps_2d"] is None:
+                nps["status"] = "unavailable"
+                nps["reason"] = (
+                    "NPS requires a two-dimensional region of at least 8 by 8 pixels."
+                )
+            else:
+                nps["status"] = "calculated"
+                nps["frequency_units"] = "cycles/mm"
 
         return {
             "modality": self.modality_key,

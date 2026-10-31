@@ -282,6 +282,24 @@ def test_angle_sr_round_trip_is_lossless(monkeypatch):
     }
 
 
+def test_physical_distance_uses_anisotropic_row_and_column_spacing():
+    from app import ClinicalApp
+
+    pixels, millimeters = ClinicalApp._measure_distance(
+        0.0, 0.0, 3.0, 4.0, [2.0, 1.0]
+    )
+
+    assert pixels == pytest.approx(5.0)
+    assert millimeters == pytest.approx(np.sqrt(73.0))
+
+
+def test_physical_distance_rejects_malformed_pixel_spacing():
+    from app import ClinicalApp
+
+    with pytest.raises(ValueError, match="two finite positive values"):
+        ClinicalApp._measure_distance(0.0, 0.0, 1.0, 1.0, [1.0, 0.0])
+
+
 def test_roi_radius_sr_round_trip_with_calibration():
     """ROI radius exports as TID 300 NUM in mm when spacing is calibrated."""
     from app import ClinicalApp
@@ -301,6 +319,60 @@ def test_roi_radius_sr_round_trip_with_calibration():
     # 5 px * mean(0.4, 0.4) mm/px = 2.0 mm; GraphicData stays in px space.
     assert float(radius[0]["value"]) == pytest.approx(2.0, rel=1e-9)
     assert radius[0]["graphic_type"] == "CIRCLE"
+
+
+def test_anisotropic_roi_radius_is_not_reported_as_a_physical_circle():
+    from app import ClinicalApp
+
+    payload = _sr_bytes(
+        [_measurement("distance", {"x1": 2.0, "y1": 2.0, "x2": 5.0, "y2": 2.0},
+                      mm=3.0, px=3.0)],
+        pixel_spacing_mm=(0.4, 0.8),
+        roi_center_px=(8.0, 8.0),
+        roi_radius_px=5,
+    )
+    report = ClinicalApp._extract_sr_report(pydicom.dcmread(io.BytesIO(payload)))
+    radius = [row for row in report["rows"] if row["kind"] == "radius"]
+
+    assert len(radius) == 1
+    assert radius[0]["unit"] == "px"
+    assert float(radius[0]["value"]) == pytest.approx(5.0)
+
+
+def test_sr_rejects_unknown_distance_units_instead_of_labeling_them_mm():
+    from app import ClinicalApp
+
+    measurement = _measurement(
+        "distance",
+        {"x1": 1.0, "y1": 1.0, "x2": 2.0, "y2": 2.0},
+        unit="furlong",
+        mm=3.0,
+    )
+
+    assert ClinicalApp._build_dicom_sr_report(
+        [measurement],
+        source_sop_class_uid=str(CTImageStorage),
+        source_sop_instance_uid=generate_uid(),
+    ) == b""
+
+
+@pytest.mark.parametrize(
+    ("source_sop_class", "source_sop_instance"),
+    [("not-a-uid", generate_uid()), (str(CTImageStorage), "not-a-uid")],
+)
+def test_sr_rejects_invalid_source_image_uids(source_sop_class, source_sop_instance):
+    from app import ClinicalApp
+
+    with pytest.raises(ValueError, match="valid source SOP"):
+        ClinicalApp._build_dicom_sr_report(
+            [_measurement(
+                "distance",
+                {"x1": 1.0, "y1": 1.0, "x2": 2.0, "y2": 2.0},
+                mm=1.0,
+            )],
+            source_sop_class_uid=source_sop_class,
+            source_sop_instance_uid=source_sop_instance,
+        )
 
 
 def test_sr_references_the_source_image_instance():

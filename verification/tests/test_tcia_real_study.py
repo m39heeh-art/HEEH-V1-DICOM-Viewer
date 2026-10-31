@@ -79,7 +79,7 @@ def test_full_series_study_headlines_are_stable():
 
 def test_live_pipeline_still_reproduces_exact_agreement():
     pytest.importorskip("SimpleITK")
-    pytest.importorskip("radiomics")
+    pytest.importorskip("radiomics", exc_type=ImportError)
     if not SERIES_ZIP.is_file() or not DCM_DIR.is_dir():
         pytest.skip("Downloaded real series is not present in this environment")
 

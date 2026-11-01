@@ -37,7 +37,7 @@ dependencies = [
     "simpleitk>=2.2",
     "streamlit>=1.57",
     "streamlit-image-coordinates>=0.3",
-    "torch>=2.5,<2.15",
+    "torch>=2.5,<2.16",
     "torchvision>=0.20,<0.30",
     "transformers>=4.41",
     "zarr>=3.1.6",
@@ -52,7 +52,7 @@ segmentation = [
     "TotalSegmentator>=2.0",
 ]
 ibsi = [
-    "pyradiomics==3.0.1",
+    "pyradiomics==3.1.0",
     "z-rad==26.9.0",
 ]
 dev = [
